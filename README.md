@@ -3145,8 +3145,11 @@ Le projet peut :
 ## Ce que tu as maintenant
 
 ✔️ **Une fiche centrale** (boussole mentale)
+
 ✔️ Un langage commun pour partenaires & publics
+
 ✔️ Une base RPG sérieuse, adulte, éthique
+
 ✔️ Un artefact réutilisable (site, PDF, README, annexe)
 
 ---
