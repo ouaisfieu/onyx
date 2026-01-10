@@ -2,105 +2,109 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>NYXO — Graph View (Zones 1km² superposables) — Bruxelles</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>NYXO — Bruxelles (Zones 1km² / Graph)</title>
 <style>
   :root{
     --bg0:#070914;
-    --bg1:#0b1020;
-    --glass:rgba(255,255,255,.06);
-    --glass2:rgba(255,255,255,.09);
-    --line:rgba(255,255,255,.14);
     --ink:#eaf1ff;
     --mut:rgba(234,241,255,.66);
+    --line:rgba(255,255,255,.14);
+    --glass:rgba(255,255,255,.06);
+    --glass2:rgba(255,255,255,.10);
     --g:#10b981;
     --p:#a78bfa;
-    --r:#ef4444;
-    --y:#fbbf24;
     --grad:linear-gradient(90deg,var(--g),var(--p));
+    --shadow:0 25px 80px rgba(0,0,0,.55);
     --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,sans-serif;
-    --shadow: 0 25px 80px rgba(0,0,0,.55);
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:
+  html,body{height:100%;margin:0;overflow:hidden;background:
     radial-gradient(1200px 800px at 20% 0%, rgba(167,139,250,.20), transparent 60%),
     radial-gradient(1200px 800px at 80% 10%, rgba(16,185,129,.14), transparent 55%),
-    radial-gradient(900px 600px at 60% 90%, rgba(16,185,129,.08), transparent 60%),
     var(--bg0);
-    color:var(--ink);font-family:var(--sans);overflow:hidden
+    color:var(--ink);font-family:var(--sans)
   }
 
-  /* Top chrome */
-  .top{
-    position:fixed;inset:10px 10px auto 10px;
-    display:flex;gap:10px;align-items:stretch;z-index:10;
+  /* Canvas */
+  #stage{position:fixed;inset:0;width:100vw;height:100vh}
+
+  /* Scanlines + grain */
+  .scanlines{pointer-events:none;position:fixed;inset:0;z-index:2;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px);
+    mix-blend-mode:overlay;opacity:.20}
+  .grain{pointer-events:none;position:fixed;inset:-20%;z-index:3;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+    opacity:.08;transform:rotate(2deg);mix-blend-mode:soft-light}
+
+  /* Mobile-first minimal HUD */
+  .hud{
+    position:fixed;
+    left:10px; right:10px; top:10px;
+    z-index:10;
+    display:flex; align-items:center; gap:10px;
+    padding-top: env(safe-area-inset-top);
     pointer-events:none;
   }
-  .panel{
+
+  .logoBtn{
     pointer-events:auto;
-    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-    border:1px solid var(--line);
-    border-radius:18px;
-    box-shadow:var(--shadow);
-    backdrop-filter: blur(10px);
-  }
-  .brand{
-    padding:12px 14px;display:flex;align-items:center;gap:10px;min-width:290px;
-  }
-  .sig{
     width:44px;height:44px;border-radius:14px;
+    border:1px solid rgba(255,255,255,.16);
     background:
       radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%),
       radial-gradient(circle at 70% 70%, rgba(16,185,129,.35), rgba(16,185,129,0) 55%),
       radial-gradient(circle at 40% 80%, rgba(167,139,250,.35), rgba(167,139,250,0) 55%),
       linear-gradient(135deg, rgba(16,185,129,.25), rgba(167,139,250,.20));
-    border:1px solid rgba(255,255,255,.16);
+    box-shadow:var(--shadow);
     position:relative;
+    display:grid;place-items:center;
+    font-family:var(--mono);
+    font-weight:900;
+    letter-spacing:.06em;
+    color:#061017;
+    cursor:pointer;
+    user-select:none;
   }
-  .sig:after{
-    content:"!NYXO";
-    position:absolute;inset:0;
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--mono);font-weight:900;font-size:12px;
-    color:#061017;letter-spacing:.08em;
-    text-shadow: 0 1px 0 rgba(255,255,255,.35);
-  }
-  .t1{font-weight:900;letter-spacing:.08em}
-  .t1 span{
-    background:var(--grad);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
-  .t2{color:var(--mut);font-size:12px;margin-top:2px}
+  .logoBtn:after{content:"!NYXO";font-size:12px}
 
-  .controls{
-    padding:10px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;min-width:min(980px, calc(100vw - 340px));
+  .toolbar{
+    pointer-events:auto;
+    flex:1;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:flex-end;
+    flex-wrap:wrap;
   }
+
+  .btn, .pill, .field{
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+
   .btn{
     cursor:pointer;
-    border:1px solid rgba(255,255,255,.16);
-    background:rgba(0,0,0,.20);
-    color:var(--ink);
-    border-radius:14px;
     padding:10px 12px;
+    color:var(--ink);
     font-size:13px;
     user-select:none;
   }
-  .btn:hover{border-color:rgba(255,255,255,.28)}
   .btn.primary{border:0;background:var(--grad);color:#061017;font-weight:900}
-  .btn.tog.on{border:0;background:linear-gradient(90deg, rgba(16,185,129,.35), rgba(167,139,250,.30));}
+  .btn:active{transform:translateY(1px)}
+
   .pill{
     display:flex;align-items:center;gap:8px;
-    border:1px solid rgba(255,255,255,.16);
-    background:rgba(0,0,0,.22);
-    border-radius:999px;
     padding:8px 10px;
     font-size:12px;color:var(--mut);
   }
   .pill input{
     appearance:none;width:38px;height:22px;border-radius:999px;
-    background:rgba(255,255,255,.12);
+    background:rgba(0,0,0,.22);
     border:1px solid rgba(255,255,255,.18);
     position:relative;outline:none;cursor:pointer;
   }
@@ -115,43 +119,87 @@
     border-color:rgba(255,255,255,.26);
   }
   .pill input:checked:after{left:19px;background:#061017}
+
   .field{
     display:flex;align-items:center;gap:8px;
-    border:1px solid rgba(255,255,255,.16);
-    background:rgba(0,0,0,.22);
-    border-radius:14px;
     padding:8px 10px;
   }
   .field label{font-size:12px;color:var(--mut)}
-  .field input[type="range"]{width:140px}
+  .field input[type="range"]{width:110px}
   .field input[type="text"]{
-    width:210px;max-width:42vw;
-    border:0;outline:none;background:transparent;color:var(--ink);
-    font-family:var(--mono);font-size:12px;
+    width:160px; max-width:52vw;
+    border:0; outline:none; background:transparent;
+    color:var(--ink); font-family:var(--mono); font-size:12px;
   }
 
-  /* Right drawer */
+  /* Floating drawer toggle (always visible) */
+  .fab{
+    position:fixed;
+    right:12px;
+    bottom:12px;
+    z-index:11;
+    padding-bottom: env(safe-area-inset-bottom);
+    pointer-events:auto;
+  }
+  .fab .btn{border-radius:18px;padding:12px 14px}
+
+  /* Drawer overlay */
+  .drawerWrap{
+    position:fixed; inset:0; z-index:20;
+    pointer-events:none;
+  }
+  .scrim{
+    position:absolute; inset:0;
+    background:rgba(0,0,0,.58);
+    opacity:0;
+    transition:opacity .18s ease;
+  }
   .drawer{
-    position:fixed;top:10px;right:10px;bottom:10px;width:min(420px, 96vw);
-    z-index:12;
-    display:flex;flex-direction:column;gap:10px;
+    position:absolute; top:0; right:0; bottom:0;
+    width:min(440px, 92vw);
+    transform:translateX(105%);
+    transition:transform .22s ease;
+    padding:10px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    display:flex; flex-direction:column; gap:10px;
   }
-  .drawer .panel{overflow:hidden}
-  .drawer .hd{
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+    border:1px solid var(--line);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(10px);
+    overflow:hidden;
+  }
+  .hd{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
-    padding:12px 12px;border-bottom:1px solid rgba(255,255,255,.10);
+    padding:12px 12px;
+    border-bottom:1px solid rgba(255,255,255,.10);
   }
-  .drawer .hd .h{
+  .hd .h{
     font-weight:900;letter-spacing:.08em;font-size:12px;
-    color:rgba(234,241,255,.85);
+    color:rgba(234,241,255,.88);
   }
-  .drawer .bd{padding:12px;overflow:auto}
+  .bd{padding:12px;overflow:auto}
   .kv{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin:8px 0}
   .kv .k{color:var(--mut);font-size:12px}
   .kv .v{font-family:var(--mono);font-size:12px}
+
+  textarea{
+    width:100%; min-height:170px; resize:vertical;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.22);
+    color:var(--ink);
+    font-family:var(--mono);
+    font-size:12px; line-height:1.45;
+    padding:10px;
+    outline:none;
+  }
+  .rowbtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
   .hint{
-    margin-top:10px;
-    border-left:6px solid rgba(16,185,129,.55);
+    margin-top:10px;border-left:6px solid rgba(16,185,129,.55);
     background:rgba(16,185,129,.08);
     border:1px solid rgba(16,185,129,.20);
     border-radius:16px;
@@ -159,56 +207,16 @@
     color:rgba(234,241,255,.82);
     font-size:12px;
   }
-  textarea{
-    width:100%;min-height:160px;resize:vertical;
-    border-radius:14px;border:1px solid rgba(255,255,255,.14);
-    background:rgba(0,0,0,.22);
-    color:var(--ink);
-    font-family:var(--mono);font-size:12px;line-height:1.45;
-    padding:10px;outline:none;
-  }
-  .rowbtn{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
-  /* Canvas */
-  #stage{
-    position:fixed;inset:0;
-    width:100vw;height:100vh;
-  }
+  .drawerWrap.open{pointer-events:auto}
+  .drawerWrap.open .scrim{opacity:1}
+  .drawerWrap.open .drawer{transform:translateX(0)}
 
-  /* Subtle scanlines */
-  .scanlines{
-    pointer-events:none;
-    position:fixed;inset:0;z-index:3;
-    background:repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,.03),
-      rgba(255,255,255,.03) 1px,
-      rgba(0,0,0,0) 3px,
-      rgba(0,0,0,0) 6px
-    );
-    mix-blend-mode:overlay;
-    opacity:.22;
+  /* Optional: compact toolbar on very small screens */
+  @media(max-width:430px){
+    .field input[type="text"]{width:130px}
+    .field input[type="range"]{width:92px}
   }
-  .grain{
-    pointer-events:none;
-    position:fixed;inset:-20%;
-    z-index:4;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
-    opacity:.08;
-    transform:rotate(2deg);
-    mix-blend-mode:soft-light;
-  }
-
-  /* Mobile: hide drawer by default */
-  @media(max-width:980px){
-    .controls{min-width:unset}
-    .drawer{width:min(420px, 96vw);transform:translateX(calc(100% + 20px));transition:transform .22s ease}
-    .drawer.open{transform:translateX(0)}
-    .drawerToggle{
-      display:inline-flex!important;
-    }
-  }
-  .drawerToggle{display:none}
 </style>
 </head>
 <body>
@@ -216,84 +224,68 @@
 <div class="scanlines"></div>
 <div class="grain"></div>
 
-<div class="top">
-  <div class="panel brand">
-    <div class="sig" aria-hidden="true"></div>
-    <div>
-      <div class="t1"><span>OBSIDIAN</span> · Graph View</div>
-      <div class="t2">Zones 1km² superposables · Bruxelles · sans géolocalisation · sans noms d’entités</div>
-    </div>
-  </div>
+<!-- Minimal HUD (logo only, no long title text) -->
+<div class="hud">
+  <div class="logoBtn" id="homeBtn" title="Recentre"></div>
 
-  <div class="panel controls">
-    <button class="btn primary" id="modeBtn">Mode: ZONES</button>
-    <button class="btn" id="regenBtn">Remélanger</button>
-    <button class="btn" id="addBtn">+ Nœud</button>
-    <button class="btn" id="addZoneBtn">+ Zone</button>
-    <button class="btn" id="exportBtn">Exporter JSON</button>
-    <button class="btn drawerToggle" id="drawerBtn">Données</button>
+  <div class="toolbar">
+    <button class="btn primary" id="modeBtn">ZONES</button>
+    <button class="btn" id="regenBtn">↻</button>
+    <button class="btn" id="addNodeBtn">+N</button>
+    <button class="btn" id="addZoneBtn">+Z</button>
 
-    <div class="pill"><span>Superposition</span><input id="overlap" type="checkbox" checked /></div>
-    <div class="pill"><span>Étiquettes</span><input id="labels" type="checkbox" /></div>
+    <div class="pill"><span>Labels</span><input id="labels" type="checkbox"></div>
+    <div class="pill"><span>Overlap</span><input id="overlap" type="checkbox" checked></div>
 
-    <div class="field">
-      <label>Zoom</label><input id="zoom" type="range" min="40" max="180" value="100" />
-    </div>
-    <div class="field">
-      <label>Filtre</label>
-      <input id="filter" type="text" placeholder="tag:xxx  zone:Z-12  type:human" />
-    </div>
+    <div class="field"><label>Zoom</label><input id="zoom" type="range" min="40" max="180" value="100"></div>
+    <div class="field"><label>Filtre</label><input id="filter" type="text" placeholder="tag:atelier zone:Z-01 type:place"></div>
   </div>
 </div>
 
-<div class="drawer panel" id="drawer">
-  <div class="panel">
-    <div class="hd">
-      <div class="h">Données (JSON) — Import / Export</div>
-      <button class="btn" id="closeDrawer">✕</button>
-    </div>
-    <div class="bd">
-      <div class="kv">
-        <div class="k">Nœuds</div><div class="v" id="statNodes">0</div>
-      </div>
-      <div class="kv">
-        <div class="k">Liens</div><div class="v" id="statLinks">0</div>
-      </div>
-      <div class="kv">
-        <div class="k">Zones 1km²</div><div class="v" id="statZones">0</div>
-      </div>
+<!-- Floating toggle for drawer (menu droit) -->
+<div class="fab">
+  <button class="btn" id="drawerToggle">Données</button>
+</div>
 
-      <textarea id="jsonArea" spellcheck="false"></textarea>
-
-      <div class="rowbtn">
-        <button class="btn primary" id="applyBtn">Appliquer</button>
-        <button class="btn" id="sampleBtn">Charger exemple (anonyme)</button>
-        <button class="btn" id="clearBtn">Vider</button>
+<!-- Drawer overlay -->
+<div class="drawerWrap" id="drawerWrap" aria-hidden="true">
+  <div class="scrim" id="scrim"></div>
+  <div class="drawer" role="dialog" aria-label="Données JSON">
+    <div class="panel">
+      <div class="hd">
+        <div class="h">Données (JSON)</div>
+        <button class="btn" id="closeDrawer">✕</button>
       </div>
+      <div class="bd">
+        <div class="kv"><div class="k">Nœuds</div><div class="v" id="statNodes">0</div></div>
+        <div class="kv"><div class="k">Liens</div><div class="v" id="statLinks">0</div></div>
+        <div class="kv"><div class="k">Zones</div><div class="v" id="statZones">0</div></div>
 
-      <div class="hint">
-        Format minimal:
-        <div style="margin-top:6px" class="mono">
-          zones:[{id, x,y, sizeKm2:1, layer, opacity}]<br/>
-          nodes:[{id, kind, tags:[...], zone, layer}]<br/>
-          links:[{a,b, kind, weight}]
+        <textarea id="jsonArea" spellcheck="false"></textarea>
+
+        <div class="rowbtn">
+          <button class="btn primary" id="applyBtn">Appliquer</button>
+          <button class="btn" id="sampleBtn">Exemple</button>
+          <button class="btn" id="exportBtn">Exporter</button>
+          <button class="btn" id="clearBtn">Vider</button>
+        </div>
+
+        <div class="hint">
+          Relier: <span style="font-family:var(--mono)">Shift</span> + clic sur 2 nœuds ·
+          Pan: drag fond · Zoom: molette / slider ·
+          (Alt+clic = déplacer la zone la plus proche)
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="panel" style="flex:1;min-height:120px">
-    <div class="hd">
-      <div class="h">Légende (anonyme)</div>
-    </div>
-    <div class="bd">
-      <div class="kv"><div class="k">🟩 Layer</div><div class="v">ASTRO</div></div>
-      <div class="kv"><div class="k">🟪 Layer</div><div class="v">TAROT</div></div>
-      <div class="kv"><div class="k">⬜ Layer</div><div class="v">NEUTRE</div></div>
-      <div class="kv"><div class="k">● Kind</div><div class="v">human / org / place / artifact</div></div>
-      <div class="kv"><div class="k">▭ Zone</div><div class="v">1km² (superposable)</div></div>
-      <div class="hint" style="border-left-color:rgba(167,139,250,.55);background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.20)">
-        Pan: drag fond · Zoom: molette · Sélection: clic nœud · Relier: Shift+clic 2 nœuds
+    <div class="panel" style="flex:1;min-height:140px">
+      <div class="hd"><div class="h">Légende (anonyme)</div></div>
+      <div class="bd">
+        <div class="kv"><div class="k">🟩 Layer</div><div class="v">ASTRO</div></div>
+        <div class="kv"><div class="k">🟪 Layer</div><div class="v">TAROT</div></div>
+        <div class="kv"><div class="k">⬜ Layer</div><div class="v">NEUTRE</div></div>
+        <div class="kv"><div class="k">● Kind</div><div class="v">human / org / place / artifact</div></div>
+        <div class="kv"><div class="k">▭ Zone</div><div class="v">1km² superposable</div></div>
       </div>
     </div>
   </div>
@@ -302,31 +294,36 @@
 <script>
 (() => {
   const canvas = document.getElementById("stage");
-  const ctx = canvas.getContext("2d", { alpha: true });
+  const ctx = canvas.getContext("2d", { alpha:true });
 
   const ui = {
+    homeBtn: document.getElementById("homeBtn"),
     modeBtn: document.getElementById("modeBtn"),
     regenBtn: document.getElementById("regenBtn"),
-    addBtn: document.getElementById("addBtn"),
+    addNodeBtn: document.getElementById("addNodeBtn"),
     addZoneBtn: document.getElementById("addZoneBtn"),
-    exportBtn: document.getElementById("exportBtn"),
-    overlap: document.getElementById("overlap"),
     labels: document.getElementById("labels"),
+    overlap: document.getElementById("overlap"),
     zoom: document.getElementById("zoom"),
     filter: document.getElementById("filter"),
-    drawer: document.getElementById("drawer"),
-    drawerBtn: document.getElementById("drawerBtn"),
+
+    drawerWrap: document.getElementById("drawerWrap"),
+    drawerToggle: document.getElementById("drawerToggle"),
+    scrim: document.getElementById("scrim"),
     closeDrawer: document.getElementById("closeDrawer"),
+
     jsonArea: document.getElementById("jsonArea"),
     applyBtn: document.getElementById("applyBtn"),
     sampleBtn: document.getElementById("sampleBtn"),
+    exportBtn: document.getElementById("exportBtn"),
     clearBtn: document.getElementById("clearBtn"),
+
     statNodes: document.getElementById("statNodes"),
     statLinks: document.getElementById("statLinks"),
     statZones: document.getElementById("statZones"),
   };
 
-  // Responsive
+  // Canvas resize
   function resize(){
     const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
     canvas.width = Math.floor(innerWidth * dpr);
@@ -338,59 +335,108 @@
   addEventListener("resize", resize);
   resize();
 
-  // World state (ANONYMOUS by design)
+  // Drawer logic (menu droit: present + toggle)
+  let drawerOpen = false;
+  function setDrawer(open){
+    drawerOpen = !!open;
+    ui.drawerWrap.classList.toggle("open", drawerOpen);
+    ui.drawerWrap.setAttribute("aria-hidden", drawerOpen ? "false" : "true");
+    ui.drawerToggle.textContent = drawerOpen ? "Fermer" : "Données";
+  }
+  ui.drawerToggle.addEventListener("click", ()=> setDrawer(!drawerOpen));
+  ui.scrim.addEventListener("click", ()=> setDrawer(false));
+  ui.closeDrawer.addEventListener("click", ()=> setDrawer(false));
+  addEventListener("keydown",(e)=>{ if(e.key==="Escape") setDrawer(false); });
+
+  // World state (anonymous)
   const LAYERS = ["ASTRO","TAROT","NEUTRE"];
-  const KINDS = ["human","org","place","artifact"];
-  const rnd = (a,b)=>a+Math.random()*(b-a);
-  const irnd = (a,b)=>Math.floor(rnd(a,b));
+  const KINDS  = ["human","org","place","artifact"];
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const irnd=(a,b)=>Math.floor(rnd(a,b));
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
   const uid=(p)=>p+"-"+Math.random().toString(16).slice(2,9);
 
-  // Viewport (pan/zoom)
   const view = { x: innerWidth*0.5, y: innerHeight*0.5, z: 1, dragging:false, lx:0, ly:0 };
-  function setZoomFromUI(){
-    view.z = ui.zoom.value/100;
-  }
+  function setZoomFromUI(){ view.z = ui.zoom.value/100; }
   setZoomFromUI();
 
-  // Mode: ZONES vs GRAPH
-  let mode = "ZONES"; // or GRAPH
+  // Modes MUST be visually different
+  let mode = "ZONES"; // or "GRAPH"
 
-  // Selection / link-creating
-  let hoveredNode = null;
-  let selectedNode = null;
-  let linkFrom = null;
+  // Selection
+  let hoveredNode=null, selectedNode=null, linkFrom=null, lastMouse=null;
 
-  // Dataset (default empty until sample)
+  // DB
   let db = { zones:[], nodes:[], links:[] };
 
-  // Build an anonymous example (no entity names)
-  function buildSample(){
-    const zones = [];
-    const nodes = [];
-    const links = [];
-
-    // Create overlapping 1km² zones (abstract plane)
-    const Z = 18; // "toutes les entités de Bruxelles" -> start with many zones; user can import more
-    for(let i=0;i<Z;i++){
-      const layer = (i%3===0) ? "ASTRO" : (i%3===1) ? "TAROT" : "NEUTRE";
-      zones.push({
-        id: "Z-"+String(i+1).padStart(2,"0"),
-        x: rnd(-520,520),
-        y: rnd(-340,340),
-        sizeKm2: 1,
-        layer,
-        opacity: layer==="NEUTRE" ? 0.18 : 0.22
-      });
+  // Helpers
+  function parseFilter(s){
+    const q=(s||"").trim();
+    const res={text:"",tag:null,zone:null,type:null,layer:null};
+    if(!q) return res;
+    const parts=q.split(/\s+/).filter(Boolean);
+    for(const p of parts){
+      const m=p.match(/^(\w+):(.*)$/);
+      if(m){
+        const k=m[1].toLowerCase(), v=(m[2]||"").trim();
+        if(k==="tag") res.tag=v.toLowerCase();
+        else if(k==="zone") res.zone=v;
+        else if(k==="type"||k==="kind") res.type=v.toLowerCase();
+        else if(k==="layer") res.layer=v.toUpperCase();
+      } else res.text += (res.text?" ":"") + p.toLowerCase();
     }
+    return res;
+  }
+  function nodeMatches(n,f){
+    if(f.zone && n.zone!==f.zone) return false;
+    if(f.type && n.kind!==f.type) return false;
+    if(f.layer && n.layer!==f.layer) return false;
+    if(f.tag && !(n.tags||[]).some(t=>String(t).toLowerCase()===f.tag)) return false;
+    if(f.text){
+      const hay=(n.id+" "+n.kind+" "+n.zone+" "+n.layer+" "+(n.tags||[]).join(" ")).toLowerCase();
+      if(!hay.includes(f.text)) return false;
+    }
+    return true;
+  }
+  function layerColor(layer, a=1){
+    if(layer==="ASTRO") return `rgba(16,185,129,${a})`;
+    if(layer==="TAROT") return `rgba(167,139,250,${a})`;
+    return `rgba(234,241,255,${a})`;
+  }
+  function kindRadius(kind){
+    if(kind==="human") return 4.1;
+    if(kind==="org") return 5.8;
+    if(kind==="place") return 5.0;
+    if(kind==="artifact") return 4.6;
+    return 4.6;
+  }
+  function worldToScreen(wx,wy){ return { x:(wx*view.z)+view.x, y:(wy*view.z)+view.y }; }
+  function screenToWorld(sx,sy){ return { x:(sx-view.x)/view.z, y:(sy-view.y)/view.z }; }
 
-    // Create anonymous nodes distributed across zones
-    const N = 160;
+  // Build sample (anonymous)
+  function seedLayout(){
+    const zoneMap=new Map(db.zones.map(z=>[z.id,z]));
+    for(const n of db.nodes){
+      const z=zoneMap.get(n.zone)||db.zones[0];
+      const spread=60;
+      n.x=(z?.x||0)+rnd(-spread,spread);
+      n.y=(z?.y||0)+rnd(-spread,spread);
+      n.vx=rnd(-.5,.5); n.vy=rnd(-.5,.5);
+    }
+  }
+  function buildSample(){
+    const zones=[], nodes=[], links=[];
+    const Z=18;
+    for(let i=0;i<Z;i++){
+      const layer=(i%3===0)?"ASTRO":(i%3===1)?"TAROT":"NEUTRE";
+      zones.push({ id:"Z-"+String(i+1).padStart(2,"0"), x:rnd(-520,520), y:rnd(-340,340), sizeKm2:1, layer, opacity: layer==="NEUTRE"?0.20:0.26 });
+    }
+    const N=160;
     for(let i=0;i<N;i++){
-      const kind = KINDS[i%KINDS.length];
-      const layer = (i%5===0) ? "ASTRO" : (i%5===1) ? "TAROT" : "NEUTRE";
-      const zone = zones[irnd(0,zones.length)].id;
-      const tags = [];
+      const kind=KINDS[i%KINDS.length];
+      const layer=(i%5===0)?"ASTRO":(i%5===1)?"TAROT":"NEUTRE";
+      const zone=zones[irnd(0,zones.length)].id;
+      const tags=[];
       if(kind==="human") tags.push("public");
       if(kind==="org") tags.push("structure");
       if(kind==="place") tags.push("lieu");
@@ -401,662 +447,500 @@
       if(Math.random()<0.16) tags.push("care");
       if(Math.random()<0.12) tags.push("impact");
       if(Math.random()<0.10) tags.push("insertion");
-
-      nodes.push({
-        id: "N-"+String(i+1).padStart(3,"0"),
-        kind, tags, zone, layer,
-        // layout positions are computed later (no geoloc)
-        x: 0, y: 0, vx:0, vy:0
-      });
+      nodes.push({ id:"N-"+String(i+1).padStart(3,"0"), kind, tags, zone, layer, x:0,y:0,vx:0,vy:0 });
     }
-
-    // Generate links (anonymous relations)
-    function link(a,b,kind,weight){
+    const REL=["participate","produce","connect","support","share","route"];
+    const seen=new Set();
+    const link=(a,b,kind,weight)=>{
       if(a===b) return;
-      const key = a<b ? a+"|"+b : b+"|"+a;
+      const key=a<b?a+"|"+b:b+"|"+a;
       if(seen.has(key)) return;
       seen.add(key);
-      links.push({ a,b, kind, weight });
+      links.push({a,b,kind,weight});
+    };
+    for(let i=0;i<440;i++){
+      link(nodes[irnd(0,nodes.length)].id, nodes[irnd(0,nodes.length)].id, REL[irnd(0,REL.length)], rnd(0.4,1.2));
     }
-    const seen = new Set();
-    const REL = ["participate","produce","connect","support","share","route"];
-    for(let i=0;i<420;i++){
-      const a = nodes[irnd(0,nodes.length)].id;
-      const b = nodes[irnd(0,nodes.length)].id;
-      link(a,b, REL[irnd(0,REL.length)], rnd(0.4,1.2));
-    }
-
-    db = { zones, nodes, links };
+    db={zones,nodes,links};
     seedLayout();
     syncTextarea();
     updateStats();
   }
 
-  // Seed layout: nodes placed near their zone (zones can overlap)
-  function seedLayout(){
-    const zoneMap = new Map(db.zones.map(z=>[z.id,z]));
-    for(const n of db.nodes){
-      const z = zoneMap.get(n.zone) || db.zones[0];
-      const spread = 60; // within-zone scatter (abstract)
-      n.x = (z?.x||0) + rnd(-spread,spread);
-      n.y = (z?.y||0) + rnd(-spread,spread);
-      n.vx = rnd(-.5,.5);
-      n.vy = rnd(-.5,.5);
-    }
-  }
-
-  // Filter parsing: "tag:xxx zone:Z-01 type:human layer:astro"
-  function parseFilter(s){
-    const q = (s||"").trim();
-    const res = { text:"", tag:null, zone:null, type:null, layer:null };
-    if(!q) return res;
-    const parts = q.split(/\s+/).filter(Boolean);
-    for(const p of parts){
-      const m = p.match(/^(\w+):(.*)$/);
-      if(m){
-        const k = m[1].toLowerCase();
-        const v = (m[2]||"").trim();
-        if(k==="tag") res.tag = v.toLowerCase();
-        else if(k==="zone") res.zone = v;
-        else if(k==="type" || k==="kind") res.type = v.toLowerCase();
-        else if(k==="layer") res.layer = v.toUpperCase();
-      } else {
-        res.text += (res.text ? " " : "") + p.toLowerCase();
-      }
-    }
-    return res;
-  }
-
-  function nodeMatches(n, f){
-    if(f.zone && n.zone !== f.zone) return false;
-    if(f.type && n.kind !== f.type) return false;
-    if(f.layer && n.layer !== f.layer) return false;
-    if(f.tag){
-      const ok = (n.tags||[]).some(t => String(t).toLowerCase() === f.tag);
-      if(!ok) return false;
-    }
-    if(f.text){
-      const hay = (n.id+" "+(n.kind||"")+" "+(n.zone||"")+" "+(n.layer||"")+" "+(n.tags||[]).join(" ")).toLowerCase();
-      if(!hay.includes(f.text)) return false;
-    }
-    return true;
-  }
-
-  // Physics (simple force sim for GRAPH mode)
+  // Physics (make ZONES vs GRAPH clearly different)
   function stepPhysics(dt){
-    const nodeById = new Map(db.nodes.map(n=>[n.id,n]));
-    const zoneById = new Map(db.zones.map(z=>[z.id,z]));
-    const f = parseFilter(ui.filter.value);
+    const nodeById=new Map(db.nodes.map(n=>[n.id,n]));
+    const zoneById=new Map(db.zones.map(z=>[z.id,z]));
+    const f=parseFilter(ui.filter.value);
 
-    // params
-    const linkK = mode==="GRAPH" ? 0.012 : 0.006;
-    const repulse = mode==="GRAPH" ? 3200 : 2000;
-    const damping = 0.88;
-    const anchorK = mode==="GRAPH" ? 0.0015 : 0.004; // in ZONES, keep near zone centers
-    const maxV = 2.2;
+    // Very distinct parameters
+    const isGraph = mode==="GRAPH";
+    const linkK   = isGraph ? 0.018 : 0.004;   // stronger springs in GRAPH
+    const repulse = isGraph ? 5200  : 1400;    // more spread in GRAPH
+    const damping = isGraph ? 0.86  : 0.90;
+    const anchorK = isGraph ? 0.0002: 0.0070;  // ZONES strongly anchors to zone center
+    const maxV    = isGraph ? 2.8   : 1.8;
 
-    // Repulsion (grid bucket for speed)
-    const bucket = new Map();
-    const cell = 120;
-    const keyOf = (x,y)=>((x/cell)|0)+","+((y/cell)|0);
+    // Buckets for repulsion
+    const bucket=new Map(), cell=isGraph?150:120;
+    const keyOf=(x,y)=>((x/cell)|0)+","+((y/cell)|0);
     for(const n of db.nodes){
-      const k = keyOf(n.x,n.y);
+      const k=keyOf(n.x,n.y);
       if(!bucket.has(k)) bucket.set(k, []);
       bucket.get(k).push(n);
     }
-    const neigh = (cx,cy)=>{
+    const neigh=(cx,cy)=>{
       const out=[];
-      for(let dx=-1;dx<=1;dx++){
-        for(let dy=-1;dy<=1;dy++){
-          const k=(cx+dx)+","+(cy+dy);
-          const b=bucket.get(k);
-          if(b) out.push(...b);
-        }
+      for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++){
+        const b=bucket.get((cx+dx)+","+(cy+dy)); if(b) out.push(...b);
       }
       return out;
     };
 
+    // Repulsion
     for(const n of db.nodes){
       if(!nodeMatches(n,f)) continue;
-      const cx = (n.x/cell)|0, cy=(n.y/cell)|0;
-      const near = neigh(cx,cy);
-      for(const m of near){
-        if(m===n) continue;
-        if(!nodeMatches(m,f)) continue;
-        let dx = n.x - m.x;
-        let dy = n.y - m.y;
-        let d2 = dx*dx+dy*dy;
+      const cx=(n.x/cell)|0, cy=(n.y/cell)|0;
+      for(const m of neigh(cx,cy)){
+        if(m===n || !nodeMatches(m,f)) continue;
+        let dx=n.x-m.x, dy=n.y-m.y, d2=dx*dx+dy*dy;
         if(d2<1) d2=1;
-        const k = repulse/d2;
+        const k=repulse/d2;
         n.vx += (dx/Math.sqrt(d2))*k*dt;
         n.vy += (dy/Math.sqrt(d2))*k*dt;
       }
     }
 
-    // Links as springs
-    for(const e of db.links){
-      const a = nodeById.get(e.a), b = nodeById.get(e.b);
-      if(!a||!b) continue;
-      if(!nodeMatches(a,f) && !nodeMatches(b,f)) continue;
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const d = Math.sqrt(dx*dx+dy*dy) || 1;
-      const target = 80 + (e.weight||1)*60;
-      const k = (d-target)*linkK;
-      const fx = (dx/d)*k, fy = (dy/d)*k;
-      a.vx += fx*dt; a.vy += fy*dt;
-      b.vx -= fx*dt; b.vy -= fy*dt;
+    // Links (springs)
+    if(isGraph){
+      for(const e of db.links){
+        const a=nodeById.get(e.a), b=nodeById.get(e.b);
+        if(!a||!b) continue;
+        if(!nodeMatches(a,f) && !nodeMatches(b,f)) continue;
+        const dx=b.x-a.x, dy=b.y-a.y;
+        const d=Math.sqrt(dx*dx+dy*dy) || 1;
+        const target=110+(e.weight||1)*90; // larger target distance in GRAPH
+        const k=(d-target)*linkK;
+        const fx=(dx/d)*k, fy=(dy/d)*k;
+        a.vx += fx*dt; a.vy += fy*dt;
+        b.vx -= fx*dt; b.vy -= fy*dt;
+      }
     }
 
-    // Anchor to zone centers in ZONES mode (no geoloc, just abstract)
-    if(mode==="ZONES"){
+    // Anchors:
+    // - ZONES: snap strongly towards zone center
+    // - GRAPH: separate layer "fields" so it visibly becomes 2-pole structure
+    if(!isGraph){
       for(const n of db.nodes){
         if(!nodeMatches(n,f)) continue;
-        const z = zoneById.get(n.zone);
-        if(!z) continue;
-        const dx = (z.x - n.x), dy = (z.y - n.y);
-        n.vx += dx*anchorK*dt;
-        n.vy += dy*anchorK*dt;
+        const z=zoneById.get(n.zone); if(!z) continue;
+        n.vx += (z.x-n.x)*anchorK*dt;
+        n.vy += (z.y-n.y)*anchorK*dt;
       }
     } else {
-      // In GRAPH, gently separate layer hubs
       for(const n of db.nodes){
         if(!nodeMatches(n,f)) continue;
-        let tx = 0, ty = 0;
-        if(n.layer==="ASTRO"){ tx = -240; ty = -60; }
-        else if(n.layer==="TAROT"){ tx = 240; ty = 60; }
-        else { tx = 0; ty = 0; }
-        n.vx += (tx - n.x)*0.0009*dt;
-        n.vy += (ty - n.y)*0.0009*dt;
+        let tx=0, ty=0;
+        if(n.layer==="ASTRO"){ tx=-360; ty=-90; }
+        else if(n.layer==="TAROT"){ tx= 360; ty= 90; }
+        n.vx += (tx-n.x)*0.0012*dt;
+        n.vy += (ty-n.y)*0.0012*dt;
       }
     }
 
     // Integrate
     for(const n of db.nodes){
-      n.vx *= damping;
-      n.vy *= damping;
-      n.vx = clamp(n.vx, -maxV, maxV);
-      n.vy = clamp(n.vy, -maxV, maxV);
-      n.x += n.vx*dt*60;
-      n.y += n.vy*dt*60;
+      n.vx*=damping; n.vy*=damping;
+      n.vx=clamp(n.vx,-maxV,maxV); n.vy=clamp(n.vy,-maxV,maxV);
+      n.x += n.vx*dt*60; n.y += n.vy*dt*60;
     }
   }
 
-  // Drawing helpers
-  function layerColor(layer, alpha=1){
-    if(layer==="ASTRO") return `rgba(16,185,129,${alpha})`;
-    if(layer==="TAROT") return `rgba(167,139,250,${alpha})`;
-    return `rgba(234,241,255,${alpha})`;
-  }
-  function kindRadius(kind){
-    if(kind==="human") return 4.2;
-    if(kind==="org") return 5.6;
-    if(kind==="place") return 5.0;
-    if(kind==="artifact") return 4.6;
-    return 4.6;
-  }
-
-  function worldToScreen(wx,wy){
-    return {
-      x: (wx*view.z) + view.x,
-      y: (wy*view.z) + view.y
-    };
-  }
-  function screenToWorld(sx,sy){
-    return {
-      x: (sx - view.x)/view.z,
-      y: (sy - view.y)/view.z
-    };
-  }
-
+  // Draw
   function draw(){
     ctx.clearRect(0,0,innerWidth,innerHeight);
 
-    // Background grid
+    // Background grid (slightly different per mode)
     ctx.save();
-    ctx.globalAlpha = 0.25;
+    ctx.globalAlpha = mode==="GRAPH" ? 0.18 : 0.24;
     ctx.strokeStyle = "rgba(255,255,255,.06)";
     ctx.lineWidth = 1;
-    const step = 80*view.z;
+    const step = (mode==="GRAPH"?92:80)*view.z;
     const ox = (view.x % step + step) % step;
     const oy = (view.y % step + step) % step;
-    for(let x=ox; x<innerWidth; x+=step){
-      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,innerHeight); ctx.stroke();
-    }
-    for(let y=oy; y<innerHeight; y+=step){
-      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(innerWidth,y); ctx.stroke();
-    }
+    for(let x=ox;x<innerWidth;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,innerHeight); ctx.stroke(); }
+    for(let y=oy;y<innerHeight;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(innerWidth,y); ctx.stroke(); }
     ctx.restore();
 
-    const f = parseFilter(ui.filter.value);
-    const showLabels = ui.labels.checked;
+    const f=parseFilter(ui.filter.value);
+    const showLabels=ui.labels.checked;
+    const allowOverlap=ui.overlap.checked;
 
-    // Zones (1km² squares; abstract scale)
-    const zonePx = 220; // visual size for 1km² (symbolic)
-    const allowOverlap = ui.overlap.checked;
+    const zonePx = mode==="GRAPH" ? 170 : 240;   // ZONES: bigger squares
+    const zoneAlphaBoost = mode==="GRAPH" ? 0.45 : 1.0;
 
-    // draw zones with translucency; superposition is always allowed; checkbox controls extra “ghosting”
-    for(const z of db.zones){
-      const c = worldToScreen(z.x,z.y);
-      const s = zonePx*view.z;
-      const alpha = (z.opacity ?? 0.22) * (allowOverlap ? 1 : 0.85);
+    // In GRAPH, draw two big "fields" to make mode obvious
+    if(mode==="GRAPH"){
       ctx.save();
-      ctx.globalAlpha = 1;
-      // Fill
-      ctx.fillStyle = layerColor(z.layer, alpha);
-      ctx.strokeStyle = layerColor(z.layer, 0.55);
+      ctx.globalAlpha=1;
+      const left = worldToScreen(-360,-90);
+      const right= worldToScreen( 360, 90);
+      const R = 240*view.z;
+      ctx.fillStyle = "rgba(16,185,129,.08)";
+      ctx.beginPath(); ctx.arc(left.x,left.y,R,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = "rgba(167,139,250,.08)";
+      ctx.beginPath(); ctx.arc(right.x,right.y,R,0,Math.PI*2); ctx.fill();
+
+      ctx.strokeStyle="rgba(255,255,255,.10)";
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(left.x,left.y,R,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(right.x,right.y,R,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    // Zones
+    for(const z of db.zones){
+      const c=worldToScreen(z.x,z.y);
+      const s=zonePx*view.z;
+      const baseA=(z.opacity ?? 0.22) * zoneAlphaBoost * (allowOverlap ? 1 : 0.85);
+      const fillA = mode==="GRAPH" ? baseA*0.55 : baseA;
+      const strokeA = mode==="GRAPH" ? 0.28 : 0.55;
+
+      ctx.save();
+      ctx.fillStyle = layerColor(z.layer, fillA);
+      ctx.strokeStyle = layerColor(z.layer, strokeA);
       ctx.lineWidth = 1.2;
+
       ctx.beginPath();
-      ctx.roundRect(c.x - s/2, c.y - s/2, s, s, 14*view.z);
-      ctx.fill();
-      // Border
-      ctx.globalAlpha = 1;
+      ctx.roundRect(c.x-s/2, c.y-s/2, s, s, 14*view.z);
+      ctx.fill(); ctx.stroke();
+
+      // Cross
+      ctx.globalAlpha=0.12;
+      ctx.strokeStyle="rgba(255,255,255,.55)";
+      ctx.beginPath();
+      ctx.moveTo(c.x-s/2,c.y); ctx.lineTo(c.x+s/2,c.y);
+      ctx.moveTo(c.x,c.y-s/2); ctx.lineTo(c.x,c.y+s/2);
       ctx.stroke();
 
-      // inner subtle cross
-      ctx.globalAlpha = 0.15;
-      ctx.strokeStyle = "rgba(255,255,255,.55)";
-      ctx.beginPath();
-      ctx.moveTo(c.x - s/2, c.y); ctx.lineTo(c.x + s/2, c.y);
-      ctx.moveTo(c.x, c.y - s/2); ctx.lineTo(c.x, c.y + s/2);
-      ctx.stroke();
-
-      // zone code (still anonymous)
-      if(showLabels){
-        ctx.globalAlpha = 0.55;
-        ctx.fillStyle = "rgba(0,0,0,.55)";
-        ctx.fillRect(c.x - s/2 + 8*view.z, c.y - s/2 + 8*view.z, 74*view.z, 22*view.z);
-        ctx.globalAlpha = 0.95;
-        ctx.fillStyle = "rgba(234,241,255,.92)";
-        ctx.font = `${Math.max(10, 12*view.z)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono') || 'monospace'}`;
-        ctx.fillText(z.id, c.x - s/2 + 14*view.z, c.y - s/2 + 24*view.z);
+      // Zone id labels only in ZONES mode (keeps GRAPH cleaner)
+      if(showLabels && mode==="ZONES"){
+        ctx.globalAlpha=0.55;
+        ctx.fillStyle="rgba(0,0,0,.55)";
+        ctx.fillRect(c.x-s/2+8*view.z, c.y-s/2+8*view.z, 74*view.z, 22*view.z);
+        ctx.globalAlpha=0.95;
+        ctx.fillStyle="rgba(234,241,255,.92)";
+        ctx.font=`${Math.max(10,12*view.z)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')||'monospace'}`;
+        ctx.fillText(z.id, c.x-s/2+14*view.z, c.y-s/2+24*view.z);
       }
       ctx.restore();
     }
 
-    // Links (only in GRAPH mode or when a node is selected)
-    const nodeById = new Map(db.nodes.map(n=>[n.id,n]));
+    // Links: ONLY visible in GRAPH (or when a node is selected)
+    const nodeById=new Map(db.nodes.map(n=>[n.id,n]));
     if(mode==="GRAPH" || selectedNode){
       ctx.save();
-      ctx.lineWidth = 1;
+      ctx.lineWidth = mode==="GRAPH" ? 1.2 : 1.0;
       for(const e of db.links){
-        const a = nodeById.get(e.a), b = nodeById.get(e.b);
+        const a=nodeById.get(e.a), b=nodeById.get(e.b);
         if(!a||!b) continue;
-        const aOk = nodeMatches(a,f), bOk = nodeMatches(b,f);
+        const aOk=nodeMatches(a,f), bOk=nodeMatches(b,f);
         if(!aOk && !bOk) continue;
-        const as = worldToScreen(a.x,a.y), bs = worldToScreen(b.x,b.y);
-        const alpha = mode==="GRAPH" ? 0.14 : 0.10;
-        ctx.strokeStyle = "rgba(234,241,255,"+alpha+")";
-        if(selectedNode && (e.a===selectedNode.id || e.b===selectedNode.id)){
-          ctx.strokeStyle = "rgba(255,255,255,.34)";
+
+        const as=worldToScreen(a.x,a.y), bs=worldToScreen(b.x,b.y);
+
+        let alpha = mode==="GRAPH" ? 0.18 : 0.10;
+        if(selectedNode && (e.a===selectedNode.id || e.b===selectedNode.id)) alpha = 0.40;
+
+        // In GRAPH, tint links slightly toward layer if they match
+        let col = "rgba(234,241,255,"+alpha+")";
+        if(mode==="GRAPH"){
+          const sameLayer = (a.layer===b.layer) ? a.layer : null;
+          if(sameLayer==="ASTRO") col = "rgba(16,185,129,"+alpha+")";
+          else if(sameLayer==="TAROT") col = "rgba(167,139,250,"+alpha+")";
         }
+        ctx.strokeStyle = col;
+
         ctx.beginPath();
         ctx.moveTo(as.x,as.y);
-        // slight curve
-        const mx = (as.x+bs.x)/2, my=(as.y+bs.y)/2;
-        const cx = mx + (bs.y-as.y)*0.06;
-        const cy = my + (as.x-bs.x)*0.06;
+        const mx=(as.x+bs.x)/2, my=(as.y+bs.y)/2;
+        const cx=mx+(bs.y-as.y)*0.06, cy=my+(as.x-bs.x)*0.06;
         ctx.quadraticCurveTo(cx,cy,bs.x,bs.y);
         ctx.stroke();
       }
       ctx.restore();
     }
 
-    // Nodes
-    hoveredNode = null;
-    const mouse = lastMouse;
-    const mw = mouse ? screenToWorld(mouse.x, mouse.y) : null;
-    const hitR = 10/view.z;
+    // Nodes + hover
+    hoveredNode=null;
+    const mw=lastMouse ? screenToWorld(lastMouse.x,lastMouse.y) : null;
+    const hitR=11/view.z;
 
     for(const n of db.nodes){
       if(!nodeMatches(n,f)) continue;
-      const s = worldToScreen(n.x,n.y);
+      const s=worldToScreen(n.x,n.y);
 
-      // hover detect
       if(mw){
-        const dx = n.x - mw.x, dy = n.y - mw.y;
-        const d2 = dx*dx+dy*dy;
-        if(d2 < hitR*hitR) hoveredNode = n;
+        const dx=n.x-mw.x, dy=n.y-mw.y;
+        if(dx*dx+dy*dy < hitR*hitR) hoveredNode=n;
       }
 
-      const r = kindRadius(n.kind)*view.z;
-      const glow = (n.layer==="NEUTRE") ? 0.20 : 0.32;
+      const r=kindRadius(n.kind)*view.z;
+      const glow=(n.layer==="NEUTRE")?0.18:0.34;
 
-      // glow
       ctx.save();
-      ctx.globalAlpha = 1;
-      ctx.shadowColor = layerColor(n.layer, 0.9);
-      ctx.shadowBlur = 18*view.z;
-      ctx.fillStyle = layerColor(n.layer, glow);
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, r*2.1, 0, Math.PI*2);
-      ctx.fill();
+      ctx.shadowColor=layerColor(n.layer,0.95);
+      ctx.shadowBlur=(mode==="GRAPH"?22:16)*view.z;
+
+      // glow blob
+      ctx.fillStyle=layerColor(n.layer, glow);
+      ctx.beginPath(); ctx.arc(s.x,s.y,r*2.3,0,Math.PI*2); ctx.fill();
 
       // core
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = layerColor(n.layer, 0.95);
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, r, 0, Math.PI*2);
-      ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.fillStyle=layerColor(n.layer,0.95);
+      ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2); ctx.fill();
 
-      // ring for kind
-      ctx.strokeStyle = "rgba(255,255,255,.24)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, r+2*view.z, 0, Math.PI*2);
-      ctx.stroke();
+      // ring
+      ctx.strokeStyle="rgba(255,255,255,.24)";
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(s.x,s.y,r+2*view.z,0,Math.PI*2); ctx.stroke();
 
-      // selected
+      // selected/hover rings
       if(selectedNode && selectedNode.id===n.id){
-        ctx.strokeStyle = "rgba(255,255,255,.85)";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, r+6*view.z, 0, Math.PI*2);
-        ctx.stroke();
+        ctx.strokeStyle="rgba(255,255,255,.85)";
+        ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(s.x,s.y,r+6*view.z,0,Math.PI*2); ctx.stroke();
       } else if(hoveredNode && hoveredNode.id===n.id){
-        ctx.strokeStyle = "rgba(255,255,255,.6)";
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, r+6*view.z, 0, Math.PI*2);
-        ctx.stroke();
+        ctx.strokeStyle="rgba(255,255,255,.60)";
+        ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.arc(s.x,s.y,r+6*view.z,0,Math.PI*2); ctx.stroke();
       }
 
-      // labels (still anonymous: only node id)
-      if(showLabels && view.z >= 0.85){
-        ctx.fillStyle = "rgba(234,241,255,.78)";
-        ctx.font = `${Math.max(10, 11*view.z)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono') || 'monospace'}`;
-        ctx.fillText(n.id, s.x + 10*view.z, s.y - 8*view.z);
+      // node labels: in GRAPH shows more, in ZONES only when zoomed in
+      const canLabel = showLabels && (mode==="GRAPH" || view.z>=0.95);
+      if(canLabel){
+        ctx.fillStyle="rgba(234,241,255,.78)";
+        ctx.font=`${Math.max(10,11*view.z)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')||'monospace'}`;
+        ctx.fillText(n.id, s.x+10*view.z, s.y-8*view.z);
       }
-
       ctx.restore();
     }
 
-    // HUD mini (bottom-left)
+    // Small bottom-left HUD
     ctx.save();
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = "rgba(0,0,0,.32)";
-    ctx.strokeStyle = "rgba(255,255,255,.10)";
-    ctx.lineWidth = 1;
-    const bx=14, by=innerHeight-90, bw=280, bh=76;
-    ctx.beginPath();
-    ctx.roundRect(bx,by,bw,bh,16);
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "rgba(234,241,255,.78)";
-    ctx.font = `12px ${getComputedStyle(document.documentElement).getPropertyValue('--mono') || 'monospace'}`;
-    ctx.fillText(`MODE:${mode}  Z:${view.z.toFixed(2)}  N:${db.nodes.length}  L:${db.links.length}  ZONES:${db.zones.length}`, bx+14, by+26);
-    if(hoveredNode){
-      ctx.fillText(`HOVER:${hoveredNode.id}  kind:${hoveredNode.kind}  layer:${hoveredNode.layer}  zone:${hoveredNode.zone}`, bx+14, by+48);
-    } else if(selectedNode){
-      ctx.fillText(`SELECT:${selectedNode.id}  kind:${selectedNode.kind}  layer:${selectedNode.layer}  zone:${selectedNode.zone}`, bx+14, by+48);
-    } else {
-      ctx.fillText(`PAN:drag  ZOOM:wheel  LINK:Shift+click x2  DATA:drawer`, bx+14, by+48);
-    }
+    ctx.fillStyle="rgba(0,0,0,.28)";
+    ctx.strokeStyle="rgba(255,255,255,.10)";
+    ctx.lineWidth=1;
+    const bx=12, by=innerHeight-78, bw=260, bh=58;
+    ctx.beginPath(); ctx.roundRect(bx,by,bw,bh,16); ctx.fill(); ctx.stroke();
+    ctx.fillStyle="rgba(234,241,255,.78)";
+    ctx.font=`12px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')||'monospace'}`;
+    ctx.fillText(`MODE:${mode}  Z:${view.z.toFixed(2)}  N:${db.nodes.length}  L:${db.links.length}`, bx+14, by+24);
+    ctx.fillText(`PAN:drag  LINK:Shift+click x2  DRAWER:${drawerOpen?"open":"closed"}`, bx+14, by+44);
     ctx.restore();
   }
 
-  // Animation loop
-  let lastT = performance.now();
+  // Animation
+  let lastT=performance.now();
   function tick(t){
-    const dt = Math.min(0.033, (t-lastT)/1000);
-    lastT = t;
+    const dt=Math.min(0.033,(t-lastT)/1000); lastT=t;
     stepPhysics(dt);
     draw();
     requestAnimationFrame(tick);
   }
 
-  // Mouse interactions
-  let lastMouse = null;
-
+  // Input
   canvas.addEventListener("mousemove",(e)=>{
-    lastMouse = { x:e.clientX, y:e.clientY };
+    lastMouse={x:e.clientX,y:e.clientY};
     if(view.dragging){
-      const dx = e.clientX - view.lx;
-      const dy = e.clientY - view.ly;
-      view.x += dx;
-      view.y += dy;
-      view.lx = e.clientX;
-      view.ly = e.clientY;
+      view.x += (e.clientX-view.lx);
+      view.y += (e.clientY-view.ly);
+      view.lx=e.clientX; view.ly=e.clientY;
     }
   });
-
   canvas.addEventListener("mousedown",(e)=>{
-    lastMouse = { x:e.clientX, y:e.clientY };
-    // if clicking node: handled in click
-    view.dragging = true;
-    view.lx = e.clientX;
-    view.ly = e.clientY;
+    lastMouse={x:e.clientX,y:e.clientY};
+    view.dragging=true; view.lx=e.clientX; view.ly=e.clientY;
   });
-
-  addEventListener("mouseup",()=>{
-    view.dragging = false;
-  });
+  addEventListener("mouseup",()=>{ view.dragging=false; });
 
   canvas.addEventListener("wheel",(e)=>{
     e.preventDefault();
-    const delta = -Math.sign(e.deltaY) * 0.08;
-    const newZ = clamp(view.z*(1+delta), 0.4, 1.8);
-    // zoom around mouse point
-    const mx = e.clientX, my = e.clientY;
-    const before = screenToWorld(mx,my);
-    view.z = newZ;
-    ui.zoom.value = Math.round(view.z*100);
-    const after = screenToWorld(mx,my);
-    view.x += (after.x - before.x)*view.z;
-    view.y += (after.y - before.y)*view.z;
-  }, { passive:false });
+    const delta=-Math.sign(e.deltaY)*0.08;
+    const newZ=clamp(view.z*(1+delta),0.4,1.8);
+    const mx=e.clientX,my=e.clientY;
+    const before=screenToWorld(mx,my);
+    view.z=newZ;
+    ui.zoom.value=Math.round(view.z*100);
+    const after=screenToWorld(mx,my);
+    view.x += (after.x-before.x)*view.z;
+    view.y += (after.y-before.y)*view.z;
+  }, {passive:false});
 
   canvas.addEventListener("click",(e)=>{
-    lastMouse = { x:e.clientX, y:e.clientY };
+    lastMouse={x:e.clientX,y:e.clientY};
 
-    // If we hovered a node, select it
+    // Node click
     if(hoveredNode){
-      const n = hoveredNode;
+      const n=hoveredNode;
 
       if(e.shiftKey){
-        if(!linkFrom){
-          linkFrom = n;
-          selectedNode = n;
-        } else if(linkFrom && linkFrom.id !== n.id){
-          // create anonymous link
-          db.links.push({ a: linkFrom.id, b: n.id, kind:"connect", weight: 1 });
-          linkFrom = null;
-          selectedNode = n;
-          syncTextarea();
-          updateStats();
+        if(!linkFrom){ linkFrom=n; selectedNode=n; }
+        else if(linkFrom && linkFrom.id!==n.id){
+          db.links.push({a:linkFrom.id,b:n.id,kind:"connect",weight:1});
+          linkFrom=null; selectedNode=n;
+          syncTextarea(); updateStats();
         }
       } else {
-        selectedNode = n;
-        linkFrom = null;
+        selectedNode=n; linkFrom=null;
       }
       return;
     } else {
-      selectedNode = null;
-      linkFrom = null;
+      selectedNode=null; linkFrom=null;
     }
 
-    // Zone drag on Alt+click (move nearest zone center)
+    // Alt+click moves nearest zone center (still no geoloc)
     if(e.altKey){
-      const w = screenToWorld(e.clientX, e.clientY);
-      let best = null, bestD = Infinity;
+      const w=screenToWorld(e.clientX,e.clientY);
+      let best=null, bestD=Infinity;
       for(const z of db.zones){
-        const dx = z.x - w.x, dy = z.y - w.y;
-        const d2 = dx*dx+dy*dy;
+        const dx=z.x-w.x, dy=z.y-w.y;
+        const d2=dx*dx+dy*dy;
         if(d2<bestD){ bestD=d2; best=z; }
       }
-      if(best){
-        best.x = w.x; best.y = w.y;
-        syncTextarea();
-      }
+      if(best){ best.x=w.x; best.y=w.y; syncTextarea(); }
     }
   });
 
-  // UI actions
+  // UI
+  ui.zoom.addEventListener("input", setZoomFromUI);
+
   ui.modeBtn.addEventListener("click",()=>{
     mode = (mode==="ZONES") ? "GRAPH" : "ZONES";
-    ui.modeBtn.textContent = "Mode: " + mode;
-    // kick energy
-    for(const n of db.nodes){ n.vx += rnd(-.8,.8); n.vy += rnd(-.8,.8); }
+    ui.modeBtn.textContent = mode;
+    // kick energy so user sees immediate change
+    for(const n of db.nodes){ n.vx += rnd(-1.2,1.2); n.vy += rnd(-1.2,1.2); }
   });
 
   ui.regenBtn.addEventListener("click",()=>{
-    // keep ids, reshuffle zone positions and node offsets (still no geoloc)
-    for(const z of db.zones){
-      z.x = rnd(-520,520);
-      z.y = rnd(-340,340);
-    }
-    seedLayout();
-    syncTextarea();
+    for(const z of db.zones){ z.x=rnd(-520,520); z.y=rnd(-340,340); }
+    seedLayout(); syncTextarea();
   });
 
-  ui.addBtn.addEventListener("click",()=>{
-    if(db.zones.length===0) db.zones.push({ id:"Z-01", x:0, y:0, sizeKm2:1, layer:"NEUTRE", opacity:0.18 });
-    const zone = db.zones[irnd(0, db.zones.length)].id;
-    const layer = ["ASTRO","TAROT","NEUTRE"][irnd(0,3)];
-    const kind = KINDS[irnd(0,KINDS.length)];
-    const n = {
-      id: uid("N"),
+  ui.addNodeBtn.addEventListener("click",()=>{
+    if(db.zones.length===0) db.zones.push({id:"Z-01",x:0,y:0,sizeKm2:1,layer:"NEUTRE",opacity:0.20});
+    const zone=db.zones[irnd(0,db.zones.length)].id;
+    const layer=LAYERS[irnd(0,LAYERS.length)];
+    const kind=KINDS[irnd(0,KINDS.length)];
+    const n={
+      id:uid("N"),
       kind,
-      tags: [kind==="artifact"?"trace":kind==="place"?"lieu":kind==="org"?"structure":"public", layer.toLowerCase()],
+      tags:[kind==="artifact"?"trace":kind==="place"?"lieu":kind==="org"?"structure":"public", layer.toLowerCase()],
       zone, layer,
       x:0,y:0,vx:rnd(-.6,.6),vy:rnd(-.6,.6)
     };
     db.nodes.push(n);
-    seedLayout();
-    syncTextarea();
-    updateStats();
+    seedLayout(); syncTextarea(); updateStats();
   });
 
   ui.addZoneBtn.addEventListener("click",()=>{
-    const z = {
-      id: uid("Z"),
-      x: rnd(-520,520),
-      y: rnd(-340,340),
-      sizeKm2: 1,
-      layer: LAYERS[irnd(0,LAYERS.length)],
-      opacity: 0.20
-    };
-    db.zones.push(z);
-    syncTextarea();
-    updateStats();
+    db.zones.push({id:uid("Z"),x:rnd(-520,520),y:rnd(-340,340),sizeKm2:1,layer:LAYERS[irnd(0,LAYERS.length)],opacity:0.22});
+    syncTextarea(); updateStats();
+  });
+
+  ui.homeBtn.addEventListener("click",()=>{
+    view.x = innerWidth*0.5;
+    view.y = innerHeight*0.5;
+    view.z = 1;
+    ui.zoom.value = 100;
+  });
+
+  // JSON sync + import/export
+  function updateStats(){
+    ui.statNodes.textContent=String(db.nodes.length);
+    ui.statLinks.textContent=String(db.links.length);
+    ui.statZones.textContent=String(db.zones.length);
+  }
+  function syncTextarea(){
+    ui.jsonArea.value = JSON.stringify({
+      zones: db.zones.map(z=>({id:z.id,x:+(+z.x).toFixed(2),y:+(+z.y).toFixed(2),sizeKm2:1,layer:z.layer,opacity:z.opacity})),
+      nodes: db.nodes.map(n=>({id:n.id,kind:n.kind,tags:n.tags||[],zone:n.zone,layer:n.layer})),
+      links: db.links.map(e=>({a:e.a,b:e.b,kind:e.kind||"connect",weight:e.weight||1}))
+    }, null, 2);
+  }
+
+  ui.sampleBtn.addEventListener("click", ()=>{ buildSample(); });
+
+  ui.clearBtn.addEventListener("click", ()=>{
+    db={zones:[],nodes:[],links:[]};
+    syncTextarea(); updateStats();
   });
 
   ui.exportBtn.addEventListener("click",()=>{
     syncTextarea();
-    // download
-    const blob = new Blob([ui.jsonArea.value], { type:"application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "nyxo-bruxelles-anonyme.json";
+    const blob=new Blob([ui.jsonArea.value],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="nyxo-bruxelles-anonyme.json";
     a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href), 800);
+    setTimeout(()=>URL.revokeObjectURL(a.href),800);
   });
-
-  // Drawer (mobile)
-  function openDrawer(open){
-    if(innerWidth>980) return; // desktop always visible
-    ui.drawer.classList.toggle("open", !!open);
-  }
-  ui.drawerBtn?.addEventListener("click",()=>openDrawer(true));
-  ui.closeDrawer.addEventListener("click",()=>openDrawer(false));
-
-  ui.zoom.addEventListener("input", setZoomFromUI);
-
-  function updateStats(){
-    ui.statNodes.textContent = String(db.nodes.length);
-    ui.statLinks.textContent = String(db.links.length);
-    ui.statZones.textContent = String(db.zones.length);
-  }
-
-  // JSON import/export
-  function syncTextarea(){
-    const clean = JSON.stringify({
-      zones: db.zones.map(z=>({
-        id:z.id, x:+(+z.x).toFixed(2), y:+(+z.y).toFixed(2), sizeKm2:1, layer:z.layer, opacity:z.opacity
-      })),
-      nodes: db.nodes.map(n=>({
-        id:n.id, kind:n.kind, tags:n.tags||[], zone:n.zone, layer:n.layer
-      })),
-      links: db.links.map(e=>({ a:e.a, b:e.b, kind:e.kind||"connect", weight:e.weight||1 }))
-    }, null, 2);
-    ui.jsonArea.value = clean;
-    updateStats();
-  }
 
   ui.applyBtn.addEventListener("click",()=>{
     try{
-      const raw = JSON.parse(ui.jsonArea.value || "{}");
-      const zones = Array.isArray(raw.zones) ? raw.zones : [];
-      const nodes = Array.isArray(raw.nodes) ? raw.nodes : [];
-      const links = Array.isArray(raw.links) ? raw.links : [];
-
-      // sanitize
-      const zMap = new Map();
-      const Z = zones.map(z=>{
-        const id = String(z.id || uid("Z"));
-        const obj = {
+      const raw=JSON.parse(ui.jsonArea.value||"{}");
+      const zones=Array.isArray(raw.zones)?raw.zones:[];
+      const nodes=Array.isArray(raw.nodes)?raw.nodes:[];
+      const links=Array.isArray(raw.links)?raw.links:[];
+      const zMap=new Map();
+      const Z=zones.map(z=>{
+        const id=String(z.id||uid("Z"));
+        const obj={
           id,
-          x: Number.isFinite(+z.x) ? +z.x : rnd(-520,520),
-          y: Number.isFinite(+z.y) ? +z.y : rnd(-340,340),
-          sizeKm2: 1,
-          layer: (String(z.layer||"NEUTRE")).toUpperCase(),
-          opacity: Number.isFinite(+z.opacity) ? clamp(+z.opacity, 0.05, 0.5) : 0.20
+          x:Number.isFinite(+z.x)?+z.x:rnd(-520,520),
+          y:Number.isFinite(+z.y)?+z.y:rnd(-340,340),
+          sizeKm2:1,
+          layer:String(z.layer||"NEUTRE").toUpperCase(),
+          opacity:Number.isFinite(+z.opacity)?clamp(+z.opacity,0.05,0.6):0.22
         };
-        if(!LAYERS.includes(obj.layer)) obj.layer = "NEUTRE";
-        zMap.set(obj.id, obj);
+        if(!LAYERS.includes(obj.layer)) obj.layer="NEUTRE";
+        zMap.set(obj.id,obj);
         return obj;
       });
-
       if(Z.length===0){
-        Z.push({ id:"Z-01", x:0, y:0, sizeKm2:1, layer:"NEUTRE", opacity:0.18 });
-        zMap.set("Z-01", Z[0]);
+        Z.push({id:"Z-01",x:0,y:0,sizeKm2:1,layer:"NEUTRE",opacity:0.20});
+        zMap.set("Z-01",Z[0]);
       }
-
-      const N = nodes.map(n=>{
-        const id = String(n.id || uid("N"));
-        const kind = (String(n.kind||"human")).toLowerCase();
-        const layer = (String(n.layer||"NEUTRE")).toUpperCase();
-        const zone = String(n.zone || Z[0].id);
+      const N=nodes.map(n=>{
+        const id=String(n.id||uid("N"));
+        const kind=String(n.kind||"human").toLowerCase();
+        const layer=String(n.layer||"NEUTRE").toUpperCase();
+        const zone=String(n.zone||Z[0].id);
         return {
           id,
           kind: KINDS.includes(kind)?kind:"human",
-          tags: Array.isArray(n.tags)?n.tags.map(t=>String(t)) : [],
+          tags: Array.isArray(n.tags)?n.tags.map(String):[],
           zone: zMap.has(zone)?zone:Z[0].id,
           layer: LAYERS.includes(layer)?layer:"NEUTRE",
           x:0,y:0,vx:rnd(-.6,.6),vy:rnd(-.6,.6)
         };
       });
-
-      const idSet = new Set(N.map(n=>n.id));
-      const E = links
-        .map(e=>({ a:String(e.a||""), b:String(e.b||""), kind:String(e.kind||"connect"), weight: Number.isFinite(+e.weight)?+e.weight:1 }))
-        .filter(e=>idSet.has(e.a) && idSet.has(e.b) && e.a!==e.b);
-
-      db = { zones: Z, nodes: N, links: E };
-      seedLayout();
-      syncTextarea();
-      updateStats();
-      // kick energy
-      for(const n of db.nodes){ n.vx += rnd(-.8,.8); n.vy += rnd(-.8,.8); }
-    } catch(err){
-      // silent fail: keep current
-    }
+      const idSet=new Set(N.map(n=>n.id));
+      const E=links
+        .map(e=>({a:String(e.a||""),b:String(e.b||""),kind:String(e.kind||"connect"),weight:Number.isFinite(+e.weight)?+e.weight:1}))
+        .filter(e=>idSet.has(e.a)&&idSet.has(e.b)&&e.a!==e.b);
+      db={zones:Z,nodes:N,links:E};
+      seedLayout(); syncTextarea(); updateStats();
+      for(const n of db.nodes){ n.vx+=rnd(-1.2,1.2); n.vy+=rnd(-1.2,1.2); }
+      setDrawer(false);
+    }catch(_){}
   });
 
-  ui.sampleBtn.addEventListener("click", buildSample);
-  ui.clearBtn.addEventListener("click",()=>{
-    db = { zones:[], nodes:[], links:[] };
-    syncTextarea();
-    updateStats();
-  });
-
-  // Start with sample (so you see something immediately)
+  // Start
   buildSample();
-
-  // Desktop drawer visible; mobile hidden by default
-  if(innerWidth<=980) openDrawer(false);
-
-  // Start loop
+  setDrawer(false);
   requestAnimationFrame(tick);
-
 })();
 </script>
 </body>
