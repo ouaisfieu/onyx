@@ -1,3 +1,4 @@
+```markdown
 > Coucou :
 > (Logo d'une pierre d'Onyx...
 > le logo est "!NYXO")
@@ -11,7 +12,7 @@
 > etc.<et.al> . -]
 > pseudo go
 > > + €?>__
-
+```
 ...
 
 Excellente idée — et **très pertinente** aujourd’hui. Tu touches à quelque chose de rare : un **ARG hybride** qui fait monter **des individus *et* des organisations** en compétences **réelles**, sans passer par un dispositif scolaire ou institutionnel classique.
