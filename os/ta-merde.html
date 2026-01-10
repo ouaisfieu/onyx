@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>NYXO Monitor — Dataset</title>
+<style>
+  :root{
+    --bg:#070914;
+    --ink:#eaf1ff;
+    --mut:rgba(234,241,255,.68);
+    --line:rgba(255,255,255,.14);
+    --g:#10b981;
+    --p:#a78bfa;
+    --grad:linear-gradient(90deg,var(--g),var(--p));
+    --shadow:0 24px 70px rgba(0,0,0,.55);
+    --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,sans-serif;
+    --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;overflow:hidden;background:
+    radial-gradient(1200px 800px at 20% 0%, rgba(167,139,250,.20), transparent 60%),
+    radial-gradient(1200px 800px at 80% 10%, rgba(16,185,129,.14), transparent 55%),
+    var(--bg);
+    color:var(--ink);font-family:var(--sans)
+  }
+
+  /* Canvas */
+  #stage{position:fixed;inset:0;width:100vw;height:100vh}
+
+  /* Scanlines + grain */
+  .scanlines{pointer-events:none;position:fixed;inset:0;z-index:2;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.03), rgba(255,255,255,.03) 1px, rgba(0,0,0,0) 3px, rgba(0,0,0,0) 6px);
+    mix-blend-mode:overlay;opacity:.18}
+  .grain{pointer-events:none;position:fixed;inset:-20%;z-index:3;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+    opacity:.08;transform:rotate(2deg);mix-blend-mode:soft-light}
+
+  /* HUD */
+  .hud{
+    position:fixed;left:10px;right:10px;top:10px;z-index:10;
+    padding-top: env(safe-area-inset-top);
+    display:flex;gap:10px;align-items:flex-start;
+    pointer-events:none;
+  }
+  .logoBtn{
+    pointer-events:auto;
+    width:44px;height:44px;border-radius:14px;
+    border:1px solid rgba(255,255,255,.16);
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%),
+      radial-gradient(circle at 70% 70%, rgba(16,185,129,.35), rgba(16,185,129,0) 55%),
+      radial-gradient(circle at 40% 80%, rgba(167,139,250,.35), rgba(167,139,250,0) 55%),
+      linear-gradient(135deg, rgba(16,185,129,.25), rgba(167,139,250,.20));
+    box-shadow:var(--shadow);
+    display:grid;place-items:center;
+    font-family:var(--mono);font-weight:900;letter-spacing:.06em;
+    color:#061017;
+    cursor:pointer;user-select:none;
+  }
+  .logoBtn:after{content:"!NYXO";font-size:12px}
+
+  .toolbarWrap{pointer-events:auto;flex:1;display:flex;justify-content:flex-end}
+  .toolbar{
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:18px;
+    padding:8px;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn,.pill,.field,.chip{
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(10px);
+  }
+  .btn{cursor:pointer;padding:10px 12px;color:var(--ink);font-size:13px;user-select:none}
+  .btn.primary{border:0;background:var(--grad);color:#061017;font-weight:900}
+  .btn:active{transform:translateY(1px)}
+  .pill{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:12px;color:var(--mut)}
+  .pill input{
+    appearance:none;width:38px;height:22px;border-radius:999px;background:rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.18);position:relative;outline:none;cursor:pointer;
+  }
+  .pill input:after{
+    content:"";position:absolute;top:50%;left:3px;transform:translateY(-50%);
+    width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.85);transition:all .18s ease;
+  }
+  .pill input:checked{
+    background:linear-gradient(90deg, rgba(16,185,129,.45), rgba(167,139,250,.45));
+    border-color:rgba(255,255,255,.26);
+  }
+  .pill input:checked:after{left:19px;background:#061017}
+  .field{display:flex;align-items:center;gap:8px;padding:8px 10px}
+  .field label{font-size:12px;color:var(--mut)}
+  .field input[type="range"]{width:110px}
+  .field input[type="text"]{
+    width:min(240px, 46vw);
+    border:0;outline:none;background:transparent;
+    color:var(--ink);font-family:var(--mono);font-size:12px;
+  }
+
+  /* Mobile: toolbar horizontal scroll */
+  @media (max-width: 860px){
+    .toolbar{flex-wrap:nowrap;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .toolbar::-webkit-scrollbar{display:none}
+    .field input[type="text"]{width:min(220px, 62vw)}
+  }
+
+  /* Monitor FAB */
+  .fab{
+    position:fixed;right:12px;bottom:12px;z-index:25;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .fab .btn{
+    border-radius:18px;padding:12px 14px;border:0;
+    background:var(--grad);color:#061017;font-weight:900;
+  }
+
+  /* Drawer (FULLSCREEN overlay when open) */
+  .drawerWrap{position:fixed;inset:0;z-index:30;pointer-events:none}
+  .scrim{position:absolute;inset:0;background:rgba(0,0,0,.72);opacity:0;transition:opacity .18s ease}
+  .drawer{
+    position:absolute;inset:0; /* full screen */
+    transform:translateY(6px);
+    opacity:0;
+    transition:opacity .18s ease, transform .18s ease;
+    padding:10px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(12px);
+    overflow:hidden;
+  }
+  .hd{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px;border-bottom:1px solid rgba(255,255,255,.10)
+  }
+  .hd .h{font-weight:900;letter-spacing:.08em;font-size:12px;color:rgba(234,241,255,.88)}
+  .bd{padding:12px;overflow:auto;max-height:calc(100vh - 110px)}
+  .drawerWrap.open{pointer-events:auto}
+  .drawerWrap.open .scrim{opacity:1}
+  .drawerWrap.open .drawer{opacity:1;transform:translateY(0)}
+
+  textarea{
+    width:100%;
+    min-height:240px;
+    height:38vh;
+    max-height:52vh;
+    resize:vertical;
+    border-radius:14px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.22);color:var(--ink);
+    font-family:var(--mono);font-size:12px;line-height:1.45;padding:10px;outline:none;
+  }
+
+  /* Monitor blocks */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:900px){ .grid2{grid-template-columns:1fr} }
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  @media(max-width:560px){ .kpis{grid-template-columns:1fr 1fr} }
+
+  .kpi{padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18)}
+  .kpi .t{font-size:12px;color:var(--mut)}
+  .kpi .v{font-family:var(--mono);font-weight:900;font-size:18px;margin-top:6px}
+  .bar{height:10px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden;margin-top:10px}
+  .bar>i{display:block;height:100%;background:var(--grad);width:0%}
+  .mini{font-size:11px;color:rgba(234,241,255,.62);margin-top:8px}
+
+  .rowbtn{display:flex;gap:8px;flex-wrap:wrap}
+  .sep{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{padding:6px 9px;font-size:11px;color:rgba(234,241,255,.80);border-radius:999px}
+  .chip.ok{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.10)}
+  .chip.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.10)}
+  .chip.bad{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.10)}
+  .list{border:1px solid rgba(255,255,255,.10);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.18)}
+  .item{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+  .item:last-child{border-bottom:0}
+  .badge{width:10px;height:10px;border-radius:50%;margin-top:4px;flex:0 0 auto;opacity:.95}
+  .item .meta{flex:1}
+  .item .id{font-family:var(--mono);font-size:12px;font-weight:900}
+  .item .sub{font-size:12px;color:var(--mut);margin-top:2px}
+  .item .right{font-family:var(--mono);font-size:11px;color:rgba(234,241,255,.70)}
+  .hint{border-left:6px solid rgba(16,185,129,.55);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.20);border-radius:16px;padding:10px 12px;color:rgba(234,241,255,.82);font-size:12px}
+
+  /* file input hidden */
+  #fileInput{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div class="scanlines"></div>
+<div class="grain"></div>
+
+<div class="hud">
+  <div class="logoBtn" id="homeBtn" title="Recentre"></div>
+
+  <div class="toolbarWrap">
+    <div class="toolbar" id="toolbar">
+      <button class="btn primary" id="modeBtn">ZONES</button>
+      <button class="btn" id="regenBtn">↻</button>
+
+      <div class="pill"><span>Labels</span><input id="labels" type="checkbox"></div>
+      <div class="pill"><span>Overlap</span><input id="overlap" type="checkbox" checked></div>
+      <div class="pill"><span>Noms réels</span><input id="reveal" type="checkbox"></div>
+
+      <div class="field"><label>Zoom</label><input id="zoom" type="range" min="40" max="180" value="100"></div>
+      <div class="field"><label>Filtre</label><input id="filter" type="text" placeholder="type:place tag:atelier confidence:>0.8"></div>
+
+      <button class="btn" id="drawerToggle">Monitor ▸</button>
+    </div>
+  </div>
+</div>
+
+<div class="fab">
+  <button class="btn" id="drawerFab">Monitor</button>
+</div>
+
+<div class="drawerWrap" id="drawerWrap" aria-hidden="true">
+  <div class="scrim" id="scrim"></div>
+  <div class="drawer" role="dialog" aria-label="NYXO Monitor">
+    <div class="panel" style="flex:1;min-height:0">
+      <div class="hd">
+        <div class="h">NYXO Monitor</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn" id="importFileBtn">Importer .json</button>
+          <button class="btn" id="closeDrawer">✕</button>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="kpis">
+          <div class="kpi"><div class="t">Entités</div><div class="v" id="kEnt">0</div></div>
+          <div class="kpi"><div class="t">Liens</div><div class="v" id="kRel">0</div></div>
+          <div class="kpi"><div class="t">Zones</div><div class="v" id="kZon">0</div></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="kpi">
+          <div class="t">Fiabilité moyenne (entités filtrées)</div>
+          <div class="v" id="kConf">0.00</div>
+          <div class="bar"><i id="confBar"></i></div>
+          <div class="mini" id="confMini">—</div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div class="kpi">
+            <div class="t">Répartition par type</div>
+            <div class="chips" id="typeChips"></div>
+          </div>
+          <div class="kpi">
+            <div class="t">Répartition par risque</div>
+            <div class="chips" id="riskChips"></div>
+            <div class="mini">OK ≥ 0.90 · À vérifier 0.70–0.89 · Risque &lt; 0.70</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Entités (filtrées)</div>
+              <div class="right" style="font-family:var(--mono);font-size:11px;color:rgba(234,241,255,.70)">clic = détails</div>
+            </div>
+            <div class="list" id="entityList" style="margin-top:10px;max-height:260px;overflow:auto"></div>
+          </div>
+
+          <div>
+            <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Détails</div>
+            <div class="panel" style="margin-top:10px">
+              <div class="bd" id="details">
+                <div class="hint">Sélectionne une entité sur la carte ou dans la liste.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Import / Export JSON</div>
+              <div class="rowbtn">
+                <button class="btn" id="exportBtn">Exporter</button>
+                <button class="btn" id="sampleBtn">Exemple</button>
+                <button class="btn primary" id="applyBtn">Appliquer</button>
+              </div>
+            </div>
+            <textarea id="jsonArea" spellcheck="false" style="margin-top:10px"></textarea>
+            <div class="rowbtn" style="margin-top:10px">
+              <button class="btn" id="clearBtn">Vider</button>
+            </div>
+            <div class="mini" style="margin-top:10px">
+              Schéma: <span style="font-family:var(--mono)">{"entities":[...],"links":[...],"zones":[...]}</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Journal</div>
+            <div class="list" id="log" style="margin-top:10px;max-height:360px;overflow:auto"></div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Monitor plein écran · Fermer: ESC · Import: bouton “Importer .json” (ou coller + Appliquer)
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<input id="fileInput" type="file" accept=".json,application/json"/>
+
+<script>
+(() => {
+  const canvas = document.getElementById("stage");
+  const ctx = canvas.getContext("2d", { alpha:true });
+
+  const ui = {
+    homeBtn: document.getElementById("homeBtn"),
+    modeBtn: document.getElementById("modeBtn"),
+    regenBtn: document.getElementById("regenBtn"),
+    labels: document.getElementById("labels"),
+    overlap: document.getElementById("overlap"),
+    reveal: document.getElementById("reveal"),
+    zoom: document.getElementById("zoom"),
+    filter: document.getElementById("filter"),
+
+    drawerWrap: document.getElementById("drawerWrap"),
+    drawerToggle: document.getElementById("drawerToggle"),
+    drawerFab: document.getElementById("drawerFab"),
+    scrim: document.getElementById("scrim"),
+    closeDrawer: document.getElementById("closeDrawer"),
+
+    importFileBtn: document.getElementById("importFileBtn"),
+    fileInput: document.getElementById("fileInput"),
+
+    kEnt: document.getElementById("kEnt"),
+    kRel: document.getElementById("kRel"),
+    kZon: document.getElementById("kZon"),
+    kConf: document.getElementById("kConf"),
+    confBar: document.getElementById("confBar"),
+    confMini: document.getElementById("confMini"),
+    typeChips: document.getElementById("typeChips"),
+    riskChips: document.getElementById("riskChips"),
+
+    entityList: document.getElementById("entityList"),
+    details: document.getElementById("details"),
+
+    jsonArea: document.getElementById("jsonArea"),
+    applyBtn: document.getElementById("applyBtn"),
+    exportBtn: document.getElementById("exportBtn"),
+    sampleBtn: document.getElementById("sampleBtn"),
+    clearBtn: document.getElementById("clearBtn"),
+
+    log: document.getElementById("log")
+  };
+
+  function resize(){
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.floor(innerWidth * dpr);
+    canvas.height = Math.floor(innerHeight * dpr);
+    canvas.style.width = innerWidth + "px";
+    canvas.style.height = innerHeight + "px";
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  addEventListener("resize", resize);
+  resize();
+
+  let drawerOpen=false;
+  function setDrawer(open){
+    drawerOpen=!!open;
+    ui.drawerWrap.classList.toggle("open", drawerOpen);
+    ui.drawerWrap.setAttribute("aria-hidden", drawerOpen ? "false":"true");
+    ui.drawerToggle.textContent = drawerOpen ? "Monitor ◂" : "Monitor ▸";
+    // when open, disable pointer on canvas feel-wise (not required but nicer)
+    canvas.style.pointerEvents = drawerOpen ? "none" : "auto";
+  }
+  ui.drawerToggle.addEventListener("click",()=>setDrawer(!drawerOpen));
+  ui.drawerFab.addEventListener("click",()=>setDrawer(!drawerOpen));
+  ui.scrim.addEventListener("click",()=>setDrawer(false));
+  ui.closeDrawer.addEventListener("click",()=>setDrawer(false));
+  addEventListener("keydown",(e)=>{ if(e.key==="Escape") setDrawer(false); });
+
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const irnd=(a,b)=>Math.floor(rnd(a,b));
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const uid=(p)=>p+"-"+Math.random().toString(16).slice(2,9);
+  const LAYERS=["ASTRO","TAROT","NEUTRE"];
+  const TYPES=["place","org","network","pole","human","artifact","unknown"];
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+  function log(msg){
+    const t=new Date().toLocaleTimeString();
+    const div=document.createElement("div");
+    div.className="item";
+    div.innerHTML=`<span class="badge" style="background:rgba(255,255,255,.6)"></span>
+      <div class="meta"><div class="id">${escapeHtml(t)}</div><div class="sub">${escapeHtml(msg)}</div></div>`;
+    ui.log.prepend(div);
+  }
+
+  function layerColor(layer,a=1){
+    if(layer==="ASTRO") return `rgba(16,185,129,${a})`;
+    if(layer==="TAROT") return `rgba(167,139,250,${a})`;
+    return `rgba(234,241,255,${a})`;
+  }
+
+  const view={ x: innerWidth*0.5, y: innerHeight*0.5, z:1, dragging:false, lx:0, ly:0 };
+  function setZoomFromUI(){ view.z=ui.zoom.value/100; }
+  setZoomFromUI();
+
+  let mode="ZONES";
+  let lastMouse=null;
+  let hovered=null, selected=null;
+
+  let db={ meta:{dataset:"nyxo-monitor"}, entities:[], links:[], zones:[] };
+
+  function normEntity(e){
+    const id=String(e.id || uid("ent"));
+    const type=String(e.type || "unknown").toLowerCase();
+    const layer=(e.layer || e.fields?.layer?.value || "NEUTRE");
+    const L=String(layer).toUpperCase();
+    const confidence=Number.isFinite(+e.confidence)?clamp(+e.confidence,0,1):0.5;
+    const display=e.display||{};
+    const real_name=(display.real_name!=null)?String(display.real_name):"";
+    const masked_name=(display.masked_name!=null)?String(display.masked_name):id;
+    const tags=Array.isArray(e.tags)?e.tags.map(String):(Array.isArray(e.fields?.tags?.value)?e.fields.tags.value.map(String):[]);
+    const zone=(e.zone!=null)?String(e.zone):(e.fields?.zone?.value!=null?String(e.fields.zone.value):"");
+    const fields=(e.fields && typeof e.fields==="object")?e.fields:{};
+    return {...e,id,type:TYPES.includes(type)?type:"unknown",layer:LAYERS.includes(L)?L:"NEUTRE",
+      confidence,display:{real_name,masked_name},tags,zone,fields};
+  }
+  function normLink(l){
+    const id=String(l.id || uid("lnk"));
+    const from=String(l.from || l.a || "");
+    const to=String(l.to || l.b || "");
+    const type=String(l.type || l.kind || "connect");
+    const confidence=(l.fields && Number.isFinite(+l.fields.confidence))?clamp(+l.fields.confidence,0,1):(Number.isFinite(+l.confidence)?clamp(+l.confidence,0,1):0.6);
+    const weight=Number.isFinite(+l.weight)?+l.weight:1;
+    return {...l,id,from,to,type,confidence,weight,fields:(l.fields&&typeof l.fields==="object")?l.fields:{}};
+  }
+  function normZone(z){
+    const id=String(z.id || uid("Z"));
+    const layer=String(z.layer || "NEUTRE").toUpperCase();
+    const opacity=Number.isFinite(+z.opacity)?clamp(+z.opacity,0.05,0.7):0.22;
+    return {...z,id,
+      x:Number.isFinite(+z.x)?+z.x:rnd(-520,520),
+      y:Number.isFinite(+z.y)?+z.y:rnd(-340,340),
+      sizeKm2:1,
+      layer:LAYERS.includes(layer)?layer:"NEUTRE",
+      opacity
+    };
+  }
+  function ensureZones(){
+    if(!Array.isArray(db.zones)) db.zones=[];
+    if(db.zones.length===0){
+      for(let i=0;i<16;i++){
+        const layer=(i%3===0)?"ASTRO":(i%3===1)?"TAROT":"NEUTRE";
+        db.zones.push(normZone({id:"Z-"+String(i+1).padStart(2,"0"),x:rnd(-520,520),y:rnd(-340,340),layer,opacity:layer==="NEUTRE"?0.20:0.26}));
+      }
+    } else db.zones=db.zones.map(normZone);
+  }
+  function seedPositions(){
+    const zoneMap=new Map(db.zones.map(z=>[z.id,z]));
+    for(const e of db.entities){
+      const z=zoneMap.get(e.zone) || db.zones[irnd(0,db.zones.length)];
+      const spread=70;
+      e._x=(z?.x||0)+rnd(-spread,spread);
+      e._y=(z?.y||0)+rnd(-spread,spread);
+      e._vx=rnd(-.5,.5);
+      e._vy=rnd(-.5,.5);
+    }
+  }
+
+  function parseFilter(s){
+    const q=(s||"").trim();
+    const res={text:"",tag:null,type:null,layer:null,zone:null,confOp:null,confVal:null};
+    if(!q) return res;
+    const parts=q.split(/\s+/).filter(Boolean);
+    for(const p of parts){
+      const m=p.match(/^(\w+):(.*)$/);
+      if(m){
+        const k=m[1].toLowerCase(), v=(m[2]||"").trim();
+        if(k==="tag") res.tag=v.toLowerCase();
+        else if(k==="type") res.type=v.toLowerCase();
+        else if(k==="layer") res.layer=v.toUpperCase();
+        else if(k==="zone") res.zone=v;
+        else if(k==="confidence"||k==="conf"){
+          const mm=v.match(/^(>=|<=|>|<|=)?\s*([0-9]*\.?[0-9]+)$/);
+          if(mm){ res.confOp=mm[1]||">="; res.confVal=parseFloat(mm[2]); }
+        }
+      } else res.text += (res.text?" ":"")+p.toLowerCase();
+    }
+    return res;
+  }
+  function passConf(c,op,val){
+    if(op==null||val==null) return true;
+    if(op===">") return c>val;
+    if(op===">=") return c>=val;
+    if(op==="<") return c<val;
+    if(op==="<=") return c<=val;
+    if(op==="=") return Math.abs(c-val)<1e-9;
+    return true;
+  }
+  function entityMatches(e,f){
+    if(f.type && e.type!==f.type) return false;
+    if(f.layer && e.layer!==f.layer) return false;
+    if(f.zone && e.zone!==f.zone) return false;
+    if(f.tag && !(e.tags||[]).some(t=>String(t).toLowerCase()===f.tag)) return false;
+    if(!passConf(e.confidence,f.confOp,f.confVal)) return false;
+    if(f.text){
+      const name = ui.reveal.checked ? (e.display.real_name||"") : (e.display.masked_name||"");
+      const hay=(e.id+" "+e.type+" "+e.layer+" "+e.zone+" "+(e.tags||[]).join(" ")+" "+name).toLowerCase();
+      if(!hay.includes(f.text)) return false;
+    }
+    return true;
+  }
+  function confBucket(c){ return (c>=0.90)?"ok":(c>=0.70)?"warn":"bad"; }
+
+  function renderMonitor(){
+    const f=parseFilter(ui.filter.value);
+    const ents=db.entities.filter(e=>entityMatches(e,f));
+    ui.kEnt.textContent=String(ents.length);
+    ui.kRel.textContent=String(db.links.length);
+    ui.kZon.textContent=String(db.zones.length);
+
+    const avg=ents.length?ents.reduce((a,e)=>a+e.confidence,0)/ents.length:0;
+    ui.kConf.textContent=avg.toFixed(2);
+    ui.confBar.style.width=Math.round(avg*100)+"%";
+
+    const counts={ok:0,warn:0,bad:0};
+    for(const e of ents) counts[confBucket(e.confidence)]++;
+    ui.confMini.textContent=`OK:${counts.ok} · À vérifier:${counts.warn} · Risque:${counts.bad}`;
+
+    const byType={};
+    for(const e of ents) byType[e.type]=(byType[e.type]||0)+1;
+    ui.typeChips.innerHTML=Object.keys(byType).sort((a,b)=>byType[b]-byType[a]).map(t=>
+      `<span class="chip">${escapeHtml(t)} · <b>${byType[t]}</b></span>`
+    ).join("") || `<span class="mini">—</span>`;
+
+    ui.riskChips.innerHTML=`
+      <span class="chip ok">OK · <b>${counts.ok}</b></span>
+      <span class="chip warn">À vérifier · <b>${counts.warn}</b></span>
+      <span class="chip bad">Risque · <b>${counts.bad}</b></span>
+    `;
+
+    ui.entityList.innerHTML="";
+    const list=ents.slice().sort((a,b)=>(b.confidence-a.confidence)||a.id.localeCompare(b.id)).slice(0,320);
+    for(const e of list){
+      const b=confBucket(e.confidence);
+      const dot=b==="ok"?"rgba(34,197,94,.9)":b==="warn"?"rgba(245,158,11,.9)":"rgba(239,68,68,.9)";
+      const name=ui.reveal.checked ? (e.display.real_name||e.display.masked_name||e.id) : (e.display.masked_name||e.id);
+      const sub=`${e.type} · ${e.layer}${e.zone?(" · "+e.zone):""} · conf:${e.confidence.toFixed(2)}`;
+      const div=document.createElement("div");
+      div.className="item";
+      div.innerHTML=`<span class="badge" style="background:${dot}"></span>
+        <div class="meta">
+          <div class="id">${escapeHtml(name)} <span style="opacity:.55">(${escapeHtml(e.id)})</span></div>
+          <div class="sub">${escapeHtml(sub)}</div>
+        </div>
+        <div class="right">${escapeHtml((e.tags||[]).slice(0,3).join(" · "))}</div>`;
+      div.addEventListener("click",()=>{ selected=e; renderDetails(); });
+      ui.entityList.appendChild(div);
+    }
+
+    syncTextarea();
+  }
+
+  function renderDetails(){
+    if(!selected){
+      ui.details.innerHTML=`<div class="hint">Sélectionne une entité sur la carte ou dans la liste.</div>`;
+      return;
+    }
+    const e=selected;
+    const name=ui.reveal.checked ? (e.display.real_name||e.display.masked_name||e.id) : (e.display.masked_name||e.id);
+    const b=confBucket(e.confidence);
+    const dotClass=b==="ok"?"ok":b==="warn"?"warn":"bad";
+
+    const fieldRows=[];
+    if(e.fields && typeof e.fields==="object"){
+      for(const [k,v] of Object.entries(e.fields)){
+        if(v && typeof v==="object" && ("value" in v || "confidence" in v || "sources" in v)){
+          const val=("value" in v)?v.value:v;
+          const conf=Number.isFinite(+v.confidence)?+v.confidence:null;
+          const src=Array.isArray(v.sources)?v.sources.join(", "):"";
+          fieldRows.push({k,val:(typeof val==="string")?val:JSON.stringify(val),conf,src});
+        }
+      }
+    }
+
+    const out=db.links.filter(l=>l.from===e.id);
+    const inn=db.links.filter(l=>l.to===e.id);
+    const idToEnt=new Map(db.entities.map(x=>[x.id,x]));
+    const fmtPeer=(id)=>{
+      const p=idToEnt.get(id);
+      if(!p) return id;
+      return ui.reveal.checked ? (p.display.real_name||p.display.masked_name||p.id) : (p.display.masked_name||p.id);
+    };
+
+    ui.details.innerHTML=`
+      <div class="chips" style="margin-bottom:10px">
+        <span class="chip ${dotClass}">${b.toUpperCase()}</span>
+        <span class="chip">type:${escapeHtml(e.type)}</span>
+        <span class="chip">layer:${escapeHtml(e.layer)}</span>
+        ${e.zone?`<span class="chip">zone:${escapeHtml(e.zone)}</span>`:""}
+        <span class="chip">conf:${escapeHtml(e.confidence.toFixed(2))}</span>
+      </div>
+
+      <div style="font-weight:900;font-family:var(--mono)">${escapeHtml(name)} <span style="opacity:.55">(${escapeHtml(e.id)})</span></div>
+      <div style="margin-top:6px;color:var(--mut);font-size:12px">${escapeHtml((e.tags||[]).join(" · ") || "—")}</div>
+
+      <div class="sep"></div>
+
+      <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Champs</div>
+      <div class="list" style="margin-top:10px">
+        ${
+          fieldRows.length ? fieldRows.slice(0,120).map(r=>`
+            <div class="item" style="cursor:default">
+              <span class="badge" style="background:rgba(255,255,255,.40)"></span>
+              <div class="meta">
+                <div class="id">${escapeHtml(r.k)}</div>
+                <div class="sub">${escapeHtml(r.val)}</div>
+                <div class="sub" style="opacity:.7">${r.conf!=null?`conf:${r.conf.toFixed(2)} · `:""}${r.src?`src:${escapeHtml(r.src)}`:""}</div>
+              </div>
+            </div>
+          `).join("") : `<div class="item" style="cursor:default"><div class="meta"><div class="sub">—</div></div></div>`
+        }
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="grid2">
+        <div>
+          <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Liens sortants</div>
+          <div class="list" style="margin-top:10px">
+            ${out.length ? out.slice(0,160).map(l=>`
+              <div class="item" data-jump="${escapeHtml(l.to)}">
+                <span class="badge" style="background:${l.confidence>=.9?'rgba(34,197,94,.9)':l.confidence>=.7?'rgba(245,158,11,.9)':'rgba(239,68,68,.9)'}"></span>
+                <div class="meta">
+                  <div class="id">${escapeHtml(l.type)} → ${escapeHtml(fmtPeer(l.to))}</div>
+                  <div class="sub">conf:${escapeHtml(l.confidence.toFixed(2))} · id:${escapeHtml(l.id)}</div>
+                </div>
+              </div>
+            `).join("") : `<div class="item" style="cursor:default"><div class="meta"><div class="sub">—</div></div></div>`}
+          </div>
+        </div>
+        <div>
+          <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Liens entrants</div>
+          <div class="list" style="margin-top:10px">
+            ${inn.length ? inn.slice(0,160).map(l=>`
+              <div class="item" data-jump="${escapeHtml(l.from)}">
+                <span class="badge" style="background:${l.confidence>=.9?'rgba(34,197,94,.9)':l.confidence>=.7?'rgba(245,158,11,.9)':'rgba(239,68,68,.9)'}"></span>
+                <div class="meta">
+                  <div class="id">${escapeHtml(fmtPeer(l.from))} → ${escapeHtml(l.type)}</div>
+                  <div class="sub">conf:${escapeHtml(l.confidence.toFixed(2))} · id:${escapeHtml(l.id)}</div>
+                </div>
+              </div>
+            `).join("") : `<div class="item" style="cursor:default"><div class="meta"><div class="sub">—</div></div></div>`}
+          </div>
+        </div>
+      </div>
+    `;
+
+    ui.details.querySelectorAll("[data-jump]").forEach(el=>{
+      el.addEventListener("click",()=>{
+        const id=el.getAttribute("data-jump");
+        const p=db.entities.find(x=>x.id===id);
+        if(p){ selected=p; renderDetails(); }
+      });
+    });
+  }
+
+  function worldToScreen(wx,wy){ return { x:(wx*view.z)+view.x, y:(wy*view.z)+view.y }; }
+  function screenToWorld(sx,sy){ return { x:(sx-view.x)/view.z, y:(sy-view.y)/view.z }; }
+  function typeRadius(type){
+    if(type==="org") return 5.8;
+    if(type==="network") return 6.2;
+    if(type==="pole") return 6.0;
+    if(type==="place") return 5.2;
+    if(type==="human") return 4.2;
+    if(type==="artifact") return 4.6;
+    return 4.6;
+  }
+
+  function stepPhysics(dt){
+    const f=parseFilter(ui.filter.value);
+    const ents=db.entities;
+    const isGraph=(mode==="GRAPH");
+    const linkK=isGraph?0.016:0.004;
+    const repulse=isGraph?5200:1600;
+    const damping=isGraph?0.86:0.90;
+    const anchorK=isGraph?0.0002:0.0070;
+    const maxV=isGraph?2.8:1.8;
+
+    const bucket=new Map(), cell=isGraph?150:120;
+    const keyOf=(x,y)=>((x/cell)|0)+","+((y/cell)|0);
+    for(const e of ents){
+      const k=keyOf(e._x,e._y);
+      if(!bucket.has(k)) bucket.set(k,[]);
+      bucket.get(k).push(e);
+    }
+    const neigh=(cx,cy)=>{
+      const out=[];
+      for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++){
+        const b=bucket.get((cx+dx)+","+(cy+dy)); if(b) out.push(...b);
+      }
+      return out;
+    };
+
+    for(const a of ents){
+      if(!entityMatches(a,f)) continue;
+      const cx=(a._x/cell)|0, cy=(a._y/cell)|0;
+      for(const b of neigh(cx,cy)){
+        if(b===a || !entityMatches(b,f)) continue;
+        let dx=a._x-b._x, dy=a._y-b._y, d2=dx*dx+dy*dy;
+        if(d2<1) d2=1;
+        const k=repulse/d2;
+        a._vx += (dx/Math.sqrt(d2))*k*dt;
+        a._vy += (dy/Math.sqrt(d2))*k*dt;
+      }
+    }
+
+    const idMap=new Map(ents.map(e=>[e.id,e]));
+    if(isGraph){
+      for(const l of db.links){
+        const a=idMap.get(l.from), b=idMap.get(l.to);
+        if(!a||!b) continue;
+        if(!entityMatches(a,f) && !entityMatches(b,f)) continue;
+        const dx=b._x-a._x, dy=b._y-a._y;
+        const d=Math.sqrt(dx*dx+dy*dy) || 1;
+        const target=120+(l.weight||1)*90;
+        const k=(d-target)*linkK;
+        const fx=(dx/d)*k, fy=(dy/d)*k;
+        a._vx += fx*dt; a._vy += fy*dt;
+        b._vx -= fx*dt; b._vy -= fy*dt;
+      }
+    }
+
+    const zoneMap=new Map(db.zones.map(z=>[z.id,z]));
+    if(!isGraph){
+      for(const e of ents){
+        if(!entityMatches(e,f)) continue;
+        const z=zoneMap.get(e.zone) || db.zones[0];
+        if(!z) continue;
+        e._vx += (z.x-e._x)*anchorK*dt;
+        e._vy += (z.y-e._y)*anchorK*dt;
+      }
+    } else {
+      for(const e of ents){
+        if(!entityMatches(e,f)) continue;
+        let tx=0,ty=0;
+        if(e.layer==="ASTRO"){ tx=-360; ty=-90; }
+        else if(e.layer==="TAROT"){ tx=360; ty=90; }
+        e._vx += (tx-e._x)*0.0012*dt;
+        e._vy += (ty-e._y)*0.0012*dt;
+      }
+    }
+
+    for(const e of ents){
+      e._vx*=damping; e._vy*=damping;
+      e._vx=clamp(e._vx,-maxV,maxV);
+      e._vy=clamp(e._vy,-maxV,maxV);
+      e._x += e._vx*dt*60;
+      e._y += e._vy*dt*60;
+    }
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+
+    ctx.save();
+    ctx.globalAlpha = mode==="GRAPH" ? 0.18 : 0.24;
+    ctx.strokeStyle = "rgba(255,255,255,.06)";
+    ctx.lineWidth = 1;
+    const step=(mode==="GRAPH"?92:80)*view.z;
+    const ox=(view.x%step+step)%step, oy=(view.y%step+step)%step;
+    for(let x=ox;x<innerWidth;x+=step){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,innerHeight); ctx.stroke(); }
+    for(let y=oy;y<innerHeight;y+=step){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(innerWidth,y); ctx.stroke(); }
+    ctx.restore();
+
+    const showLabels=ui.labels.checked;
+    const allowOverlap=ui.overlap.checked;
+    const f=parseFilter(ui.filter.value);
+
+    if(mode==="GRAPH"){
+      ctx.save();
+      const left=worldToScreen(-360,-90), right=worldToScreen(360,90);
+      const R=240*view.z;
+      ctx.fillStyle="rgba(16,185,129,.08)"; ctx.beginPath(); ctx.arc(left.x,left.y,R,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="rgba(167,139,250,.08)"; ctx.beginPath(); ctx.arc(right.x,right.y,R,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle="rgba(255,255,255,.10)"; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(left.x,left.y,R,0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(right.x,right.y,R,0,Math.PI*2); ctx.stroke();
+      ctx.restore();
+    }
+
+    const zonePx = mode==="GRAPH" ? 170 : 240;
+    const zoneAlphaBoost = mode==="GRAPH" ? 0.45 : 1.0;
+    for(const z of db.zones){
+      const c=worldToScreen(z.x,z.y);
+      const s=zonePx*view.z;
+      const baseA=(z.opacity ?? 0.22) * zoneAlphaBoost * (allowOverlap?1:0.85);
+      const fillA = mode==="GRAPH" ? baseA*0.55 : baseA;
+      ctx.save();
+      ctx.fillStyle=layerColor(z.layer, fillA);
+      ctx.strokeStyle=layerColor(z.layer, mode==="GRAPH"?0.28:0.55);
+      ctx.lineWidth=1.2;
+      ctx.beginPath();
+      ctx.roundRect(c.x-s/2,c.y-s/2,s,s,14*view.z);
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+
+    const idMap=new Map(db.entities.map(e=>[e.id,e]));
+    if(mode==="GRAPH" || selected){
+      ctx.save();
+      ctx.lineWidth = (mode==="GRAPH") ? 1.2 : 1.0;
+      for(const l of db.links){
+        const a=idMap.get(l.from), b=idMap.get(l.to);
+        if(!a||!b) continue;
+        if(!entityMatches(a,f) && !entityMatches(b,f)) continue;
+        const as=worldToScreen(a._x,a._y);
+        const bs=worldToScreen(b._x,b._y);
+        let alpha = (mode==="GRAPH") ? 0.18 : 0.10;
+        if(selected && (l.from===selected.id || l.to===selected.id)) alpha=0.42;
+        let col=`rgba(234,241,255,${alpha})`;
+        if(mode==="GRAPH"){
+          const same=(a.layer===b.layer)?a.layer:null;
+          if(same==="ASTRO") col=`rgba(16,185,129,${alpha})`;
+          if(same==="TAROT") col=`rgba(167,139,250,${alpha})`;
+        }
+        ctx.strokeStyle=col;
+        ctx.beginPath();
+        ctx.moveTo(as.x,as.y);
+        const mx=(as.x+bs.x)/2, my=(as.y+bs.y)/2;
+        const cx=mx+(bs.y-as.y)*0.06, cy=my+(as.x-bs.x)*0.06;
+        ctx.quadraticCurveTo(cx,cy,bs.x,bs.y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    hovered=null;
+    const mw=lastMouse?screenToWorld(lastMouse.x,lastMouse.y):null;
+    const hitR=11/view.z;
+
+    for(const e of db.entities){
+      if(!entityMatches(e,f)) continue;
+      const s=worldToScreen(e._x,e._y);
+      if(mw){
+        const dx=e._x-mw.x, dy=e._y-mw.y;
+        if(dx*dx+dy*dy < hitR*hitR) hovered=e;
+      }
+
+      const r=typeRadius(e.type)*view.z;
+      const glow=(e.layer==="NEUTRE")?0.18:0.34;
+
+      ctx.save();
+      ctx.shadowColor=layerColor(e.layer,0.95);
+      ctx.shadowBlur=(mode==="GRAPH"?22:16)*view.z;
+
+      ctx.fillStyle=layerColor(e.layer,glow);
+      ctx.beginPath(); ctx.arc(s.x,s.y,r*2.3,0,Math.PI*2); ctx.fill();
+
+      ctx.shadowBlur=0;
+      ctx.fillStyle=layerColor(e.layer, 0.75 + e.confidence*0.20);
+      ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2); ctx.fill();
+
+      let ring="rgba(255,255,255,.22)";
+      const bb=confBucket(e.confidence);
+      if(bb==="ok") ring="rgba(34,197,94,.45)";
+      if(bb==="warn") ring="rgba(245,158,11,.45)";
+      if(bb==="bad") ring="rgba(239,68,68,.45)";
+      ctx.strokeStyle=ring; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.arc(s.x,s.y,r+2*view.z,0,Math.PI*2); ctx.stroke();
+
+      if(selected && selected.id===e.id){
+        ctx.strokeStyle="rgba(255,255,255,.85)";
+        ctx.lineWidth=2;
+        ctx.beginPath(); ctx.arc(s.x,s.y,r+6*view.z,0,Math.PI*2); ctx.stroke();
+      } else if(hovered && hovered.id===e.id){
+        ctx.strokeStyle="rgba(255,255,255,.60)";
+        ctx.lineWidth=1.6;
+        ctx.beginPath(); ctx.arc(s.x,s.y,r+6*view.z,0,Math.PI*2); ctx.stroke();
+      }
+
+      const canLabel = showLabels && (mode==="GRAPH" || view.z>=0.95);
+      if(canLabel){
+        const name=ui.reveal.checked ? (e.display.real_name||e.display.masked_name||e.id) : (e.display.masked_name||e.id);
+        ctx.fillStyle="rgba(234,241,255,.80)";
+        ctx.font=`${Math.max(10,11*view.z)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')||'monospace'}`;
+        ctx.fillText(name, s.x+10*view.z, s.y-8*view.z);
+      }
+      ctx.restore();
+    }
+  }
+
+  /* interactions */
+  canvas.addEventListener("mousemove",(e)=>{
+    lastMouse={x:e.clientX,y:e.clientY};
+    if(view.dragging){
+      view.x += (e.clientX-view.lx);
+      view.y += (e.clientY-view.ly);
+      view.lx=e.clientX; view.ly=e.clientY;
+    }
+  });
+  canvas.addEventListener("mousedown",(e)=>{
+    lastMouse={x:e.clientX,y:e.clientY};
+    view.dragging=true; view.lx=e.clientX; view.ly=e.clientY;
+  });
+  addEventListener("mouseup",()=>{ view.dragging=false; });
+
+  canvas.addEventListener("wheel",(e)=>{
+    e.preventDefault();
+    const delta=-Math.sign(e.deltaY)*0.08;
+    const newZ=clamp(view.z*(1+delta),0.4,1.8);
+    const mx=e.clientX,my=e.clientY;
+    const before=screenToWorld(mx,my);
+    view.z=newZ;
+    ui.zoom.value=Math.round(view.z*100);
+    const after=screenToWorld(mx,my);
+    view.x += (after.x-before.x)*view.z;
+    view.y += (after.y-before.y)*view.z;
+  }, {passive:false});
+
+  canvas.addEventListener("click",(e)=>{
+    lastMouse={x:e.clientX,y:e.clientY};
+    if(hovered){ selected=hovered; renderDetails(); }
+    else { selected=null; renderDetails(); }
+  });
+
+  ui.zoom.addEventListener("input",()=>setZoomFromUI());
+  ui.modeBtn.addEventListener("click",()=>{
+    mode=(mode==="ZONES")?"GRAPH":"ZONES";
+    ui.modeBtn.textContent=mode;
+    for(const e of db.entities){ e._vx+=rnd(-1.2,1.2); e._vy+=rnd(-1.2,1.2); }
+    log(`Mode: ${mode}`);
+  });
+  ui.regenBtn.addEventListener("click",()=>{
+    for(const z of db.zones){ z.x=rnd(-520,520); z.y=rnd(-340,340); }
+    seedPositions(); renderMonitor(); log("Zones remélangées");
+  });
+  ui.homeBtn.addEventListener("click",()=>{
+    view.x=innerWidth*0.5; view.y=innerHeight*0.5; view.z=1; ui.zoom.value=100;
+    log("Recentrage");
+  });
+
+  ui.filter.addEventListener("input",()=>renderMonitor());
+  ui.reveal.addEventListener("change",()=>{
+    renderMonitor(); renderDetails();
+    log(ui.reveal.checked ? "Noms réels: ON" : "Noms réels: OFF");
+  });
+
+  /* JSON sync/import/export */
+  function syncTextarea(){
+    ui.jsonArea.value = JSON.stringify({
+      meta: db.meta || { dataset:"nyxo-monitor" },
+      zones: db.zones.map(z=>({id:z.id,x:+z.x.toFixed(2),y:+z.y.toFixed(2),sizeKm2:1,layer:z.layer,opacity:z.opacity})),
+      entities: db.entities.map(e=>({
+        id:e.id,type:e.type,layer:e.layer,zone:e.zone,
+        confidence:e.confidence,
+        display:e.display,
+        tags:e.tags||[],
+        fields:e.fields||{}
+      })),
+      links: db.links.map(l=>({id:l.id,type:l.type,from:l.from,to:l.to,confidence:l.confidence,weight:l.weight,fields:l.fields||{}}))
+    }, null, 2);
+  }
+
+  function applyRaw(raw){
+    db = {
+      meta: raw.meta || db.meta || {dataset:"nyxo-monitor"},
+      zones: (Array.isArray(raw.zones)?raw.zones:[]).map(normZone),
+      entities: (Array.isArray(raw.entities)?raw.entities:[]).map(normEntity),
+      links: (Array.isArray(raw.links)?raw.links:[]).map(normLink),
+    };
+    ensureZones();
+    seedPositions();
+    selected=null;
+    renderMonitor(); renderDetails();
+  }
+
+  ui.applyBtn.addEventListener("click",()=>{
+    try{
+      const raw=JSON.parse(ui.jsonArea.value||"{}");
+      applyRaw(raw);
+      log(`Import OK: entities=${db.entities.length} links=${db.links.length} zones=${db.zones.length}`);
+    }catch(err){
+      log("Import JSON: erreur (JSON invalide)");
+    }
+  });
+
+  ui.exportBtn.addEventListener("click",()=>{
+    syncTextarea();
+    const blob=new Blob([ui.jsonArea.value],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="nyxo-monitor.json";
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),800);
+    log("Export JSON");
+  });
+
+  ui.clearBtn.addEventListener("click",()=>{
+    db={meta:{dataset:"nyxo-monitor"},entities:[],links:[],zones:[]};
+    ensureZones(); seedPositions(); selected=null;
+    renderMonitor(); renderDetails();
+    log("Dataset vidé");
+  });
+
+  ui.sampleBtn.addEventListener("click",()=>{
+    const zones=[];
+    for(let i=0;i<16;i++){
+      const layer=(i%3===0)?"ASTRO":(i%3===1)?"TAROT":"NEUTRE";
+      zones.push({id:"Z-"+String(i+1).padStart(2,"0"),x:rnd(-520,520),y:rnd(-340,340),layer,opacity:layer==="NEUTRE"?0.20:0.26});
+    }
+    const entities=[
+      {id:"ent_a",type:"place",layer:"TAROT",zone:"Z-11",confidence:1.0,display:{masked_name:"TAROT-PRIME",real_name:"Nom Réel Démo"},tags:["place","tarot"],fields:{}},
+      {id:"ent_b",type:"org",layer:"NEUTRE",zone:"Z-10",confidence:0.78,display:{masked_name:"PARTNER-01",real_name:"Nom Réel Partiel"},tags:["org","neutre"],fields:{}},
+      {id:"ent_c",type:"network",layer:"NEUTRE",zone:"Z-14",confidence:0.62,display:{masked_name:"NET-01",real_name:"Nom Réel Incertain"},tags:["network","neutre"],fields:{}}
+    ];
+    const links=[{id:"lnk_1",type:"supports",from:"ent_b",to:"ent_a",confidence:0.78,weight:1,fields:{confidence:0.78,sources:["demo"]}}];
+    applyRaw({meta:{dataset:"nyxo-sample"},zones,entities,links});
+    log("Exemple chargé");
+  });
+
+  /* file import */
+  ui.importFileBtn.addEventListener("click",()=>ui.fileInput.click());
+  ui.fileInput.addEventListener("change",async ()=>{
+    const file=ui.fileInput.files && ui.fileInput.files[0];
+    if(!file) return;
+    try{
+      const txt = await file.text();
+      const raw = JSON.parse(txt);
+      ui.jsonArea.value = JSON.stringify(raw, null, 2);
+      applyRaw(raw);
+      log(`Fichier importé: ${file.name} (entities=${db.entities.length})`);
+    }catch(err){
+      log("Import fichier: erreur (JSON invalide)");
+    } finally {
+      ui.fileInput.value="";
+    }
+  });
+
+  /* drawer controls */
+  function setDrawer(open){
+    drawerOpen=!!open;
+    ui.drawerWrap.classList.toggle("open", drawerOpen);
+    ui.drawerWrap.setAttribute("aria-hidden", drawerOpen ? "false":"true");
+    ui.drawerToggle.textContent = drawerOpen ? "Monitor ◂" : "Monitor ▸";
+    canvas.style.pointerEvents = drawerOpen ? "none" : "auto";
+    if(drawerOpen) syncTextarea();
+  }
+  ui.drawerToggle.addEventListener("click",()=>setDrawer(!drawerOpen));
+  ui.drawerFab.addEventListener("click",()=>setDrawer(!drawerOpen));
+  ui.scrim.addEventListener("click",()=>setDrawer(false));
+  ui.closeDrawer.addEventListener("click",()=>setDrawer(false));
+  addEventListener("keydown",(e)=>{ if(e.key==="Escape") setDrawer(false); });
+
+  /* boot */
+  function boot(){
+    ensureZones();
+    const base=[];
+    for(let i=0;i<90;i++){
+      const type=(i%6===0)?"network":(i%6===1)?"org":(i%6===2)?"place":(i%6===3)?"artifact":(i%6===4)?"human":"pole";
+      const layer=(i%5===0)?"ASTRO":(i%5===1)?"TAROT":"NEUTRE";
+      const zone=db.zones[irnd(0,db.zones.length)].id;
+      const conf=(Math.random()<0.7)?rnd(0.90,1.00):(Math.random()<0.6?rnd(0.70,0.89):rnd(0.45,0.69));
+      base.push(normEntity({
+        id:"E-"+String(i+1).padStart(3,"0"),
+        type,layer,zone,
+        confidence:+conf.toFixed(2),
+        display:{masked_name:(layer==="ASTRO"?"A":"T")+":"+type.toUpperCase()+":"+String(i+1).padStart(3,"0"),
+                real_name:"REAL:"+type.toUpperCase()+":"+String(i+1).padStart(3,"0")},
+        tags:[type,layer.toLowerCase()].filter(Boolean),
+        fields:{}
+      }));
+    }
+    db.entities=base;
+    const links=[];
+    for(let i=0;i<180;i++){
+      const a=db.entities[irnd(0,db.entities.length)].id;
+      const b=db.entities[irnd(0,db.entities.length)].id;
+      if(a===b) continue;
+      links.push(normLink({from:a,to:b,type:"connect",confidence:rnd(0.55,1.0),weight:rnd(0.6,1.3),fields:{confidence:rnd(0.55,1.0),sources:["synthetic"]}}));
+    }
+    db.links=links;
+    seedPositions();
+    renderMonitor(); renderDetails(); syncTextarea();
+    log("Boot: dataset synthétique (importe ton JSON via fichier ou textarea)");
+  }
+
+  /* loop */
+  let lastT=performance.now();
+  function tick(t){
+    const dt=Math.min(0.033,(t-lastT)/1000); lastT=t;
+    stepPhysics(dt);
+    draw();
+    requestAnimationFrame(tick);
+  }
+
+  ui.zoom.addEventListener("input",()=>setZoomFromUI());
+  boot();
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
