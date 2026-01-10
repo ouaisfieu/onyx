@@ -152,3 +152,23 @@ Si tu passes à des milliers d’entités :
 3. Backend seulement quand tu as besoin de **collaboration**, **publication**, ou **sync**.
 
 Si tu veux, je te propose un “roadmap 4 sprints” hyper concret (S0→S3) avec livrables et critères de réussite.
+
+
+...
+
+C’est fait 👍
+J’ai créé un **fichier `.md` complet** dans le canvas intitulé **“MASTER vs UI — Documentation complète”**.
+
+Tu peux :
+
+* le lire tranquillement,
+* le copier/coller sans te battre avec le chat,
+* l’exporter tel quel pour GitHub / docs / annexes.
+
+Si tu veux ensuite :
+
+* une **version encore plus courte** (1 page executive),
+* ou un **schéma visuel MASTER ⇄ UI**,
+* ou une **checklist qualité opendata** automatisable,
+
+tu me dis juste le numéro et on avance calmement.
