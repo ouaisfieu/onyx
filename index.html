@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>!NYXO / !NiXÖ — Saison 0 · Mission 1</title>
+
+<style>
+:root{
+  --bg:#0b0e11;
+  --panel:#11161c;
+  --grid:#1b2330;
+  --txt:#d6efe3;
+  --mut:#9bb7b0;
+  --green:#8fffd2;
+  --lilac:#c7a8ff;
+  --warn:#ffd27a;
+  --bad:#ff7aa5;
+  --accent:linear-gradient(90deg,var(--green),var(--lilac));
+  --mono:'Courier New', monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);}
+
+body{
+  background:
+    linear-gradient(180deg,#0b0e11,#06080b),
+    repeating-linear-gradient(to right,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px),
+    repeating-linear-gradient(to bottom,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px);
+}
+
+.container{max-width:1040px;margin:auto;padding:3rem 1.5rem 5rem;}
+.logo{
+  font-size:2.6rem;letter-spacing:.15em;margin:0;
+  background:var(--accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{color:var(--mut);margin:.7rem 0 2.2rem;line-height:1.5;}
+.panel{
+  background:rgba(17,22,28,.88);
+  border:1px solid #222a36;
+  border-radius:16px;
+  padding:2.4rem;
+  box-shadow:0 0 55px rgba(0,0,0,.65);
+}
+h2{
+  color:var(--lilac);
+  letter-spacing:.2em;
+  font-size:1rem;
+  margin:2.3rem 0 .9rem;
+}
+p{line-height:1.8;font-size:1rem;margin:.8rem 0;}
+ul{padding-left:1.4rem;margin:.6rem 0;}
+li{margin:.55rem 0;line-height:1.65;}
+kbd{
+  display:inline-block;
+  padding:.1rem .45rem;
+  border:1px solid #2b3442;
+  border-bottom-color:#1f2631;
+  border-radius:6px;
+  background:#0c1016;
+  color:var(--green);
+}
+.small{font-size:.92rem;color:var(--mut);}
+.hr{height:1px;background:#222a36;margin:2rem 0;}
+.callout{
+  margin:1.6rem 0;
+  padding:1.3rem 1.3rem;
+  border-left:4px solid;
+  border-image:var(--accent) 1;
+  background:#0d1218;
+  border-radius:10px;
+}
+.callout strong{color:var(--green);}
+.mission{
+  margin-top:1.6rem;
+  padding:1.8rem;
+  border:1px dashed #2a3342;
+  border-radius:14px;
+  background:#0c1016;
+}
+.mission h3{margin:.2rem 0 1rem;color:var(--green);letter-spacing:.12em;}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:900px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+.card{
+  background:#0c1016;
+  border:1px solid #222a36;
+  border-radius:14px;
+  padding:1.2rem;
+}
+.card h4{
+  margin:.1rem 0 .7rem;
+  color:var(--lilac);
+  letter-spacing:.12em;
+  font-size:.95rem;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.25rem .6rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  color:var(--mut);
+  font-size:.85rem;
+  margin:.2rem .3rem .2rem 0;
+}
+.badge i{
+  width:.55rem;height:.55rem;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(143,255,210,.35);
+  display:inline-block;
+}
+.badge.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.35);}
+.badge.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.30);}
+.btnrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.1rem;}
+button{
+  cursor:pointer;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+}
+button:hover{border-color:#3a475a;}
+button.primary{
+  border:0;
+  background:var(--accent);
+  color:#091015;
+  font-weight:700;
+}
+button.ghost{background:transparent;}
+textarea,input{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:.85rem .9rem;
+}
+textarea{min-height:140px;resize:vertical;}
+label{display:block;margin:.8rem 0 .4rem;color:var(--mut);font-size:.9rem;}
+.footer{
+  margin-top:2.4rem;
+  padding-top:1.5rem;
+  border-top:1px dashed #2a3342;
+  color:var(--mut);
+  font-size:.9rem;
+  line-height:1.6;
+}
+.note{color:var(--mut);font-size:.9rem;}
+.pill{
+  display:inline-block;
+  padding:.15rem .55rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  background:#0c1016;
+  color:var(--green);
+}
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#0c1016;border:1px solid #2a3342;color:var(--txt);
+  padding:.75rem .9rem;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  max-width:min(720px,92vw);
+}
+.toast.show{opacity:1;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1 class="logo">!NYXO / !NiXÖ</h1>
+  <div class="subtitle">
+    Saison 0 · <span class="pill">Mission 1</span><br>
+    <span class="small">Relier une activité à une autre — sans forcer, sans exposer, sans “faire un projet de plus”.</span>
+  </div>
+
+  <div class="panel">
+
+    <p>
+      Vous venez de passer la Mission 0 : <em>regarder autrement</em>.
+      Mission 1 est le premier petit pas dans le réel — un pas doux, reproductible, et utile.
+    </p>
+
+    <div class="callout">
+      <strong>Idée simple :</strong> dans un lieu de lien, des choses importantes se passent déjà.
+      Mission 1 consiste à <strong>relier</strong> une activité existante à une autre action très légère
+      pour lui donner un “après” (une trace, une circulation, un prolongement).
+    </div>
+
+    <h2>RÈGLE DE BASE</h2>
+    <ul>
+      <li>Rien d’obligatoire. Rien à prouver.</li>
+      <li>On ne publie rien de personnel sans accord.</li>
+      <li>On valorise sans exposer, on relie sans capturer.</li>
+      <li>On garde le dispositif plus petit que les personnes et plus léger que les lieux.</li>
+    </ul>
+
+    <div class="hr"></div>
+
+    <h2>MISSION 1 — VERSION GRAND PUBLIC</h2>
+
+    <div class="mission">
+      <h3>Choisissez une activité réelle (déjà existante)</h3>
+      <p class="note">
+        Atelier, visite sociale, permanence, discussion, ciné-club, jardinage, informatique, céramique, accueil,
+        sortie culturelle, réunion, atelier d’écriture… Tout marche.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <h4>Étape A — Identifier “ce qui mérite de durer”</h4>
+          <div class="badge"><i></i> 5 minutes</div>
+          <div class="badge purple"><i></i> Sans outils</div>
+          <ul>
+            <li>Qu’est-ce qui s’est joué ici (au-delà de l’activité) ?</li>
+            <li>Quel geste ordinaire mérite d’être reconnu ?</li>
+            <li>Quel lien humain a été renforcé ?</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Étape B — Ajouter un “après” ultra léger</h4>
+          <div class="badge"><i></i> 10 minutes</div>
+          <div class="badge warn"><i></i> Accord recommandé</div>
+          <ul>
+            <li>Une trace : 5 lignes de récit anonymes</li>
+            <li>Une transmission : une astuce / mini-tuto</li>
+            <li>Une passerelle : une idée de lien avec une autre activité</li>
+            <li>Une valorisation : une photo d’objet <em>sans visage</em> (si ok)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>3 modes au choix (vous prenez celui qui vous convient)</h3>
+      <div class="grid">
+        <div class="card">
+          <h4>Mode 1 — “Trace discrète” (le plus simple)</h4>
+          <ul>
+            <li>Écrire 5 à 10 lignes : ce qui a compté aujourd’hui.</li>
+            <li>Sans noms, sans détails intimes, sans jugement.</li>
+            <li>But : rendre visible ce qui est habituellement invisible.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Mode 2 — “Passerelle” (relier sans forcer)</h4>
+          <ul>
+            <li>Proposer une suite douce : un autre atelier, une sortie, une rencontre.</li>
+            <li>But : créer de la continuité, pas de la pression.</li>
+            <li>Une bonne passerelle est optionnelle et accueillante.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Mode 3 — “Artefact” (valoriser sans exposer)</h4>
+          <ul>
+            <li>Un objet, un texte, une idée, une mini-création.</li>
+            <li>But : montrer qu’une production peut avoir une vie.</li>
+            <li>Sans visage, sans données personnelles, sauf accord explicite.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Bonus — “Écho inter-lieux” (si vous aimez)</h4>
+          <ul>
+            <li>Formuler une question à poser ailleurs : “Chez vous, comment…”</li>
+            <li>But : créer un fil entre lieux sans les mettre en concurrence.</li>
+            <li>Le réseau se révèle plus tard, tranquillement.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h3>Outil intégré (optionnel) : rédiger votre trace en 2 minutes</h3>
+      <p class="note">
+        Cet outil ne collecte rien. Tout reste sur votre appareil. Vous pouvez copier-coller si vous le souhaitez.
+      </p>
+
+      <label for="act">1) Activité (en une phrase)</label>
+      <input id="act" placeholder="Ex : atelier céramique / accueil / sortie / permanence numérique..." />
+
+      <label for="what">2) Ce qui a compté (5–10 lignes)</label>
+      <textarea id="what" placeholder="Sans noms, sans détails intimes. Décrivez l’essentiel : un geste, une ambiance, une prise de conscience, un lien, une idée."></textarea>
+
+      <label for="bridge">3) Passerelle possible (optionnel)</label>
+      <textarea id="bridge" placeholder="Ex : Une suite douce / un autre atelier / une visite / une rencontre / une idée simple à tester ailleurs."></textarea>
+
+      <div class="btnrow">
+        <button class="primary" id="make">Générer un “log” !NYXO</button>
+        <button class="ghost" id="copy">Copier</button>
+        <button class="ghost" id="clear">Effacer</button>
+      </div>
+
+      <label for="out">Sortie</label>
+      <textarea id="out" readonly placeholder="Votre log apparaîtra ici."></textarea>
+
+      <div class="callout">
+        <strong>Critère de réussite :</strong> si, grâce à vous, une activité a gagné un “après”
+        (même minuscule), la mission est accomplie.
+      </div>
+    </div>
+
+    <h2>POUR LES PARTENAIRES (PERSONNES MORALES)</h2>
+    <p>
+      Mission 1 peut être utilisée par une équipe ou un lieu comme un micro-rituel de continuité :
+      <strong>5 minutes en fin d’activité</strong> pour produire une trace anonyme et une passerelle.
+      Cela renforce la mémoire, la transmissibilité, et la valeur sociale… sans charge administrative.
+    </p>
+
+    <h2>FERMETURE DE BOUCLE</h2>
+    <p>
+      Au début, il y avait une question : comment retrouver prise sur le réel sans qu’on nous l’explique d’en haut ?
+      Mission 1 n’apporte pas une réponse théorique.
+      Elle propose un geste : <strong>relier</strong>.
+    </p>
+    <p>
+      Si vous avez envie d’aller plus loin, la Mission 2 proposera de rendre une production
+      visible sans exposer les personnes — et de préparer les premiers échos entre lieux.
+    </p>
+
+    <div class="footer">
+      Saison 0 · Mission 1 — Document reproductible · Participation libre · Low-tech par défaut<br>
+      Conseil : commencez petit. Le réseau apparaît quand les liens existent déjà.
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const act = $("act"), what = $("what"), bridge = $("bridge"), out = $("out");
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1800);
+  }
+
+  function sanitize(s){
+    return (s||"").trim().replace(/\s+\n/g,"\n").replace(/\n{3,}/g,"\n\n");
+  }
+
+  $("make").addEventListener("click", ()=>{
+    const a = sanitize(act.value);
+    const w = sanitize(what.value);
+    const b = sanitize(bridge.value);
+
+    if(!a && !w && !b){
+      showToast("Ajoutez au moins une activité ou une trace.");
+      return;
+    }
+
+    const stamp = new Date();
+    const iso = stamp.toISOString().replace("T"," ").slice(0,19) + "Z";
+    const lines = [];
+
+    lines.push("!NYXO // SAISON_0 :: MISSION_1");
+    lines.push("HORODATAGE : " + iso);
+    if(a) lines.push("ACTIVITÉ   : " + a);
+    lines.push("");
+    if(w){
+      lines.push("TRACE (anonyme) :");
+      lines.push(w);
+      lines.push("");
+    }
+    if(b){
+      lines.push("PASSERELLE (optionnelle) :");
+      lines.push(b);
+      lines.push("");
+    }
+    lines.push("RÈGLE : rien d’obligatoire · pas d’expo sans accord · relier sans capturer");
+    out.value = lines.join("\n");
+    showToast("Log généré. Vous pouvez copier-coller.");
+  });
+
+  $("copy").addEventListener("click", async ()=>{
+    const text = out.value.trim();
+    if(!text){ showToast("Rien à copier."); return; }
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Copié dans le presse-papiers.");
+    }catch(e){
+      out.focus();
+      out.select();
+      document.execCommand("copy");
+      showToast("Copie tentée (mode compat).");
+    }
+  });
+
+  $("clear").addEventListener("click", ()=>{
+    act.value = "";
+    what.value = "";
+    bridge.value = "";
+    out.value = "";
+    showToast("Champs effacés.");
+  });
+})();
+</script>
+</body>
+</html>
