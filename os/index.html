@@ -10,16 +10,13 @@
     --ink:#eaf1ff;
     --mut:rgba(234,241,255,.68);
     --line:rgba(255,255,255,.14);
-    --glass:rgba(255,255,255,.06);
     --g:#10b981;
     --p:#a78bfa;
     --grad:linear-gradient(90deg,var(--g),var(--p));
     --shadow:0 24px 70px rgba(0,0,0,.55);
     --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,sans-serif;
-    --ok:#22c55e;
-    --warn:#f59e0b;
-    --bad:#ef4444;
+    --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;overflow:hidden;background:
@@ -40,7 +37,7 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
     opacity:.08;transform:rotate(2deg);mix-blend-mode:soft-light}
 
-  /* HUD (mobile-first) */
+  /* HUD */
   .hud{
     position:fixed;left:10px;right:10px;top:10px;z-index:10;
     padding-top: env(safe-area-inset-top);
@@ -64,23 +61,19 @@
   }
   .logoBtn:after{content:"!NYXO";font-size:12px}
 
-  .toolbarWrap{
-    pointer-events:auto;
-    flex:1;
-    display:flex;
-    justify-content:flex-end;
-  }
+  .toolbarWrap{pointer-events:auto;flex:1;display:flex;justify-content:flex-end}
   .toolbar{
-    display:flex;
-    gap:8px;
-    align-items:center;
-    flex-wrap:wrap;
-    justify-content:flex-end;
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:18px;
+    padding:8px;
+    backdrop-filter: blur(10px);
   }
 
   .btn,.pill,.field,.chip{
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-    border:1px solid var(--line);
+    border:1px solid rgba(255,255,255,.14);
     border-radius:14px;
     box-shadow:var(--shadow);
     backdrop-filter: blur(10px);
@@ -111,45 +104,31 @@
     color:var(--ink);font-family:var(--mono);font-size:12px;
   }
 
-  /* MOBILE: toolbar becomes a single horizontal scroll row (no “encaissement”) */
+  /* Mobile: toolbar horizontal scroll */
   @media (max-width: 860px){
-    .hud{align-items:flex-start}
-    .toolbarWrap{justify-content:flex-start}
-    .toolbar{
-      flex-wrap:nowrap;
-      overflow:auto;
-      -webkit-overflow-scrolling:touch;
-      scrollbar-width:none;
-      gap:10px;
-      padding-bottom:2px;
-      max-width:100%;
-    }
+    .toolbar{flex-wrap:nowrap;overflow:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
     .toolbar::-webkit-scrollbar{display:none}
     .field input[type="text"]{width:min(220px, 62vw)}
   }
 
-  /* Floating Monitor FAB (always accessible, especially mobile) */
+  /* Monitor FAB */
   .fab{
     position:fixed;right:12px;bottom:12px;z-index:25;
     padding-bottom: env(safe-area-inset-bottom);
   }
   .fab .btn{
-    border-radius:18px;
-    padding:12px 14px;
-    border:0;
-    background:var(--grad);
-    color:#061017;
-    font-weight:900;
+    border-radius:18px;padding:12px 14px;border:0;
+    background:var(--grad);color:#061017;font-weight:900;
   }
 
-  /* Drawer */
+  /* Drawer (FULLSCREEN overlay when open) */
   .drawerWrap{position:fixed;inset:0;z-index:30;pointer-events:none}
-  .scrim{position:absolute;inset:0;background:rgba(0,0,0,.60);opacity:0;transition:opacity .18s ease}
+  .scrim{position:absolute;inset:0;background:rgba(0,0,0,.72);opacity:0;transition:opacity .18s ease}
   .drawer{
-    position:absolute;top:0;right:0;bottom:0;
-    width:min(560px, 94vw);
-    transform:translateX(105%);
-    transition:transform .22s ease;
+    position:absolute;inset:0; /* full screen */
+    transform:translateY(6px);
+    opacity:0;
+    transition:opacity .18s ease, transform .18s ease;
     padding:10px;
     padding-top: calc(10px + env(safe-area-inset-top));
     padding-bottom: calc(10px + env(safe-area-inset-bottom));
@@ -157,10 +136,10 @@
   }
   .panel{
     background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-    border:1px solid var(--line);
+    border:1px solid rgba(255,255,255,.14);
     border-radius:18px;
     box-shadow:var(--shadow);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
     overflow:hidden;
   }
   .hd{
@@ -168,44 +147,35 @@
     padding:12px;border-bottom:1px solid rgba(255,255,255,.10)
   }
   .hd .h{font-weight:900;letter-spacing:.08em;font-size:12px;color:rgba(234,241,255,.88)}
-  .bd{padding:12px;overflow:auto;max-height:calc(100vh - 130px)}
+  .bd{padding:12px;overflow:auto;max-height:calc(100vh - 110px)}
   .drawerWrap.open{pointer-events:auto}
   .drawerWrap.open .scrim{opacity:1}
-  .drawerWrap.open .drawer{transform:translateX(0)}
+  .drawerWrap.open .drawer{opacity:1;transform:translateY(0)}
 
   textarea{
     width:100%;
     min-height:240px;
-    height:42vh;          /* IMPORTANT: ensures visible on mobile */
+    height:38vh;
     max-height:52vh;
     resize:vertical;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.14);
-    background:rgba(0,0,0,.22);
-    color:var(--ink);
-    font-family:var(--mono);
-    font-size:12px;
-    line-height:1.45;
-    padding:10px;
-    outline:none;
+    border-radius:14px;border:1px solid rgba(255,255,255,.14);
+    background:rgba(0,0,0,.22);color:var(--ink);
+    font-family:var(--mono);font-size:12px;line-height:1.45;padding:10px;outline:none;
   }
 
   /* Monitor blocks */
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media(max-width:560px){ .grid2{grid-template-columns:1fr} }
-
+  @media(max-width:900px){ .grid2{grid-template-columns:1fr} }
   .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   @media(max-width:560px){ .kpis{grid-template-columns:1fr 1fr} }
 
-  .kpi{
-    padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);
-    background:rgba(0,0,0,.18)
-  }
+  .kpi{padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18)}
   .kpi .t{font-size:12px;color:var(--mut)}
   .kpi .v{font-family:var(--mono);font-weight:900;font-size:18px;margin-top:6px}
   .bar{height:10px;border-radius:999px;background:rgba(255,255,255,.10);overflow:hidden;margin-top:10px}
   .bar>i{display:block;height:100%;background:var(--grad);width:0%}
   .mini{font-size:11px;color:rgba(234,241,255,.62);margin-top:8px}
+
   .rowbtn{display:flex;gap:8px;flex-wrap:wrap}
   .sep{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
   .chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -213,26 +183,18 @@
   .chip.ok{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.10)}
   .chip.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.10)}
   .chip.bad{border-color:rgba(239,68,68,.35);background:rgba(239,68,68,.10)}
-  .list{
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:16px;overflow:hidden;background:rgba(0,0,0,.18)
-  }
-  .item{
-    padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);
-    display:flex;gap:10px;align-items:flex-start;cursor:pointer
-  }
+  .list{border:1px solid rgba(255,255,255,.10);border-radius:16px;overflow:hidden;background:rgba(0,0,0,.18)}
+  .item{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:10px;align-items:flex-start;cursor:pointer}
   .item:last-child{border-bottom:0}
   .badge{width:10px;height:10px;border-radius:50%;margin-top:4px;flex:0 0 auto;opacity:.95}
   .item .meta{flex:1}
   .item .id{font-family:var(--mono);font-size:12px;font-weight:900}
   .item .sub{font-size:12px;color:var(--mut);margin-top:2px}
   .item .right{font-family:var(--mono);font-size:11px;color:rgba(234,241,255,.70)}
-  .hint{
-    border-left:6px solid rgba(16,185,129,.55);
-    background:rgba(16,185,129,.08);
-    border:1px solid rgba(16,185,129,.20);
-    border-radius:16px;padding:10px 12px;color:rgba(234,241,255,.82);font-size:12px
-  }
+  .hint{border-left:6px solid rgba(16,185,129,.55);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.20);border-radius:16px;padding:10px 12px;color:rgba(234,241,255,.82);font-size:12px}
+
+  /* file input hidden */
+  #fileInput{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 </style>
 </head>
 <body>
@@ -255,13 +217,11 @@
       <div class="field"><label>Zoom</label><input id="zoom" type="range" min="40" max="180" value="100"></div>
       <div class="field"><label>Filtre</label><input id="filter" type="text" placeholder="type:place tag:atelier confidence:>0.8"></div>
 
-      <!-- IMPORTANT: we keep this button, but FAB is the guaranteed access -->
       <button class="btn" id="drawerToggle">Monitor ▸</button>
     </div>
   </div>
 </div>
 
-<!-- Guaranteed access (mobile-first): floating Monitor button -->
 <div class="fab">
   <button class="btn" id="drawerFab">Monitor</button>
 </div>
@@ -269,10 +229,13 @@
 <div class="drawerWrap" id="drawerWrap" aria-hidden="true">
   <div class="scrim" id="scrim"></div>
   <div class="drawer" role="dialog" aria-label="NYXO Monitor">
-    <div class="panel">
+    <div class="panel" style="flex:1;min-height:0">
       <div class="hd">
         <div class="h">NYXO Monitor</div>
-        <button class="btn" id="closeDrawer">✕</button>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn" id="importFileBtn">Importer .json</button>
+          <button class="btn" id="closeDrawer">✕</button>
+        </div>
       </div>
       <div class="bd">
         <div class="kpis">
@@ -312,7 +275,7 @@
               <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Entités (filtrées)</div>
               <div class="right" style="font-family:var(--mono);font-size:11px;color:rgba(234,241,255,.70)">clic = détails</div>
             </div>
-            <div class="list" id="entityList" style="margin-top:10px;max-height:240px;overflow:auto"></div>
+            <div class="list" id="entityList" style="margin-top:10px;max-height:260px;overflow:auto"></div>
           </div>
 
           <div>
@@ -329,12 +292,16 @@
 
         <div class="grid2">
           <div>
-            <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Import / Export JSON</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+              <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Import / Export JSON</div>
+              <div class="rowbtn">
+                <button class="btn" id="exportBtn">Exporter</button>
+                <button class="btn" id="sampleBtn">Exemple</button>
+                <button class="btn primary" id="applyBtn">Appliquer</button>
+              </div>
+            </div>
             <textarea id="jsonArea" spellcheck="false" style="margin-top:10px"></textarea>
             <div class="rowbtn" style="margin-top:10px">
-              <button class="btn primary" id="applyBtn">Appliquer</button>
-              <button class="btn" id="exportBtn">Exporter</button>
-              <button class="btn" id="sampleBtn">Exemple</button>
               <button class="btn" id="clearBtn">Vider</button>
             </div>
             <div class="mini" style="margin-top:10px">
@@ -344,22 +311,21 @@
 
           <div>
             <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Journal</div>
-            <div class="list" id="log" style="margin-top:10px;max-height:320px;overflow:auto"></div>
+            <div class="list" id="log" style="margin-top:10px;max-height:360px;overflow:auto"></div>
           </div>
         </div>
 
         <div class="sep"></div>
         <div class="hint">
-          Pan: drag fond · Zoom: molette / slider · Sélection: clic · Fermer: ESC
-          <div class="mini" style="margin-top:8px">
-            Filtre: <span style="font-family:var(--mono)">type:place tag:atelier layer:ASTRO zone:Z-01 confidence:&gt;0.8</span>
-          </div>
+          Monitor plein écran · Fermer: ESC · Import: bouton “Importer .json” (ou coller + Appliquer)
         </div>
 
       </div>
     </div>
   </div>
 </div>
+
+<input id="fileInput" type="file" accept=".json,application/json"/>
 
 <script>
 (() => {
@@ -382,6 +348,9 @@
     scrim: document.getElementById("scrim"),
     closeDrawer: document.getElementById("closeDrawer"),
 
+    importFileBtn: document.getElementById("importFileBtn"),
+    fileInput: document.getElementById("fileInput"),
+
     kEnt: document.getElementById("kEnt"),
     kRel: document.getElementById("kRel"),
     kZon: document.getElementById("kZon"),
@@ -403,7 +372,6 @@
     log: document.getElementById("log")
   };
 
-  /* --- canvas resize --- */
   function resize(){
     const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
     canvas.width = Math.floor(innerWidth * dpr);
@@ -415,13 +383,14 @@
   addEventListener("resize", resize);
   resize();
 
-  /* --- Drawer --- */
   let drawerOpen=false;
   function setDrawer(open){
     drawerOpen=!!open;
     ui.drawerWrap.classList.toggle("open", drawerOpen);
     ui.drawerWrap.setAttribute("aria-hidden", drawerOpen ? "false":"true");
     ui.drawerToggle.textContent = drawerOpen ? "Monitor ◂" : "Monitor ▸";
+    // when open, disable pointer on canvas feel-wise (not required but nicer)
+    canvas.style.pointerEvents = drawerOpen ? "none" : "auto";
   }
   ui.drawerToggle.addEventListener("click",()=>setDrawer(!drawerOpen));
   ui.drawerFab.addEventListener("click",()=>setDrawer(!drawerOpen));
@@ -429,7 +398,6 @@
   ui.closeDrawer.addEventListener("click",()=>setDrawer(false));
   addEventListener("keydown",(e)=>{ if(e.key==="Escape") setDrawer(false); });
 
-  /* --- Utils --- */
   const rnd=(a,b)=>a+Math.random()*(b-a);
   const irnd=(a,b)=>Math.floor(rnd(a,b));
   const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -441,10 +409,10 @@
     return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
   function log(msg){
-    const t = new Date().toLocaleTimeString();
+    const t=new Date().toLocaleTimeString();
     const div=document.createElement("div");
     div.className="item";
-    div.innerHTML = `<span class="badge" style="background:rgba(255,255,255,.6)"></span>
+    div.innerHTML=`<span class="badge" style="background:rgba(255,255,255,.6)"></span>
       <div class="meta"><div class="id">${escapeHtml(t)}</div><div class="sub">${escapeHtml(msg)}</div></div>`;
     ui.log.prepend(div);
   }
@@ -455,52 +423,45 @@
     return `rgba(234,241,255,${a})`;
   }
 
-  /* --- View --- */
-  const view = { x: innerWidth*0.5, y: innerHeight*0.5, z: 1, dragging:false, lx:0, ly:0 };
-  function setZoomFromUI(){ view.z = ui.zoom.value/100; }
+  const view={ x: innerWidth*0.5, y: innerHeight*0.5, z:1, dragging:false, lx:0, ly:0 };
+  function setZoomFromUI(){ view.z=ui.zoom.value/100; }
   setZoomFromUI();
 
-  /* --- State --- */
   let mode="ZONES";
   let lastMouse=null;
   let hovered=null, selected=null;
 
-  /* --- Dataset --- */
-  let db = { meta:{dataset:"nyxo-monitor"}, entities:[], links:[], zones:[] };
+  let db={ meta:{dataset:"nyxo-monitor"}, entities:[], links:[], zones:[] };
 
   function normEntity(e){
-    const id = String(e.id || uid("ent"));
-    const type = String(e.type || "unknown").toLowerCase();
-    const layer = (e.layer || e.fields?.layer?.value || "NEUTRE");
-    const L = String(layer).toUpperCase();
-    const confidence = Number.isFinite(+e.confidence) ? clamp(+e.confidence, 0, 1) : 0.5;
-    const display = e.display || {};
-    const real_name = (display.real_name != null) ? String(display.real_name) : "";
-    const masked_name = (display.masked_name != null) ? String(display.masked_name) : id;
-    const tags = Array.isArray(e.tags) ? e.tags.map(String) :
-      (Array.isArray(e.fields?.tags?.value) ? e.fields.tags.value.map(String) : []);
-    const zone = (e.zone != null) ? String(e.zone) :
-      (e.fields?.zone?.value != null ? String(e.fields.zone.value) : "");
-    const fields = (e.fields && typeof e.fields==="object") ? e.fields : {};
-    return { ...e, id, type: TYPES.includes(type)?type:"unknown", layer: LAYERS.includes(L)?L:"NEUTRE",
-      confidence, display:{real_name,masked_name}, tags, zone, fields };
+    const id=String(e.id || uid("ent"));
+    const type=String(e.type || "unknown").toLowerCase();
+    const layer=(e.layer || e.fields?.layer?.value || "NEUTRE");
+    const L=String(layer).toUpperCase();
+    const confidence=Number.isFinite(+e.confidence)?clamp(+e.confidence,0,1):0.5;
+    const display=e.display||{};
+    const real_name=(display.real_name!=null)?String(display.real_name):"";
+    const masked_name=(display.masked_name!=null)?String(display.masked_name):id;
+    const tags=Array.isArray(e.tags)?e.tags.map(String):(Array.isArray(e.fields?.tags?.value)?e.fields.tags.value.map(String):[]);
+    const zone=(e.zone!=null)?String(e.zone):(e.fields?.zone?.value!=null?String(e.fields.zone.value):"");
+    const fields=(e.fields && typeof e.fields==="object")?e.fields:{};
+    return {...e,id,type:TYPES.includes(type)?type:"unknown",layer:LAYERS.includes(L)?L:"NEUTRE",
+      confidence,display:{real_name,masked_name},tags,zone,fields};
   }
   function normLink(l){
-    const id = String(l.id || uid("lnk"));
-    const from = String(l.from || l.a || "");
-    const to = String(l.to || l.b || "");
-    const type = String(l.type || l.kind || "connect");
-    const confidence =
-      (l.fields && Number.isFinite(+l.fields.confidence)) ? clamp(+l.fields.confidence,0,1) :
-      (Number.isFinite(+l.confidence) ? clamp(+l.confidence,0,1) : 0.6);
-    const weight = Number.isFinite(+l.weight) ? +l.weight : 1;
-    return { ...l, id, from, to, type, confidence, weight, fields:(l.fields&&typeof l.fields==="object")?l.fields:{} };
+    const id=String(l.id || uid("lnk"));
+    const from=String(l.from || l.a || "");
+    const to=String(l.to || l.b || "");
+    const type=String(l.type || l.kind || "connect");
+    const confidence=(l.fields && Number.isFinite(+l.fields.confidence))?clamp(+l.fields.confidence,0,1):(Number.isFinite(+l.confidence)?clamp(+l.confidence,0,1):0.6);
+    const weight=Number.isFinite(+l.weight)?+l.weight:1;
+    return {...l,id,from,to,type,confidence,weight,fields:(l.fields&&typeof l.fields==="object")?l.fields:{}};
   }
   function normZone(z){
-    const id = String(z.id || uid("Z"));
-    const layer = String(z.layer || "NEUTRE").toUpperCase();
-    const opacity = Number.isFinite(+z.opacity) ? clamp(+z.opacity,0.05,0.7) : 0.22;
-    return { ...z, id,
+    const id=String(z.id || uid("Z"));
+    const layer=String(z.layer || "NEUTRE").toUpperCase();
+    const opacity=Number.isFinite(+z.opacity)?clamp(+z.opacity,0.05,0.7):0.22;
+    return {...z,id,
       x:Number.isFinite(+z.x)?+z.x:rnd(-520,520),
       y:Number.isFinite(+z.y)?+z.y:rnd(-340,340),
       sizeKm2:1,
@@ -508,20 +469,19 @@
       opacity
     };
   }
-
   function ensureZones(){
     if(!Array.isArray(db.zones)) db.zones=[];
     if(db.zones.length===0){
       for(let i=0;i<16;i++){
         const layer=(i%3===0)?"ASTRO":(i%3===1)?"TAROT":"NEUTRE";
-        db.zones.push(normZone({id:"Z-"+String(i+1).padStart(2,"0"), x:rnd(-520,520), y:rnd(-340,340), layer, opacity: layer==="NEUTRE"?0.20:0.26}));
+        db.zones.push(normZone({id:"Z-"+String(i+1).padStart(2,"0"),x:rnd(-520,520),y:rnd(-340,340),layer,opacity:layer==="NEUTRE"?0.20:0.26}));
       }
-    } else db.zones = db.zones.map(normZone);
+    } else db.zones=db.zones.map(normZone);
   }
   function seedPositions(){
     const zoneMap=new Map(db.zones.map(z=>[z.id,z]));
     for(const e of db.entities){
-      const z = zoneMap.get(e.zone) || db.zones[irnd(0,db.zones.length)];
+      const z=zoneMap.get(e.zone) || db.zones[irnd(0,db.zones.length)];
       const spread=70;
       e._x=(z?.x||0)+rnd(-spread,spread);
       e._y=(z?.y||0)+rnd(-spread,spread);
@@ -530,7 +490,6 @@
     }
   }
 
-  /* --- Filtering --- */
   function parseFilter(s){
     const q=(s||"").trim();
     const res={text:"",tag:null,type:null,layer:null,zone:null,confOp:null,confVal:null};
@@ -546,14 +505,14 @@
         else if(k==="zone") res.zone=v;
         else if(k==="confidence"||k==="conf"){
           const mm=v.match(/^(>=|<=|>|<|=)?\s*([0-9]*\.?[0-9]+)$/);
-          if(mm){ res.confOp = mm[1]||">="; res.confVal = parseFloat(mm[2]); }
+          if(mm){ res.confOp=mm[1]||">="; res.confVal=parseFloat(mm[2]); }
         }
       } else res.text += (res.text?" ":"")+p.toLowerCase();
     }
     return res;
   }
-  function passConf(c, op, val){
-    if(op==null || val==null) return true;
+  function passConf(c,op,val){
+    if(op==null||val==null) return true;
     if(op===">") return c>val;
     if(op===">=") return c>=val;
     if(op==="<") return c<val;
@@ -566,56 +525,50 @@
     if(f.layer && e.layer!==f.layer) return false;
     if(f.zone && e.zone!==f.zone) return false;
     if(f.tag && !(e.tags||[]).some(t=>String(t).toLowerCase()===f.tag)) return false;
-    if(!passConf(e.confidence, f.confOp, f.confVal)) return false;
+    if(!passConf(e.confidence,f.confOp,f.confVal)) return false;
     if(f.text){
       const name = ui.reveal.checked ? (e.display.real_name||"") : (e.display.masked_name||"");
-      const hay = (e.id+" "+e.type+" "+e.layer+" "+e.zone+" "+(e.tags||[]).join(" ")+" "+name).toLowerCase();
+      const hay=(e.id+" "+e.type+" "+e.layer+" "+e.zone+" "+(e.tags||[]).join(" ")+" "+name).toLowerCase();
       if(!hay.includes(f.text)) return false;
     }
     return true;
   }
   function confBucket(c){ return (c>=0.90)?"ok":(c>=0.70)?"warn":"bad"; }
 
-  /* --- Monitor rendering --- */
   function renderMonitor(){
     const f=parseFilter(ui.filter.value);
     const ents=db.entities.filter(e=>entityMatches(e,f));
+    ui.kEnt.textContent=String(ents.length);
+    ui.kRel.textContent=String(db.links.length);
+    ui.kZon.textContent=String(db.zones.length);
 
-    document.getElementById("kEnt").textContent = String(ents.length);
-    document.getElementById("kRel").textContent = String(db.links.length);
-    document.getElementById("kZon").textContent = String(db.zones.length);
-
-    const avg = ents.length ? ents.reduce((a,e)=>a+e.confidence,0)/ents.length : 0;
-    document.getElementById("kConf").textContent = avg.toFixed(2);
-    document.getElementById("confBar").style.width = Math.round(avg*100)+"%";
+    const avg=ents.length?ents.reduce((a,e)=>a+e.confidence,0)/ents.length:0;
+    ui.kConf.textContent=avg.toFixed(2);
+    ui.confBar.style.width=Math.round(avg*100)+"%";
 
     const counts={ok:0,warn:0,bad:0};
     for(const e of ents) counts[confBucket(e.confidence)]++;
-    document.getElementById("confMini").textContent = `OK:${counts.ok} · À vérifier:${counts.warn} · Risque:${counts.bad}`;
+    ui.confMini.textContent=`OK:${counts.ok} · À vérifier:${counts.warn} · Risque:${counts.bad}`;
 
-    // types
     const byType={};
     for(const e of ents) byType[e.type]=(byType[e.type]||0)+1;
-    ui.typeChips.innerHTML = Object.keys(byType).sort((a,b)=>byType[b]-byType[a]).map(t=>
+    ui.typeChips.innerHTML=Object.keys(byType).sort((a,b)=>byType[b]-byType[a]).map(t=>
       `<span class="chip">${escapeHtml(t)} · <b>${byType[t]}</b></span>`
     ).join("") || `<span class="mini">—</span>`;
 
-    ui.riskChips.innerHTML = `
+    ui.riskChips.innerHTML=`
       <span class="chip ok">OK · <b>${counts.ok}</b></span>
       <span class="chip warn">À vérifier · <b>${counts.warn}</b></span>
       <span class="chip bad">Risque · <b>${counts.bad}</b></span>
     `;
 
-    // list
     ui.entityList.innerHTML="";
-    const list=ents.slice().sort((a,b)=>(b.confidence-a.confidence)||a.id.localeCompare(b.id)).slice(0,260);
+    const list=ents.slice().sort((a,b)=>(b.confidence-a.confidence)||a.id.localeCompare(b.id)).slice(0,320);
     for(const e of list){
       const b=confBucket(e.confidence);
       const dot=b==="ok"?"rgba(34,197,94,.9)":b==="warn"?"rgba(245,158,11,.9)":"rgba(239,68,68,.9)";
-      const name = ui.reveal.checked
-        ? (e.display.real_name || e.display.masked_name || e.id)
-        : (e.display.masked_name || e.id);
-      const sub = `${e.type} · ${e.layer}${e.zone?(" · "+e.zone):""} · conf:${e.confidence.toFixed(2)}`;
+      const name=ui.reveal.checked ? (e.display.real_name||e.display.masked_name||e.id) : (e.display.masked_name||e.id);
+      const sub=`${e.type} · ${e.layer}${e.zone?(" · "+e.zone):""} · conf:${e.confidence.toFixed(2)}`;
       const div=document.createElement("div");
       div.className="item";
       div.innerHTML=`<span class="badge" style="background:${dot}"></span>
@@ -637,19 +590,15 @@
       return;
     }
     const e=selected;
-    const name = ui.reveal.checked
-      ? (e.display.real_name || e.display.masked_name || e.id)
-      : (e.display.masked_name || e.id);
-
+    const name=ui.reveal.checked ? (e.display.real_name||e.display.masked_name||e.id) : (e.display.masked_name||e.id);
     const b=confBucket(e.confidence);
     const dotClass=b==="ok"?"ok":b==="warn"?"warn":"bad";
 
-    // fields
     const fieldRows=[];
     if(e.fields && typeof e.fields==="object"){
       for(const [k,v] of Object.entries(e.fields)){
         if(v && typeof v==="object" && ("value" in v || "confidence" in v || "sources" in v)){
-          const val=("value" in v) ? v.value : v;
+          const val=("value" in v)?v.value:v;
           const conf=Number.isFinite(+v.confidence)?+v.confidence:null;
           const src=Array.isArray(v.sources)?v.sources.join(", "):"";
           fieldRows.push({k,val:(typeof val==="string")?val:JSON.stringify(val),conf,src});
@@ -657,7 +606,6 @@
       }
     }
 
-    // links
     const out=db.links.filter(l=>l.from===e.id);
     const inn=db.links.filter(l=>l.to===e.id);
     const idToEnt=new Map(db.entities.map(x=>[x.id,x]));
@@ -667,7 +615,7 @@
       return ui.reveal.checked ? (p.display.real_name||p.display.masked_name||p.id) : (p.display.masked_name||p.id);
     };
 
-    ui.details.innerHTML = `
+    ui.details.innerHTML=`
       <div class="chips" style="margin-bottom:10px">
         <span class="chip ${dotClass}">${b.toUpperCase()}</span>
         <span class="chip">type:${escapeHtml(e.type)}</span>
@@ -684,7 +632,7 @@
       <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Champs</div>
       <div class="list" style="margin-top:10px">
         ${
-          fieldRows.length ? fieldRows.slice(0,80).map(r=>`
+          fieldRows.length ? fieldRows.slice(0,120).map(r=>`
             <div class="item" style="cursor:default">
               <span class="badge" style="background:rgba(255,255,255,.40)"></span>
               <div class="meta">
@@ -703,7 +651,7 @@
         <div>
           <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Liens sortants</div>
           <div class="list" style="margin-top:10px">
-            ${out.length ? out.slice(0,120).map(l=>`
+            ${out.length ? out.slice(0,160).map(l=>`
               <div class="item" data-jump="${escapeHtml(l.to)}">
                 <span class="badge" style="background:${l.confidence>=.9?'rgba(34,197,94,.9)':l.confidence>=.7?'rgba(245,158,11,.9)':'rgba(239,68,68,.9)'}"></span>
                 <div class="meta">
@@ -717,7 +665,7 @@
         <div>
           <div style="font-weight:900;letter-spacing:.06em;font-size:12px;color:rgba(234,241,255,.88)">Liens entrants</div>
           <div class="list" style="margin-top:10px">
-            ${inn.length ? inn.slice(0,120).map(l=>`
+            ${inn.length ? inn.slice(0,160).map(l=>`
               <div class="item" data-jump="${escapeHtml(l.from)}">
                 <span class="badge" style="background:${l.confidence>=.9?'rgba(34,197,94,.9)':l.confidence>=.7?'rgba(245,158,11,.9)':'rgba(239,68,68,.9)'}"></span>
                 <div class="meta">
@@ -740,7 +688,6 @@
     });
   }
 
-  /* --- Canvas draw/physics --- */
   function worldToScreen(wx,wy){ return { x:(wx*view.z)+view.x, y:(wy*view.z)+view.y }; }
   function screenToWorld(sx,sy){ return { x:(sx-view.x)/view.z, y:(sy-view.y)/view.z }; }
   function typeRadius(type){
@@ -756,7 +703,7 @@
   function stepPhysics(dt){
     const f=parseFilter(ui.filter.value);
     const ents=db.entities;
-    const isGraph=mode==="GRAPH";
+    const isGraph=(mode==="GRAPH");
     const linkK=isGraph?0.016:0.004;
     const repulse=isGraph?5200:1600;
     const damping=isGraph?0.86:0.90;
@@ -839,7 +786,6 @@
   function draw(){
     ctx.clearRect(0,0,innerWidth,innerHeight);
 
-    // grid
     ctx.save();
     ctx.globalAlpha = mode==="GRAPH" ? 0.18 : 0.24;
     ctx.strokeStyle = "rgba(255,255,255,.06)";
@@ -854,7 +800,6 @@
     const allowOverlap=ui.overlap.checked;
     const f=parseFilter(ui.filter.value);
 
-    // fields in GRAPH
     if(mode==="GRAPH"){
       ctx.save();
       const left=worldToScreen(-360,-90), right=worldToScreen(360,90);
@@ -867,7 +812,6 @@
       ctx.restore();
     }
 
-    // zones
     const zonePx = mode==="GRAPH" ? 170 : 240;
     const zoneAlphaBoost = mode==="GRAPH" ? 0.45 : 1.0;
     for(const z of db.zones){
@@ -885,7 +829,6 @@
       ctx.restore();
     }
 
-    // links (graph or selected)
     const idMap=new Map(db.entities.map(e=>[e.id,e]));
     if(mode==="GRAPH" || selected){
       ctx.save();
@@ -894,13 +837,10 @@
         const a=idMap.get(l.from), b=idMap.get(l.to);
         if(!a||!b) continue;
         if(!entityMatches(a,f) && !entityMatches(b,f)) continue;
-
         const as=worldToScreen(a._x,a._y);
         const bs=worldToScreen(b._x,b._y);
-
         let alpha = (mode==="GRAPH") ? 0.18 : 0.10;
         if(selected && (l.from===selected.id || l.to===selected.id)) alpha=0.42;
-
         let col=`rgba(234,241,255,${alpha})`;
         if(mode==="GRAPH"){
           const same=(a.layer===b.layer)?a.layer:null;
@@ -918,7 +858,6 @@
       ctx.restore();
     }
 
-    // nodes
     hovered=null;
     const mw=lastMouse?screenToWorld(lastMouse.x,lastMouse.y):null;
     const hitR=11/view.z;
@@ -926,7 +865,6 @@
     for(const e of db.entities){
       if(!entityMatches(e,f)) continue;
       const s=worldToScreen(e._x,e._y);
-
       if(mw){
         const dx=e._x-mw.x, dy=e._y-mw.y;
         if(dx*dx+dy*dy < hitR*hitR) hovered=e;
@@ -947,10 +885,10 @@
       ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2); ctx.fill();
 
       let ring="rgba(255,255,255,.22)";
-      const b=confBucket(e.confidence);
-      if(b==="ok") ring="rgba(34,197,94,.45)";
-      if(b==="warn") ring="rgba(245,158,11,.45)";
-      if(b==="bad") ring="rgba(239,68,68,.45)";
+      const bb=confBucket(e.confidence);
+      if(bb==="ok") ring="rgba(34,197,94,.45)";
+      if(bb==="warn") ring="rgba(245,158,11,.45)";
+      if(bb==="bad") ring="rgba(239,68,68,.45)";
       ctx.strokeStyle=ring; ctx.lineWidth=1.2;
       ctx.beginPath(); ctx.arc(s.x,s.y,r+2*view.z,0,Math.PI*2); ctx.stroke();
 
@@ -966,19 +904,16 @@
 
       const canLabel = showLabels && (mode==="GRAPH" || view.z>=0.95);
       if(canLabel){
-        const name = ui.reveal.checked
-          ? (e.display.real_name || e.display.masked_name || e.id)
-          : (e.display.masked_name || e.id);
+        const name=ui.reveal.checked ? (e.display.real_name||e.display.masked_name||e.id) : (e.display.masked_name||e.id);
         ctx.fillStyle="rgba(234,241,255,.80)";
         ctx.font=`${Math.max(10,11*view.z)}px ${getComputedStyle(document.documentElement).getPropertyValue('--mono')||'monospace'}`;
         ctx.fillText(name, s.x+10*view.z, s.y-8*view.z);
       }
-
       ctx.restore();
     }
   }
 
-  /* --- Interactions --- */
+  /* interactions */
   canvas.addEventListener("mousemove",(e)=>{
     lastMouse={x:e.clientX,y:e.clientY};
     if(view.dragging){
@@ -1008,16 +943,10 @@
 
   canvas.addEventListener("click",(e)=>{
     lastMouse={x:e.clientX,y:e.clientY};
-    if(hovered){
-      selected=hovered;
-      renderDetails();
-    } else {
-      selected=null;
-      renderDetails();
-    }
+    if(hovered){ selected=hovered; renderDetails(); }
+    else { selected=null; renderDetails(); }
   });
 
-  /* --- UI --- */
   ui.zoom.addEventListener("input",()=>setZoomFromUI());
   ui.modeBtn.addEventListener("click",()=>{
     mode=(mode==="ZONES")?"GRAPH":"ZONES";
@@ -1027,9 +956,7 @@
   });
   ui.regenBtn.addEventListener("click",()=>{
     for(const z of db.zones){ z.x=rnd(-520,520); z.y=rnd(-340,340); }
-    seedPositions();
-    renderMonitor();
-    log("Zones remélangées");
+    seedPositions(); renderMonitor(); log("Zones remélangées");
   });
   ui.homeBtn.addEventListener("click",()=>{
     view.x=innerWidth*0.5; view.y=innerHeight*0.5; view.z=1; ui.zoom.value=100;
@@ -1037,15 +964,12 @@
   });
 
   ui.filter.addEventListener("input",()=>renderMonitor());
-
-  // IMPORTANT: real-name switch now forces immediate redraw + refresh monitor/details
   ui.reveal.addEventListener("change",()=>{
-    renderMonitor();
-    renderDetails();
+    renderMonitor(); renderDetails();
     log(ui.reveal.checked ? "Noms réels: ON" : "Noms réels: OFF");
   });
 
-  /* --- JSON sync/import/export --- */
+  /* JSON sync/import/export */
   function syncTextarea(){
     ui.jsonArea.value = JSON.stringify({
       meta: db.meta || { dataset:"nyxo-monitor" },
@@ -1061,6 +985,29 @@
     }, null, 2);
   }
 
+  function applyRaw(raw){
+    db = {
+      meta: raw.meta || db.meta || {dataset:"nyxo-monitor"},
+      zones: (Array.isArray(raw.zones)?raw.zones:[]).map(normZone),
+      entities: (Array.isArray(raw.entities)?raw.entities:[]).map(normEntity),
+      links: (Array.isArray(raw.links)?raw.links:[]).map(normLink),
+    };
+    ensureZones();
+    seedPositions();
+    selected=null;
+    renderMonitor(); renderDetails();
+  }
+
+  ui.applyBtn.addEventListener("click",()=>{
+    try{
+      const raw=JSON.parse(ui.jsonArea.value||"{}");
+      applyRaw(raw);
+      log(`Import OK: entities=${db.entities.length} links=${db.links.length} zones=${db.zones.length}`);
+    }catch(err){
+      log("Import JSON: erreur (JSON invalide)");
+    }
+  });
+
   ui.exportBtn.addEventListener("click",()=>{
     syncTextarea();
     const blob=new Blob([ui.jsonArea.value],{type:"application/json"});
@@ -1074,31 +1021,9 @@
 
   ui.clearBtn.addEventListener("click",()=>{
     db={meta:{dataset:"nyxo-monitor"},entities:[],links:[],zones:[]};
-    ensureZones();
-    seedPositions();
-    selected=null;
+    ensureZones(); seedPositions(); selected=null;
     renderMonitor(); renderDetails();
     log("Dataset vidé");
-  });
-
-  ui.applyBtn.addEventListener("click",()=>{
-    try{
-      const raw=JSON.parse(ui.jsonArea.value||"{}");
-      db = {
-        meta: raw.meta || db.meta || {dataset:"nyxo-monitor"},
-        zones: (Array.isArray(raw.zones)?raw.zones:[]).map(normZone),
-        entities: (Array.isArray(raw.entities)?raw.entities:[]).map(normEntity),
-        links: (Array.isArray(raw.links)?raw.links:[]).map(normLink)
-      };
-      ensureZones();
-      seedPositions();
-      selected=null;
-      renderMonitor(); renderDetails();
-      setDrawer(false);
-      log(`Import OK: entities=${db.entities.length} links=${db.links.length} zones=${db.zones.length}`);
-    }catch(err){
-      log("Import JSON: erreur (JSON invalide)");
-    }
   });
 
   ui.sampleBtn.addEventListener("click",()=>{
@@ -1107,30 +1032,50 @@
       const layer=(i%3===0)?"ASTRO":(i%3===1)?"TAROT":"NEUTRE";
       zones.push({id:"Z-"+String(i+1).padStart(2,"0"),x:rnd(-520,520),y:rnd(-340,340),layer,opacity:layer==="NEUTRE"?0.20:0.26});
     }
-    const entities=[];
-    const mk=(id,type,layer,zone,conf,masked,real)=>({
-      id,type,layer,zone,confidence:conf,
-      display:{masked_name:masked, real_name:real},
-      tags:[type,layer.toLowerCase()],
-      fields:{}
-    });
-    entities.push(mk("ent_a","place","TAROT","Z-11",1.0,"TAROT-PRIME","Nom Réel Démo"));
-    entities.push(mk("ent_b","org","NEUTRE","Z-10",0.78,"PARTNER-01","Nom Réel Partiel"));
-    entities.push(mk("ent_c","network","NEUTRE","Z-14",0.62,"NET-01","Nom Réel Incertain"));
-
-    const links=[
-      {id:"lnk_1",type:"supports",from:"ent_b",to:"ent_a",confidence:0.78,weight:1,fields:{confidence:0.78,sources:["demo"]}}
+    const entities=[
+      {id:"ent_a",type:"place",layer:"TAROT",zone:"Z-11",confidence:1.0,display:{masked_name:"TAROT-PRIME",real_name:"Nom Réel Démo"},tags:["place","tarot"],fields:{}},
+      {id:"ent_b",type:"org",layer:"NEUTRE",zone:"Z-10",confidence:0.78,display:{masked_name:"PARTNER-01",real_name:"Nom Réel Partiel"},tags:["org","neutre"],fields:{}},
+      {id:"ent_c",type:"network",layer:"NEUTRE",zone:"Z-14",confidence:0.62,display:{masked_name:"NET-01",real_name:"Nom Réel Incertain"},tags:["network","neutre"],fields:{}}
     ];
-
-    db={meta:{dataset:"nyxo-sample"}, zones:zones.map(normZone), entities:entities.map(normEntity), links:links.map(normLink)};
-    ensureZones();
-    seedPositions();
-    selected=null;
-    renderMonitor(); renderDetails();
+    const links=[{id:"lnk_1",type:"supports",from:"ent_b",to:"ent_a",confidence:0.78,weight:1,fields:{confidence:0.78,sources:["demo"]}}];
+    applyRaw({meta:{dataset:"nyxo-sample"},zones,entities,links});
     log("Exemple chargé");
   });
 
-  /* --- Boot (synthetic visible) --- */
+  /* file import */
+  ui.importFileBtn.addEventListener("click",()=>ui.fileInput.click());
+  ui.fileInput.addEventListener("change",async ()=>{
+    const file=ui.fileInput.files && ui.fileInput.files[0];
+    if(!file) return;
+    try{
+      const txt = await file.text();
+      const raw = JSON.parse(txt);
+      ui.jsonArea.value = JSON.stringify(raw, null, 2);
+      applyRaw(raw);
+      log(`Fichier importé: ${file.name} (entities=${db.entities.length})`);
+    }catch(err){
+      log("Import fichier: erreur (JSON invalide)");
+    } finally {
+      ui.fileInput.value="";
+    }
+  });
+
+  /* drawer controls */
+  function setDrawer(open){
+    drawerOpen=!!open;
+    ui.drawerWrap.classList.toggle("open", drawerOpen);
+    ui.drawerWrap.setAttribute("aria-hidden", drawerOpen ? "false":"true");
+    ui.drawerToggle.textContent = drawerOpen ? "Monitor ◂" : "Monitor ▸";
+    canvas.style.pointerEvents = drawerOpen ? "none" : "auto";
+    if(drawerOpen) syncTextarea();
+  }
+  ui.drawerToggle.addEventListener("click",()=>setDrawer(!drawerOpen));
+  ui.drawerFab.addEventListener("click",()=>setDrawer(!drawerOpen));
+  ui.scrim.addEventListener("click",()=>setDrawer(false));
+  ui.closeDrawer.addEventListener("click",()=>setDrawer(false));
+  addEventListener("keydown",(e)=>{ if(e.key==="Escape") setDrawer(false); });
+
+  /* boot */
   function boot(){
     ensureZones();
     const base=[];
@@ -1143,10 +1088,8 @@
         id:"E-"+String(i+1).padStart(3,"0"),
         type,layer,zone,
         confidence:+conf.toFixed(2),
-        display:{
-          masked_name:(layer==="ASTRO"?"A":"T")+":"+type.toUpperCase()+":"+String(i+1).padStart(3,"0"),
-          real_name:"REAL:"+type.toUpperCase()+":"+String(i+1).padStart(3,"0")
-        },
+        display:{masked_name:(layer==="ASTRO"?"A":"T")+":"+type.toUpperCase()+":"+String(i+1).padStart(3,"0"),
+                real_name:"REAL:"+type.toUpperCase()+":"+String(i+1).padStart(3,"0")},
         tags:[type,layer.toLowerCase()].filter(Boolean),
         fields:{}
       }));
@@ -1161,13 +1104,11 @@
     }
     db.links=links;
     seedPositions();
-    renderMonitor();
-    renderDetails();
-    syncTextarea();
-    log("Boot: dataset synthétique (importe ton JSON via Monitor)");
+    renderMonitor(); renderDetails(); syncTextarea();
+    log("Boot: dataset synthétique (importe ton JSON via fichier ou textarea)");
   }
 
-  /* --- Animation loop --- */
+  /* loop */
   let lastT=performance.now();
   function tick(t){
     const dt=Math.min(0.033,(t-lastT)/1000); lastT=t;
@@ -1176,6 +1117,7 @@
     requestAnimationFrame(tick);
   }
 
+  ui.zoom.addEventListener("input",()=>setZoomFromUI());
   boot();
   requestAnimationFrame(tick);
 })();
