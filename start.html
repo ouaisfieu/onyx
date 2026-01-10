@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>V3 — NE PIGEZ RIEN (x3) — Quêtes de restauration</title>
+<style>
+  :root{
+    --bg:#070b10;
+    --paper:#0f1620;
+    --paper2:#0a111a;
+    --ink:#d7efe6;
+    --mut:#8aa6a0;
+    --line:#233042;
+    --green:#8fffd2;
+    --lilac:#c7a8ff;
+    --warn:#ffd27a;
+    --bad:#ff7aa5;
+    --ok:#7affb0;
+    --accent:linear-gradient(90deg,var(--green),var(--lilac));
+    --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);line-height:1.65}
+  a{color:var(--green);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1220px;margin:0 auto;padding:18px}
+  .top{
+    background:rgba(15,22,32,.88);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px 14px 12px;
+    box-shadow:0 0 60px rgba(0,0,0,.55);
+  }
+  .title{
+    margin:0;
+    font-size:20px;
+    letter-spacing:.14em;
+    background:var(--accent);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .sub{color:var(--mut);font-size:13px;margin-top:6px}
+  .bar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px
+  }
+  .pill{
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:7px 10px;
+    background:rgba(11,17,26,.82);
+    color:var(--mut);
+    font-size:12px;
+    display:inline-flex;gap:8px;align-items:center;
+  }
+  .pill i{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(143,255,210,.3)}
+  .pill.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.3)}
+  .pill.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.25)}
+  .pill.bad i{background:var(--bad);box-shadow:0 0 14px rgba(255,122,165,.25)}
+  .pill.ok i{background:var(--ok);box-shadow:0 0 14px rgba(122,255,176,.25)}
+  .btn{
+    cursor:pointer;
+    border-radius:14px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    background:rgba(11,17,26,.82);
+    color:var(--ink);
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .btn:hover{border-color:#32455e}
+  .btn.primary{border:0;background:var(--accent);color:#061017;font-weight:900}
+  .btn.danger{border-color:#4a2432}
+  .btn.danger:hover{border-color:#6a2f45}
+  .search{
+    flex:1;min-width:min(520px,100%);
+    display:flex;gap:8px;align-items:center;
+  }
+  .search input{
+    width:100%;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(11,17,26,.82);
+    color:var(--ink);
+    padding:10px 12px;
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .panel{
+    margin-top:14px;
+    background:rgba(15,22,32,.78);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:16px;
+  }
+  .h{
+    margin:18px 0 10px;
+    color:var(--lilac);
+    letter-spacing:.18em;
+    font-size:12px;
+    text-transform:uppercase;
+  }
+  .hr{height:1px;background:var(--line);margin:14px 0}
+  .note{
+    background:rgba(11,17,26,.88);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    color:var(--mut);
+    font-size:12px;
+  }
+  .box{
+    background:rgba(11,17,26,.88);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    margin:12px 0;
+  }
+  .box b{color:var(--green)}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tag{
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:5px 9px;
+    color:var(--mut);
+    font-size:12px;
+    background:rgba(15,22,32,.6);
+  }
+  .kbd{
+    display:inline-block;
+    padding:.1rem .5rem;
+    border:1px solid #2b3442;
+    border-bottom-color:#1f2631;
+    border-radius:10px;
+    background:rgba(11,17,26,.88);
+    color:var(--green);
+    font-size:12px;
+  }
+
+  /* Links are NOT hidden: icon + domain tooltip */
+  .ext{display:inline-flex;align-items:center;gap:8px}
+  .ext .ico{
+    width:16px;height:16px;border-radius:4px;
+    border:1px solid var(--line);
+    background:rgba(15,22,32,.85);
+    display:inline-flex;align-items:center;justify-content:center;
+    color:var(--mut);font-size:11px;
+  }
+  [data-domain]{position:relative}
+  [data-domain]:hover::after{
+    content:attr(data-domain);
+    position:absolute;left:0;top:120%;
+    background:#0a0d12;color:#e8fff7;font-size:12px;
+    padding:6px 8px;border-radius:10px;
+    border:1px solid #28364a;
+    white-space:nowrap;
+    z-index:30;
+  }
+
+  /* JP blocks easy to spot */
+  .jp{
+    border-left:6px solid var(--bad);
+    background:rgba(30,12,18,.55);
+    border:1px solid #4a2432;
+    border-radius:16px;
+    padding:12px 12px 12px 14px;
+    margin:14px 0;
+  }
+  .jp h3{margin:0 0 8px;color:#ffd6e3;letter-spacing:.12em;font-size:13px}
+  .jp a{color:#ffd6e3;font-weight:900}
+  .jp .mark{display:inline-block;padding:2px 8px;border:1px dashed #ff9fbe;border-radius:999px;font-size:12px;color:#ffb3cd}
+
+  /* The stream */
+  .stream{white-space:pre-wrap;font-size:13px}
+  .sep{display:block;margin:18px 0;color:var(--mut)}
+  .sig{color:var(--green)}
+  .vio{color:var(--lilac)}
+  .w{color:var(--warn)}
+  .r{color:var(--bad)}
+  .mut{color:var(--mut)}
+
+  /* Fog mode */
+  body.fog .mix{letter-spacing:.02em;filter: blur(.55px) contrast(1.08);opacity:.92}
+  body.fog .clarity{opacity:.14;filter: blur(2px)}
+  body.restore .mix{filter:none;opacity:1}
+  body.restore .clarity{opacity:1;filter:none}
+
+  /* Locked/unlocked sections */
+  .locked{opacity:.22;filter:blur(2.2px);pointer-events:none;user-select:none}
+  .unlocked{opacity:1;filter:none;pointer-events:auto}
+  .toclike{
+    background:rgba(11,17,26,.88);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    margin:12px 0;
+  }
+  .toclike a{display:block;padding:2px 0}
+
+  /* Quest UI */
+  .questGrid{display:grid;grid-template-columns:1.25fr .75fr;gap:12px}
+  @media(max-width:980px){.questGrid{grid-template-columns:1fr}}
+  .quest{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    background:rgba(11,17,26,.88);
+  }
+  .quest h4{margin:0 0 6px;color:var(--lilac);letter-spacing:.12em;font-size:13px;text-transform:uppercase}
+  .quest p{margin:6px 0;color:var(--mut);font-size:12px}
+  .quest ul{margin:8px 0 0;padding-left:18px;color:var(--ink);font-size:12px}
+  .quest li{margin:6px 0}
+  .meter{
+    height:10px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(15,22,32,.8);overflow:hidden;margin-top:10px
+  }
+  .meter > div{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+  }
+  .inv{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:10px
+  }
+  .chip{
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:5px 9px;
+    font-size:12px;
+    color:var(--mut);
+    background:rgba(15,22,32,.6);
+  }
+  .chip.on{color:#061017;background:var(--accent);border:0;font-weight:900}
+  .chip.bad{border-color:#4a2432}
+  .chip.ok{border-color:#234238}
+  .toast{
+    position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
+    background:rgba(11,17,26,.95);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:10px 12px;border-radius:14px;
+    box-shadow:0 0 40px rgba(0,0,0,.65);
+    opacity:0;pointer-events:none;transition:opacity .18s ease;
+    max-width:min(980px,92vw);
+    font-size:13px;
+  }
+  .toast.show{opacity:1}
+
+  /* Clickable “runes” that award tokens */
+  .rune{
+    display:inline-block;
+    padding:0 6px;
+    border:1px dashed rgba(143,255,210,.35);
+    border-radius:10px;
+    cursor:pointer;
+    user-select:none;
+    margin:0 2px;
+  }
+  .rune:hover{border-color:rgba(199,168,255,.55)}
+  .rune.taken{opacity:.3;filter:blur(1.5px);cursor:default}
+</style>
+</head>
+
+<body class="fog">
+<div class="wrap">
+  <div class="top">
+    <h1 class="title">V3 — NE PIGEZ RIEN (x3 longueur) — Quêtes de restauration</h1>
+    <div class="sub">
+      Une SEULE page. Texte volontairement illisible (multi-langues) + <b>quêtes</b> pour remettre de l’ordre.
+      <span class="clarity">Les liens restent signalés (↗ + domaine au survol) — pas de piège.</span>
+    </div>
+
+    <div class="bar">
+      <span class="pill"><i></i> Brouillard</span>
+      <span class="pill purple"><i></i> Elfiques pluriels: Quenya / Sindarin / Telerin / Avari-ish</span>
+      <span class="pill warn"><i></i> FR · EN · LA · Klingon · High Valyrian · Lorem · 日本語</span>
+      <span class="pill bad"><i></i> JP repérable: dl.ouaisfi.eu/haha</span>
+      <div class="search">
+        <input id="q" placeholder="Commande / ancre (Enter): IE | STRAT | HYBRID | JP | ORDER | NYXO | 642 | ELEN | HITH | ANOGAR | QAPLA …" />
+      </div>
+      <button class="btn primary" id="restoreBtn">Restaurer: niveau 1</button>
+      <button class="btn" id="fogBtn">Brouillard: ON</button>
+      <button class="btn danger" id="resetBtn">Reset (perte de mémoire)</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="note">
+      <b>Gameplay</b> : Tu dois récupérer des <b>runes</b> (clique dans le texte) OU taper des ancres dans le bon ordre.
+      Chaque rune fait gagner un <b>jeton</b> de restauration.<br>
+      Quêtes principales : <span class="kbd">IE</span> → <span class="kbd">STRAT</span> → <span class="kbd">HYBRID</span> → <span class="kbd">JP</span> → <span class="kbd">ORDER</span><br>
+      Bonus : Konami (<span class="kbd">↑↑↓↓←→←→BA</span>) = accès direct au niveau 5.
+    </div>
+
+    <div class="questGrid">
+      <div class="quest">
+        <h4>Quêtes principales</h4>
+        <p>Remets de l’ordre en validant les 5 étapes. Chaque étape déverrouille une couche (TOC, sections propres, mode lecture…).</p>
+        <ul>
+          <li><b>Q1:</b> Trouver <span class="kbd">IE</span> (veille/protection) → déverrouille la table.</li>
+          <li><b>Q2:</b> Trouver <span class="kbd">STRAT</span> (objectifs/moyens/contraintes/tempo).</li>
+          <li><b>Q3:</b> Trouver <span class="kbd">HYBRID</span> (multi-domaines, récits).</li>
+          <li><b>Q4:</b> Trouver <span class="kbd">JP</span> (tes liens repérables).</li>
+          <li><b>Q5:</b> Trouver <span class="kbd">ORDER</span> (réassemblage final).</li>
+        </ul>
+        <div class="meter"><div id="meterFill"></div></div>
+        <div class="inv" id="chips"></div>
+      </div>
+
+      <div class="quest">
+        <h4>Inventaire</h4>
+        <p>Jetons (runes / ancres) : <b><span id="score">0</span>/10</b></p>
+        <p>Étape actuelle : <b><span id="step">Q1</span></b></p>
+        <p class="clarity">Astuce: tu peux cliquer sur certaines runes dans le texte (elles ressemblent à des fragments encadrés en pointillés).</p>
+        <div class="hr"></div>
+        <p><b>Liens “vrais” (propres)</b> : ↗ + domaine au survol.</p>
+        <p>
+          <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">IE (FR)</a></span><br>
+          <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Strategy">Strategy (EN)</a></span><br>
+          <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hybrid_warfare">Hybrid warfare (EN)</a></span><br>
+          <span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener" href="https://www.nato.int/cps/en/natohq/topics_156338.htm">NATO topic</a></span>
+        </p>
+      </div>
+    </div>
+
+    <div class="toclike locked" id="toc">
+      <div class="h">Table (déverrouillage par quête Q1)</div>
+      <a href="#anchor-ie">[IE] Intelligence économique (ordre)</a>
+      <a href="#anchor-strat">[STRAT] Stratégie (ordre)</a>
+      <a href="#anchor-hybrid">[HYBRID] Guerre hybride (ordre)</a>
+      <a href="#anchor-jp">[JP] 日本語リンク (ordre)</a>
+      <a href="#anchor-refs">[REFS] Références (ordre)</a>
+      <div class="hr"></div>
+      <div class="mut">Si tu vois ça clairement, tu as déjà commencé à restaurer.</div>
+    </div>
+
+    <div class="box">
+      <b>Longueur x3</b> : la page génère automatiquement des blocs supplémentaires (procédural) pour faire un vrai mur de texte “NE PIGEZ RIEN”.
+      Tu peux ajuster le volume dans le code (variable <span class="kbd">VOLUME</span>).
+    </div>
+
+    <div class="hr"></div>
+
+    <!-- STREAM 1 -->
+    <div class="stream mix" id="stream">
+<span class="sep">—— [PROLOGUE] FR/EN/LA/tlh/ELV+/HV/Lorem/日本語 — “Chaos as curriculum” ——</span>
+<span class="sig">FR</span>: “On a tout dans le désordre.” <span class="mut">EN</span>: “So you can learn ordering.” <span class="vio">LA</span>: <i>Ordo ab chao</i>. <span class="r">tlhIngan Hol</span>: <i>bIvalbe’ ‘e’ yImev</i>. <span class="sig">Quenya</span>: <i>Elen síla lúmenn’ omentielvo</i>. <span class="sig">Sindarin</span>: <i>Mae govannen, mellon</i>. <span class="sig">Telerin</span>: <i>Elen síla i lómë</i>. <span class="mut">Avari-ish</span>: <i>naí… elen…</i>. <span class="w">High Valyrian</span>: <i>Skoros ñuhyz syt?</i>. <span class="mut">Lorem</span>: Lorem ipsum dolor sit amet. 日本語: 「霧の中で学ぶ」.
+
+<span class="sep">—— [RUNES] (clique) ——</span>
+Ici: <span class="rune" data-token="IE">IE</span> / <span class="rune" data-token="STRAT">STRAT</span> / <span class="rune" data-token="HYBRID">HYBRID</span> / <span class="rune" data-token="JP">JP</span> / <span class="rune" data-token="ORDER">ORDER</span>
+et bonus: <span class="rune" data-token="NYXO">NYXO</span> <span class="rune" data-token="642">642</span> <span class="rune" data-token="ELEN">ELEN</span> <span class="rune" data-token="HITH">HITH</span> <span class="rune" data-token="ANOGAR">ANOGAR</span> <span class="rune" data-token="QAPLA">QAPLA</span>
+
+<span class="sep">—— [CYOA 0] Tu choisis MAIS tu ne comprends pas ——</span>
+A) FR: “Je veux voir.” EN: “signal.” LA: <i>Vigilare</i>. tlh: <i>De’</i>. Quenya: <i>cen-</i>. Sindarin: <i>tir-</i>. Telerin: <i>cenë</i>. HV: <i>kepus</i>. Lorem: ut enim ad minim veniam.  
+B) FR: “Je veux choisir.” EN: “Ends/Ways/Means.” LA: <i>Festina lente</i>. tlh: <i>Qapla’</i>. Quenya: <i>ná</i>. Sindarin: <i>thangail</i>. Telerin: <i>lindë</i>. HV: <i>vēzos</i>. Lorem: quis nostrud exercitation.  
+C) FR: “Je veux résister au brouillard.” EN: “Resilience.” LA: <i>Caveat lector</i>. tlh: <i>yInlIj yIchenmoH</i>. Quenya: <i>hiswë</i>. Sindarin: <i>hith</i>. Telerin: <i>lómë</i>. HV: <i>ānogar</i>. Lorem: excepteur sint occaecat.  
+
+<span class="sep">—— [WIKI-FRAGMENTS DISLOQUÉS] ——</span>
+Infobox(fragment): [IE] [Strategy] [Hybrid] [NO MANUAL] [YES LITERACY] [BXL] [Lieux de liens] [WOPS] [Babelzin].  
+Catégories(fragment): [[Intelligence économique]] [[Stratégie]] [[Hybride]] [[Bruxelles]] [[RPG sérieux]] [[Éducation populaire]].
+
+<span class="sep">—— [IE: brume] ——</span>
+IE: FR: “veille / protection / influence” ; EN: “signal > noise” ; LA: <i>Non multa sed multum</i> ; tlh: <i>QIn</i> ; Quenya: <i>cen-</i> ; Sindarin: <i>tir-</i> ; Telerin: <i>cenë</i> ; HV: <i>kepus</i> ; Lorem: sed do eiusmod.  
+Source réelle (propre): <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">“IE / not-IE / i.e.”</a></span>
+
+<span class="sep">—— [STRAT: brume] ——</span>
+STRAT: EN: “Ends/Ways/Means” ; FR: “objectifs/moyens/contraintes/tempo” ; LA: <i>Primum vivere</i> ; tlh: <i>yIlo’</i> ; Quenya: <i>lúmë</i> ; Sindarin: <i>tha</i> ; Telerin: <i>lindë</i> ; HV: <i>vēzos</i> ; Lorem: dolore magna.  
+Lien réel: <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Strategy">“strategos / stratēgia / …”</a></span>
+
+<span class="sep">—— [HYBRID: brume] ——</span>
+HYBRID: FR: “multi-domaines” ; EN: “blend instruments” ; LA: <i>caveat emptor</i> ; tlh: <i>QInmey</i> ; Quenya: <i>úvëa</i> ; Sindarin: <i>hith</i> ; Telerin: <i>lómë</i> ; HV: <i>ānogar</i> ; Lorem: perspiciatis.  
+Liens réels: <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hybrid_warfare">“hybrid / …”</a></span> + <span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener" href="https://www.nato.int/cps/en/natohq/topics_156338.htm">“resilience / topics”</a></span>
+
+<span class="sep">—— [BRUXELLES / LIEUX DE LIENS: brume] ——</span>
+Bruxelles/Brussels/Bruxellae: FR: “lieux de liens” ; EN: “third places” ; LA: <i>loci</i> ; tlh: <i>juH</i> ; Quenya: <i>nórë</i> ; Sindarin: <i>ost</i> ; Telerin: <i>nórëa</i> ; HV: <i>rȳ</i> ; Lorem: quis autem vel eum.  
+WOPS / Babelzin: [nom propre] → [réseau] → [satellites] → [bonus missions] → [céramique] → [boutique] → [portfolio] → [opportunités]. (Tu dois ordonner.)
+
+    </div>
+
+    <!-- JP repérable -->
+    <div class="jp mix" id="anchor-jp">
+      <h3>セクション（日本語）— リンク置き場 <span class="mark">REPÉRABLE</span></h3>
+      <p>ここは赤い枠。あなたのリンクを入れる場所。全部 <b>dl.ouaisfi.eu/haha</b>。</p>
+      <ul>
+        <li><span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a></span> — 置き換え①</li>
+        <li><span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a></span> — 置き換え②</li>
+        <li><span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a></span> — 置き換え③</li>
+      </ul>
+    </div>
+
+    <!-- STREAM 2 (will be huge, generated procedurally for x3) -->
+    <div class="stream mix" id="generated">
+<span class="sep">—— [V3] Génération procédurale (x3 longueur) : le mur de texte arrive… ——</span>
+    </div>
+
+    <!-- Ordered sections (locked until quests) -->
+    <div class="panel locked" id="ordered">
+      <div class="h">Ordre restauré (déverrouillé par quêtes)</div>
+
+      <div id="anchor-ie" class="box">
+        <b>[IE] Intelligence économique — Version ordonnée</b>
+        <div class="tags">
+          <span class="tag">Veille</span><span class="tag">Protection</span><span class="tag">Capitalisation</span>
+        </div>
+        <div class="clarity">
+          <p>3 règles : (1) peu de sources, (2) routine courte, (3) transformer chaque info en fiche 1 page.</p>
+          <p>Liens : <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">IE</a></span></p>
+        </div>
+      </div>
+
+      <div id="anchor-strat" class="box">
+        <b>[STRAT] Stratégie — Version ordonnée</b>
+        <div class="tags">
+          <span class="tag">Objectif</span><span class="tag">Moyens</span><span class="tag">Contraintes</span><span class="tag">Tempo</span>
+        </div>
+        <div class="clarity">
+          <p>On ne “gagne” pas : on crée des options. Un plan doit être faisable un mauvais jour.</p>
+          <p>Liens : <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Strategy">Strategy</a></span></p>
+        </div>
+      </div>
+
+      <div id="anchor-hybrid" class="box">
+        <b>[HYBRID] Guerre hybride — Version ordonnée</b>
+        <div class="tags">
+          <span class="tag">Information</span><span class="tag">Économie</span><span class="tag">Cyber</span><span class="tag">Récits</span>
+        </div>
+        <div class="clarity">
+          <p>Lecture saine : dater, recouper, citer, éviter les vendeurs de peur. Hybride ≠ “tout est complot”.</p>
+          <p>Liens : <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hybrid_warfare">Hybrid warfare</a></span> · <span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener" href="https://www.nato.int/cps/en/natohq/topics_156338.htm">NATO topic</a></span></p>
+        </div>
+      </div>
+
+      <div id="anchor-refs" class="box">
+        <b>[REFS] Références — Version ordonnée</b>
+        <div class="clarity">
+          <ul>
+            <li>IE : Wikipedia FR</li>
+            <li>Strategy : Wikipedia EN</li>
+            <li>Hybrid warfare : Wikipedia EN</li>
+            <li>NATO topic : hybrid threats</li>
+            <li>JP placeholders : dl.ouaisfi.eu/haha</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="note clarity">
+        Si tu veux une V4 : on peut ajouter un “historique d’édition” fictif (encore sur la même page) + des quêtes secondaires (OSINT propre, organisation, portfolio, etc.).
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = (id)=>document.getElementById(id);
+  const toast = $("toast");
+  const toc = $("toc");
+  const ordered = $("ordered");
+  const restoreBtn = $("restoreBtn");
+  const fogBtn = $("fogBtn");
+  const resetBtn = $("resetBtn");
+  const q = $("q");
+  const meterFill = $("meterFill");
+  const chips = $("chips");
+  const scoreEl = $("score");
+  const stepEl = $("step");
+
+  // ---- SETTINGS ----
+  const VOLUME = 240;        // Increase for even more length (try 400+)
+  const BLOCK_SIZE = 6;      // Lines per block
+  const MAX_SCORE = 10;      // Score for full restore (incl. bonuses)
+
+  // ---- STATE ----
+  let fog = true;
+  let score = 0;
+
+  // Quest step order
+  const steps = ["IE","STRAT","HYBRID","JP","ORDER"];
+  let stepIndex = 0;
+  const collected = new Set();
+
+  // Bonus tokens (give points but not required)
+  const bonus = ["NYXO","642","ELEN","HITH","ANOGAR","QAPLA"];
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1350);
+  }
+
+  function renderChips(){
+    chips.innerHTML = "";
+    [...steps, ...bonus].forEach(tok=>{
+      const el = document.createElement("span");
+      el.className = "chip " + (collected.has(tok) ? "on" : "");
+      if(tok === "JP") el.className += " bad";
+      if(steps.includes(tok) && collected.has(tok)) el.className += " ok";
+      el.textContent = tok;
+      chips.appendChild(el);
+    });
+  }
+
+  function updateUI(){
+    scoreEl.textContent = String(score);
+    stepEl.textContent = "Q" + (stepIndex+1) + (stepIndex<steps.length ? " ("+steps[stepIndex]+")" : " (DONE)");
+    const pct = Math.max(0, Math.min(100, Math.round((score/MAX_SCORE)*100)));
+    meterFill.style.width = pct + "%";
+
+    // Unlock rules
+    if(stepIndex >= 1){ toc.classList.remove("locked"); toc.classList.add("unlocked"); }
+    if(stepIndex >= 3){ ordered.classList.remove("locked"); ordered.classList.add("unlocked"); }
+    if(stepIndex >= 5){
+      document.body.classList.add("restore");
+      showToast("Ordre restauré (mode lecture).");
+    }
+
+    restoreBtn.textContent = stepIndex < steps.length
+      ? ("Restaurer: niveau " + (stepIndex+1))
+      : "Restaurer: COMPLET";
+    renderChips();
+  }
+
+  function award(token, source){
+    if(collected.has(token)){
+      showToast("Déjà pris: " + token);
+      return;
+    }
+
+    // Quest logic: must follow scenario order for main steps
+    const expected = steps[stepIndex];
+
+    if(steps.includes(token)){
+      if(token !== expected){
+        showToast("Mauvais ordre. Attendu: " + expected);
+        // Penalty: fog spike (game)
+        document.body.classList.add("fog");
+        fog = true;
+        fogBtn.textContent = "Brouillard: ON";
+        return;
+      }
+      collected.add(token);
+      score = Math.min(MAX_SCORE, score + 2);
+      stepIndex++;
+      showToast("Quête validée: " + token + " (+" + 2 + ")");
+    } else {
+      // Bonus
+      collected.add(token);
+      score = Math.min(MAX_SCORE, score + 1);
+      showToast("Bonus: " + token + " (+" + 1 + ")");
+    }
+
+    updateUI();
+  }
+
+  // Buttons
+  restoreBtn.addEventListener("click", ()=>{
+    // “Manual” restoration: gives a hint but not a free win; requires entering the expected token
+    const expected = steps[stepIndex] || "DONE";
+    showToast("Indice: tape " + expected + " puis Enter (ou trouve la rune).");
+    q.focus();
+  });
+
+  fogBtn.addEventListener("click", ()=>{
+    fog = !fog;
+    document.body.classList.toggle("fog", fog);
+    fogBtn.textContent = fog ? "Brouillard: ON" : "Brouillard: OFF";
+    showToast(fog ? "Brouillard activé." : "Brouillard désactivé.");
+  });
+
+  resetBtn.addEventListener("click", ()=>{
+    // Hard reset
+    score = 0;
+    stepIndex = 0;
+    collected.clear();
+    toc.classList.add("locked");
+    toc.classList.remove("unlocked");
+    ordered.classList.add("locked");
+    ordered.classList.remove("unlocked");
+    document.body.classList.remove("restore");
+    document.body.classList.add("fog");
+    fog = true;
+    fogBtn.textContent = "Brouillard: ON";
+    showToast("Reset: mémoire effacée.");
+    updateUI();
+    // Also reset runes state
+    document.querySelectorAll(".rune").forEach(r=>{
+      r.classList.remove("taken");
+    });
+  });
+
+  // Command input
+  q.addEventListener("keydown",(e)=>{
+    if(e.key !== "Enter") return;
+    const v = (q.value||"").trim().toUpperCase();
+    if(!v){ showToast("Tape une ancre."); return; }
+    // Accept partials like "IE..." etc.
+    const hitMain = steps.find(s => v.includes(s));
+    const hitBonus = bonus.find(b => v.includes(b));
+    if(hitMain) award(hitMain, "cmd");
+    else if(hitBonus) award(hitBonus, "cmd");
+    else showToast("Bruit. Attendu: " + (steps[stepIndex]||"DONE") + " (ou bonus).");
+    q.select();
+  });
+
+  // Rune clicks
+  document.addEventListener("click",(e)=>{
+    const r = e.target.closest(".rune");
+    if(!r) return;
+    if(r.classList.contains("taken")) return;
+    const token = r.getAttribute("data-token");
+    // Mark taken only if award succeeded (best-effort: if wrong order, keep clickable)
+    const before = collected.size;
+    award(token, "rune");
+    if(collected.has(token) && collected.size !== before){
+      r.classList.add("taken");
+    }
+  });
+
+  // Konami unlock -> full restore
+  const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+  let kpos = 0;
+  window.addEventListener("keydown",(e)=>{
+    const key = e.key;
+    const expect = KONAMI[kpos];
+    if(key === expect || key.toLowerCase() === expect){
+      kpos++;
+      if(kpos === KONAMI.length){
+        kpos = 0;
+        // Grant all
+        steps.forEach(s=>collected.add(s));
+        bonus.forEach(b=>collected.add(b));
+        score = MAX_SCORE;
+        stepIndex = steps.length;
+        toc.classList.remove("locked"); toc.classList.add("unlocked");
+        ordered.classList.remove("locked"); ordered.classList.add("unlocked");
+        document.body.classList.add("restore");
+        showToast("Konami: ordre total déverrouillé.");
+        updateUI();
+      }
+    } else kpos = 0;
+  });
+
+  // ---- Procedural x3 content ----
+  const gen = $("generated");
+  const pools = {
+    FR: [
+      "Le signal n’est pas une opinion, c’est une trace.",
+      "Le brouillard est une pédagogie, pas une punition.",
+      "On ne cherche pas la perfection, on cherche une preuve.",
+      "Un plan doit survivre à un mauvais jour.",
+      "La clarté fabrique des options."
+    ],
+    EN: [
+      "Noise is infinite; attention is scarce.",
+      "Agency follows comprehension.",
+      "Ship a small artifact, then iterate.",
+      "A map is not a territory—still useful.",
+      "Stabilize to strategize."
+    ],
+    LA: [
+      "Scientia potentia est (sed cura necessaria).",
+      "Festina lente.",
+      "Caveat lector.",
+      "Non multa sed multum.",
+      "Primum vivere, deinde philosophari."
+    ],
+    TLH: [
+      "bIvalbe’ ‘e’ yImev.",
+      "Qapla’.",
+      "De’ lIghlu’.",
+      "yInlIj yIchenmoH.",
+      "QInmey tIbuS."
+    ],
+    Q: [
+      "Elen síla lúmenn’ omentielvo.",
+      "Nai elen siluva lyenna.",
+      "Hiswë mi lúmë.",
+      "Cen- quet- (voir-dire).",
+      "Lúmë ná turë."
+    ],
+    S: [
+      "Mae govannen, mellon.",
+      "Hith suilad.",
+      "Tir- i chent.",
+      "Thangail: keep what matters.",
+      "Caro an i-’lam."
+    ],
+    T: [
+      "Elen síla i lómë.",
+      "Lindë: tempo as tool.",
+      "Cenë i tecil.",
+      "Nórëa: place as network.",
+      "Lómë is curriculum."
+    ],
+    AV: [
+      "naí… elen… (fragmentum).",
+      "lómë-quen… (styl.)",
+      "tir-quen… (styl.)",
+      "cen-quen… (styl.)",
+      "mellon… (echo)"
+    ],
+    HV: [
+      "Skoros ñuhyz syt?",
+      "Ānogar isse.",
+      "Valar dohaeris.",
+      "Vestri iksos issa.",
+      "Kepus, ñuhyz."
+    ],
+    LOREM: [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.",
+      "Excepteur sint occaecat cupidatat non proident."
+    ],
+    JP: [
+      "日本語：霧は学習の環境。",
+      "日本語：リンクは赤い枠にある。",
+      "日本語：順番が大事（IE→STRAT→HYBRID→JP→ORDER）。",
+      "日本語：証拠を作る、少しずつ。",
+      "日本語：混乱から秩序へ。"
+    ]
+  };
+
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+  function block(i){
+    // Occasionally insert clickable runes deeper in the wall
+    const runeInject = (i % 29 === 0) ? `  <span class="rune" data-token="${steps[Math.min(steps.length-1, (i/29)|0)]}">${steps[Math.min(steps.length-1, (i/29)|0)]}</span>` : "";
+    const bonusInject = (i % 41 === 0) ? `  <span class="rune" data-token="${bonus[(i/41)|0 % bonus.length]}">${bonus[(i/41)|0 % bonus.length]}</span>` : "";
+    return (
+`—[${String(i).padStart(3,"0")}]— ` +
+`FR: ${pick(pools.FR)}  ` +
+`EN: ${pick(pools.EN)}  ` +
+`LA: ${pick(pools.LA)}  ` +
+`tlh: ${pick(pools.TLH)}  ` +
+`Quenya: ${pick(pools.Q)}  ` +
+`Sindarin: ${pick(pools.S)}  ` +
+`Telerin: ${pick(pools.T)}  ` +
+`Avari-ish: ${pick(pools.AV)}  ` +
+`HV: ${pick(pools.HV)}  ` +
+`Lorem: ${pick(pools.LOREM)}  ` +
+`${pick(pools.JP)}${runeInject}${bonusInject}\n`
+    );
+  }
+
+  // Generate a BIG wall quickly without freezing
+  let out = [];
+  out.push("—— [MUR DE TEXTE] (procédural) — tu n’es pas censé “comprendre”, tu es censé trier. ——\n\n");
+  for(let i=1;i<=VOLUME;i++){
+    out.push(block(i));
+    if(i % BLOCK_SIZE === 0) out.push("\n");
+    if(i % 48 === 0){
+      out.push(
+        `\n[interlude] `+
+        `↗ `+
+        `<span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">IE</a></span>`+
+        ` · `+
+        `<span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Strategy">STRAT</a></span>`+
+        ` · `+
+        `<span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hybrid_warfare">HYBRID</a></span>`+
+        ` · `+
+        `<span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">JP (toi)</a></span>\n\n`
+      );
+    }
+  }
+  gen.innerHTML += out.join("");
+
+  // Initialize UI
+  function init(){
+    document.body.classList.toggle("fog", fog);
+    renderChips();
+    updateUI();
+  }
+  init();
+
+  // Helper in updateUI (uses chips render)
+  function renderChips(){
+    chips.innerHTML = "";
+    [...steps, ...bonus].forEach(tok=>{
+      const el = document.createElement("span");
+      el.className = "chip " + (collected.has(tok) ? "on" : "");
+      if(tok === "JP") el.className += " bad";
+      if(steps.includes(tok) && collected.has(tok)) el.className += " ok";
+      el.textContent = tok;
+      chips.appendChild(el);
+    });
+  }
+})();
+</script>
+</body>
+</html>
