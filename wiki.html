@@ -3,477 +3,818 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Encyclopædia Ludica — Intelligence économique · Stratégie · Guerre hybride</title>
+<title>Wikipedia-clone — IE · Stratégie · Guerre hybride (CYOA · Brouillard)</title>
 <style>
   :root{
-    --bg:#f6f6f6; --paper:#fff; --ink:#202122; --mut:#54595d; --line:#a2a9b1;
-    --link:#0645ad; --visited:#0b0080; --accent:#36c; --tag:#eaf3ff;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-    --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,sans-serif;
+    --bg:#f6f6f6; --paper:#fff; --ink:#202122; --mut:#54595d;
+    --line:#a2a9b1; --line2:#c8ccd1;
+    --link:#0645ad; --visited:#0b0080; --danger:#d33;
+    --sans:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,sans-serif;
+    --serif:Georgia, "Times New Roman", Times, serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    --shade:#f8f9fa;
   }
-  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55}
   a{color:var(--link);text-decoration:none}
   a:visited{color:var(--visited)}
   a:hover{text-decoration:underline}
-  .wrap{max-width:1120px;margin:0 auto;padding:18px}
-  .topbar{
-    display:flex;gap:14px;align-items:center;justify-content:space-between;
-    padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;
+
+  /* --- Wiki layout --- */
+  .wrap{max-width:1260px;margin:0 auto;padding:12px}
+  .top{
+    display:flex;align-items:center;gap:12px;justify-content:space-between;
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;
+    padding:8px 10px;
   }
-  .brand{display:flex;gap:10px;align-items:center}
-  .globe{
+  .brand{display:flex;align-items:center;gap:10px;min-width:260px}
+  .mark{
     width:34px;height:34px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #cfe3ff, #7aa7ff 38%, #2b5fd6 70%, #1a3f9c 100%);
+    background:radial-gradient(circle at 35% 30%, #ffffff, #dbe7ff 28%, #92b2ff 55%, #3a66d6 80%, #24489f 100%);
     border:1px solid var(--line);
   }
-  .brand h1{font-size:16px;margin:0}
-  .brand .sub{font-size:12px;color:var(--mut)}
+  .brand .t{display:flex;flex-direction:column}
+  .brand h1{margin:0;font-size:15px;font-weight:700}
+  .brand .s{font-size:12px;color:var(--mut)}
+  .top .controls{display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end;flex-wrap:wrap}
   .search{
-    display:flex;gap:8px;align-items:center;flex:1;max-width:520px;
+    display:flex;align-items:center;gap:6px;min-width:min(520px,100%);
   }
   .search input{
-    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;
+    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;
   }
-  .pill{
-    font-size:12px;padding:4px 8px;border-radius:999px;background:var(--tag);border:1px solid #c8ddff;color:#1a3f9c;
+  .btn{
+    border:1px solid var(--line2);background:#fff;border-radius:4px;padding:8px 10px;
+    font-family:var(--sans);cursor:pointer;font-size:13px;
   }
-  .layout{display:grid;grid-template-columns:260px 1fr 300px;gap:14px;margin-top:14px}
-  @media(max-width:1100px){.layout{grid-template-columns:1fr}}
-  .side,.main,.info{
-    background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;
+  .btn:hover{border-color:var(--line)}
+  .btn.primary{background:#eaf3ff;border-color:#c8ddff}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;color:var(--mut);
+    border:1px solid #eaecf0;background:var(--shade);
+    padding:5px 8px;border-radius:999px;
   }
-  .side h2,.info h2{font-size:13px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
-  .toc{font-size:14px}
-  .toc a{display:block;padding:4px 0}
-  .toc small{color:var(--mut)}
-  .main .title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
-  .main h1{font-family:Georgia,serif;font-size:30px;line-height:1.15;margin:0}
-  .meta{color:var(--mut);font-size:13px}
-  .hr{height:1px;background:var(--line);margin:12px 0}
-  .hatnote{font-size:13px;color:var(--mut);background:#f8f9fa;border:1px solid #eaecf0;padding:8px;border-radius:6px}
-  .box{
-    border:1px solid #eaecf0;background:#f8f9fa;border-radius:8px;padding:10px;margin:10px 0
+  .layout{
+    display:grid;
+    grid-template-columns:250px 1fr 320px;
+    gap:12px;margin-top:12px;
   }
-  .box h3{margin:0 0 6px;font-size:14px}
-  .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
-  .tag{font-size:12px;border:1px solid #eaecf0;background:#fff;border-radius:999px;padding:3px 8px;color:var(--mut)}
+  @media(max-width:1150px){.layout{grid-template-columns:1fr}}
+  .side,.main,.right{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px}
+  .side h2,.right h2{margin:0 0 10px;font-size:12px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+  .portlet{margin-bottom:14px}
+  .portlet .ptitle{font-size:12px;color:var(--mut);margin:0 0 6px}
+  .pbody a{display:block;padding:3px 0;font-size:14px}
+  .pbody small{color:var(--mut)}
+  .tabs{
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    border-bottom:1px solid #eaecf0;padding-bottom:8px;margin-bottom:10px
+  }
+  .tab{
+    font-size:13px;padding:6px 10px;border:1px solid #eaecf0;border-bottom:0;border-radius:6px 6px 0 0;
+    background:var(--shade);color:var(--mut);cursor:pointer;user-select:none
+  }
+  .tab.active{background:#fff;color:var(--ink);border-color:var(--line2);font-weight:700}
+  .articleTitle{
+    font-family:var(--serif);
+    font-size:34px;line-height:1.15;margin:8px 0 4px
+  }
+  .subtitle{color:var(--mut);font-size:13px;margin:0 0 10px}
+  .hatnote{
+    background:var(--shade);border:1px solid #eaecf0;border-radius:4px;padding:8px 10px;
+    font-size:13px;color:var(--mut)
+  }
+  .toc{
+    background:var(--shade);border:1px solid #eaecf0;border-radius:4px;padding:10px;margin:12px 0;
+    width:min(420px,100%)
+  }
+  .toc .t{font-weight:700;margin:0 0 6px;font-size:13px}
+  .toc a{display:block;padding:2px 0;font-size:13px}
+  .toc .lvl2{padding-left:12px}
+  .toc .lvl3{padding-left:24px}
+
   .infobox{
-    border:1px solid var(--line);background:#f8f9fa;border-radius:8px;overflow:hidden
+    border:1px solid var(--line2);background:var(--shade);border-radius:4px;overflow:hidden
   }
-  .infobox .hd{background:#eaecf0;padding:10px;font-weight:700}
+  .infobox .hd{
+    background:#eaecf0;padding:10px;font-weight:700;text-align:center
+  }
   .infobox .bd{padding:10px;font-size:13px}
   .infobox dt{color:var(--mut);margin-top:8px}
   .infobox dd{margin:2px 0 0 0}
-  .kbd{font-family:var(--mono);font-size:12px;background:#fff;border:1px solid #c8ccd1;border-bottom-color:#a2a9b1;border-radius:4px;padding:1px 6px}
-  .langmix{
-    font-family:var(--mono);font-size:12px;background:#0b1020;color:#eaf3ff;border:1px solid #2b334a;
-    padding:10px;border-radius:8px;white-space:pre-wrap
+  .mini{
+    font-family:var(--mono);font-size:12px;background:#fff;border:1px solid #c8ccd1;border-radius:4px;padding:1px 6px
   }
-  .choice{
-    border:1px solid #c8ccd1;border-radius:10px;overflow:hidden;margin:10px 0;background:#fff
+
+  .box{
+    border:1px solid #eaecf0;background:var(--shade);border-radius:4px;padding:10px;margin:10px 0
   }
-  .choice .chd{background:#f8f9fa;padding:10px;font-weight:700}
-  .choice .cbd{padding:10px}
-  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-  button{
-    border:1px solid #c8ccd1;background:#fff;border-radius:8px;padding:9px 10px;cursor:pointer
+  .box h3{margin:0 0 6px;font-size:14px}
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .tag{font-size:12px;border:1px solid #eaecf0;background:#fff;border-radius:999px;padding:3px 8px;color:var(--mut)}
+
+  .refs{font-size:13px}
+  .refs ol{padding-left:18px}
+  .refs li{margin:6px 0}
+  .cats{
+    margin-top:14px;border-top:1px solid #eaecf0;padding-top:10px;font-size:13px;color:var(--mut)
   }
-  button:hover{border-color:#7a869a}
-  .note{font-size:12px;color:var(--mut)}
-  .jp{
-    border-left:4px solid #d33;padding-left:10px;margin:14px 0
-  }
-  .jp h3{margin:0 0 6px}
-  .linkhint{
+  .cats a{margin-right:8px}
+
+  /* Links: visible but can be “arcane” text; domain revealed on hover for safety */
+  .ext{
     display:inline-flex;align-items:center;gap:6px
   }
-  .linkhint .ico{
-    width:14px;height:14px;border-radius:3px;border:1px solid #c8ccd1;background:#f8f9fa;
+  .ext .ico{
+    width:14px;height:14px;border-radius:3px;border:1px solid #c8ccd1;background:#fff;
     display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#6b7280
   }
-  /* Tooltip (domain visible = anti-tromperie) */
   [data-domain]{position:relative}
   [data-domain]:hover::after{
     content:attr(data-domain);
-    position:absolute;left:0;top:120%;
+    position:absolute;left:0;top:115%;
     background:#202122;color:#fff;font-size:12px;
-    padding:6px 8px;border-radius:6px;white-space:nowrap;z-index:10
+    padding:6px 8px;border-radius:6px;white-space:nowrap;z-index:20
   }
-  .refs ol{padding-left:18px}
-  .refs li{margin:6px 0}
-  .footer{margin-top:14px;color:var(--mut);font-size:12px}
+
+  /* Japanese blocks easy to spot */
+  .jp{
+    border-left:6px solid var(--danger);
+    padding-left:12px;margin:14px 0;background:#fff9f9;border:1px solid #ffe3e3;border-radius:4px
+  }
+  .jp h3{margin:10px 0 6px}
+  .jp a{font-weight:700}
+
+  /* CYOA */
+  .cyoa{
+    border:1px solid #eaecf0;background:#fff;border-radius:6px;overflow:hidden;margin:12px 0
+  }
+  .cyoa .hd{background:var(--shade);padding:10px;font-weight:700}
+  .cyoa .bd{padding:10px}
+  .choices{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .choicebtn{
+    border:1px solid var(--line2);background:#fff;border-radius:4px;padding:8px 10px;cursor:pointer;font-size:13px
+  }
+  .choicebtn:hover{border-color:var(--line)}
+  .cyoa .langnoise{font-family:var(--mono);font-size:12px;background:#0b1020;color:#eaf3ff;border:1px solid #2b334a;padding:10px;border-radius:6px;white-space:pre-wrap}
+  .hidden{display:none!important}
+
+  /* Fog mode (text becomes “don’t understand”) */
+  .fog .main .readable{filter: blur(0.0px);} /* keep structure */
+  .fog .main .fogify{letter-spacing:.02em}
+  .fog .main .fogify .mix{opacity:.98}
+  .fog .main .fogify .clarity{opacity:.35}
+  .fogHint{
+    font-size:12px;color:var(--mut);margin-top:6px
+  }
+
+  /* Small utility */
+  .footer{margin-top:10px;color:var(--mut);font-size:12px}
+  .sep{height:1px;background:#eaecf0;margin:12px 0}
 </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="globe" aria-hidden="true"></div>
-        <div>
-          <h1>Encyclopædia Ludica</h1>
-          <div class="sub">Wiki-like · CYOA · Multi-langues · “Reprendre la main” (version adulte)</div>
-        </div>
-      </div>
-      <div class="search" role="search">
-        <input id="q" placeholder="Rechercher (ex: ‘intelligence économique’, ‘hybrid warfare’, ‘strategie’)…" />
-        <span class="pill">Saison 0</span>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div class="t">
+        <h1>Wikipedia-clone (fictionnel) — Encyclopaedia Ludica</h1>
+        <div class="s">CYOA · Multilingue extrême · Mode Brouillard · Sections JP repérables</div>
       </div>
     </div>
 
-    <div class="layout">
-      <!-- LEFT -->
-      <aside class="side">
-        <h2>Sommaire</h2>
-        <nav class="toc">
-          <a href="#cyoa">📖 Livre dont vous êtes le héros</a>
-          <a href="#intro">1. Introduction</a>
-          <a href="#ie">2. Intelligence économique</a>
-          <a href="#strat">3. Stratégie militaire (niveau général)</a>
-          <a href="#hybrid">4. Guerre hybride (niveau général)</a>
-          <a href="#ethique">5. Garde-fous & éthique</a>
-          <a href="#jp">6. セクション（日本語）</a>
-          <a href="#refs">7. Références (liens)</a>
-          <div class="hr"></div>
-          <small>Astuce : <span class="kbd">Ctrl</span>+<span class="kbd">F</span> marche aussi.</small>
-        </nav>
-
-        <div class="hr"></div>
-
-        <h2>Langue / texture</h2>
-        <div class="langmix" id="glyphs">
-FR: « On reprend la main par la clarté. »
-EN: “Control follows comprehension.”
-LA: *Scientia potentia est* (sed cura necessaria).
-TLH (Klingon): Heghlu’meH QaQ jajvam? (non. not today.)
-Quenya: *Elen síla lúmenn’ omentielvo.*
-Sindarin: *Mae govannen, mellon.*
-High Valyrian: *Valar morghulis* / *valar dohaeris.*
-Lorem: Lorem ipsum dolor sit amet, consectetur adipiscing elit…
-        </div>
-        <p class="note">Oui, “elfiques” au pluriel : ici Quenya + Sindarin. Si tu veux d’autres (Telerin, etc.), je peux étendre.</p>
-      </aside>
-
-      <!-- MAIN -->
-      <main class="main">
-        <div class="title">
-          <h1>Intelligence économique, stratégie, guerre hybride</h1>
-          <div class="meta">Page “wiki-like” + branche narrative · version non-infantilisante · liens vérifiables</div>
-        </div>
-        <div class="hr"></div>
-
-        <div class="hatnote">
-          <b>Note :</b> cette page présente des notions à un niveau <b>général</b>, orientées “culture & compréhension”.
-          Elle ne fournit pas de mode opératoire ni de tactiques exploitables. (On reste dans du savoir civique / analytique.)
-        </div>
-
-        <!-- CYOA -->
-        <section id="cyoa">
-          <h2>📖 LIVRE DONT VOUS ÊTES LE HÉROS</h2>
-          <p>
-            Vous arrivez dans une bibliothèque blanche. Sur la table : un dossier sans titre, une carte de Bruxelles, et un mot :
-            <i>“Reprendre la main, sans se brûler.”</i>
-          </p>
-
-          <div class="choice">
-            <div class="chd">Page 1 — Choisissez votre porte</div>
-            <div class="cbd">
-              <p>
-                FR : Vous cherchez un fil. EN : You need a thread, not a plan.
-                LA : *Initium sapientiæ timor…* (ou juste le respect du réel).
-                Quenya : *Nai elen siluva lyenna* — que la clarté te trouve.
-                Lorem : sed do eiusmod tempor incididunt ut labore…
-              </p>
-              <div class="btns">
-                <button data-go="p2">A) “Je veux comprendre le jeu.”</button>
-                <button data-go="p3">B) “Je veux produire quelque chose d’utile.”</button>
-                <button data-go="p4">C) “Je veux sécuriser mon temps et mon argent.”</button>
-              </div>
-              <p class="note">Le CYOA te renvoie ensuite aux sections “wiki”. C’est voulu : l’histoire sert de boussole.</p>
-            </div>
-          </div>
-
-          <div class="choice" id="p2" hidden>
-            <div class="chd">Page 2 — Comprendre (sans paranoïa)</div>
-            <div class="cbd">
-              <p>
-                EN: “The map is not the territory.” FR: mais une carte vaut mieux que le brouillard.
-                Sindarin: *I annon edhellen* — une porte elfique, mais sans magie : des concepts.
-              </p>
-              <p><b>Action micro :</b> écris 5 mots qui reviennent dans ta vie (droits, aides, administration, dette, réseau…)</p>
-              <div class="btns">
-                <button data-jump="#ie">Aller : Intelligence économique</button>
-                <button data-jump="#hybrid">Aller : Guerre hybride (général)</button>
-                <button data-back>Retour</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="choice" id="p3" hidden>
-            <div class="chd">Page 3 — Produire (une preuve, pas un rêve)</div>
-            <div class="cbd">
-              <p>
-                High Valyrian: <i>Skoros ñuhyz syt?</i> — Quel est ton nom ? (Réponse : ton artefact.)
-                FR: un texte, un tuto, une page simple. EN: ship something small.
-              </p>
-              <p><b>Action micro :</b> fais une “fiche 1 page” : ce que tu sais faire + à quoi ça sert + preuve.</p>
-              <div class="btns">
-                <button data-jump="#ethique">Aller : Garde-fous</button>
-                <button data-jump="#refs">Aller : Outils & sources</button>
-                <button data-back>Retour</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="choice" id="p4" hidden>
-            <div class="chd">Page 4 — Sécuriser (le réel d’abord)</div>
-            <div class="cbd">
-              <p>
-                LA: *Primum vivere*… FR: d’abord stabiliser. EN: stabilize to strategize.
-                TLH: bIvalbe’ ‘e’ yImev! (si tu ne comprends pas, ralentis.)
-              </p>
-              <p><b>Action micro :</b> note : entrées / sorties / 3 variables. Même approximatif. C’est une carte.</p>
-              <div class="btns">
-                <button data-jump="#ie">Aller : IE (protection / veille)</button>
-                <button data-jump="#refs">Aller : Outils numériques</button>
-                <button data-back>Retour</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div class="hr"></div>
-
-        <!-- INTRO -->
-        <section id="intro">
-          <h2>1. Introduction</h2>
-          <p>
-            Ici, “reprendre la main” signifie : transformer le flou en décisions possibles.
-            L’intelligence économique (IE) sert à <b>voir</b>, la stratégie sert à <b>choisir</b>,
-            et la notion de “guerre hybride” sert à <b>comprendre</b> certains environnements informationnels
-            (sans tomber dans le délire).
-          </p>
-          <div class="box">
-            <h3>Traduction simple</h3>
-            <div class="tagrow">
-              <span class="tag">IE = observer & protéger</span>
-              <span class="tag">Stratégie = choisir un but + un chemin</span>
-              <span class="tag">Hybride = plusieurs moyens entremêlés</span>
-              <span class="tag">Éthique = éviter l’extraction / la nuisance</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- IE -->
-        <section id="ie">
-          <h2>2. Intelligence économique</h2>
-          <p>
-            L’IE (au sens large) regroupe la <b>veille</b>, la <b>protection</b> et l’<b>influence</b>… mais dans un Starter Kit orienté autonomie,
-            on privilégie deux axes : <b>comprendre un environnement</b> et <b>se protéger</b>.
-          </p>
-          <div class="box">
-            <h3>Version “autonomie” (pragmatique)</h3>
-            <ul>
-              <li><b>Veille</b> : suivre 3 sources fiables + un indicateur simple (ex: appels à projets, droits, opportunités locales).</li>
-              <li><b>Protection</b> : organiser ses documents, limiter l’exposition, savoir ce qu’on partage et pourquoi.</li>
-              <li><b>Capitalisation</b> : transformer une info en fiche claire (1 page) réutilisable.</li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- STRAT -->
-        <section id="strat">
-          <h2>3. Stratégie militaire (niveau général)</h2>
-          <p>
-            Ici, “stratégie” est prise au sens large : articulation <b>objectifs</b> → <b>moyens</b> → <b>contraintes</b> → <b>temps</b>.
-            On reste au niveau conceptuel (pas de tactiques, pas de procédés).
-          </p>
-          <div class="box">
-            <h3>Traduction “vie réelle”</h3>
-            <ul>
-              <li><b>But</b> : qu’est-ce qui change ta vie si ça marche ?</li>
-              <li><b>Moyens</b> : qu’est-ce que tu as vraiment (temps, énergie, réseau, compétences) ?</li>
-              <li><b>Contraintes</b> : qu’est-ce qui est non négociable (santé, droits, sécurité) ?</li>
-              <li><b>Tempo</b> : quel rythme est tenable sans te casser ?</li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- HYBRID -->
-        <section id="hybrid">
-          <h2>4. Guerre hybride (niveau général)</h2>
-          <p>
-            L’expression “guerre hybride” sert souvent à décrire des situations où plusieurs dimensions se combinent :
-            information, économie, diplomatie, cyber, pression sociale… Là encore, on reste sur une lecture <b>analytique</b>
-            pour ne pas se faire balader par des récits simplistes.
-          </p>
-          <div class="box">
-            <h3>Hybride ≠ magique</h3>
-            <ul>
-              <li>Ce n’est pas “tout est complot”.</li>
-              <li>C’est : plusieurs leviers agissent en même temps, et le public peut être brouillé.</li>
-              <li>Réponse saine : <b>sources</b>, <b>vérification</b>, <b>cadre éthique</b>, <b>prudence</b>.</li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- ETHIQUE -->
-        <section id="ethique">
-          <h2>5. Garde-fous & éthique</h2>
-          <p>
-            Le Starter Kit vise l’autonomie : pas la manipulation. Les règles minimales :
-          </p>
-          <ul>
-            <li><b>Pas de liens trompeurs</b>, pas de dissimulation volontaire.</li>
-            <li><b>Consentement</b> si des personnes sont identifiables.</li>
-            <li><b>Protection</b> : anonymisation par défaut, pas de collecte inutile.</li>
-            <li><b>Capacitation</b> : l’outil doit rendre autonome, pas dépendant.</li>
-          </ul>
-        </section>
-
-        <!-- JP -->
-        <section id="jp">
-          <h2>6. セクション（日本語）— あなたのリンク置き場</h2>
-          <div class="jp">
-            <h3>リンク（目印付き）</h3>
-            <p>以下は <b>あなたが差し替える用</b> のプレースホルダーです（赤いラインで目立つ）。</p>
-            <ul>
-              <li><span class="linkhint"><span class="ico">↗</span>
-                <a href="https://dl.ouaisfi.eu/haha" target="_blank" rel="noopener" data-domain="dl.ouaisfi.eu">dl.ouaisfi.eu/haha</a></span>
-                — ここにあなたの資料を置く</li>
-              <li><span class="linkhint"><span class="ico">↗</span>
-                <a href="https://dl.ouaisfi.eu/haha" target="_blank" rel="noopener" data-domain="dl.ouaisfi.eu">dl.ouaisfi.eu/haha</a></span>
-                — ここに別のリンクを置く</li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- REFS -->
-        <section id="refs" class="refs">
-          <h2>7. Références (liens)</h2>
-          <p class="small">
-            Liens “vrais” et identifiables (icône ↗ + domaine au survol). Tu peux les remplacer par tes propres sources.
-          </p>
-          <ol>
-            <li>
-              <span class="linkhint"><span class="ico">↗</span>
-              <a href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique" target="_blank" rel="noopener" data-domain="wikipedia.org">Intelligence économique (Wikipedia)</a></span>
-            </li>
-            <li>
-              <span class="linkhint"><span class="ico">↗</span>
-              <a href="https://en.wikipedia.org/wiki/Hybrid_warfare" target="_blank" rel="noopener" data-domain="wikipedia.org">Hybrid warfare (Wikipedia EN)</a></span>
-            </li>
-            <li>
-              <span class="linkhint"><span class="ico">↗</span>
-              <a href="https://www.nato.int/cps/en/natohq/topics_156338.htm" target="_blank" rel="noopener" data-domain="nato.int">NATO — resilience / hybrid threats (topic)</a></span>
-            </li>
-            <li>
-              <span class="linkhint"><span class="ico">↗</span>
-              <a href="https://www.oecd.org/" target="_blank" rel="noopener" data-domain="oecd.org">OCDE — contexte éco & politiques publiques (portail)</a></span>
-            </li>
-            <li>
-              <span class="linkhint"><span class="ico">↗</span>
-              <a href="https://www.coursera.org/learn/strategic-management" target="_blank" rel="noopener" data-domain="coursera.org">Strategic management (exemple de cours — à remplacer si besoin)</a></span>
-            </li>
-          </ol>
-        </section>
-
-        <div class="footer">
-          <b>Note technique :</b> cette page est un “wiki-like”, pas un clone exact, et elle refuse les patterns trompeurs.
-          Si tu veux, je peux : (1) ajouter une vraie sidebar “pages”, (2) faire un index multi-pages, (3) intégrer ton Starter Kit en navigation.
-        </div>
-      </main>
-
-      <!-- RIGHT INFOBOX -->
-      <aside class="info">
-        <h2>Infobox</h2>
-        <div class="infobox">
-          <div class="hd">Encyclopædia Ludica</div>
-          <div class="bd">
-            <dl>
-              <dt>Type</dt><dd>Page encyclopédique + CYOA</dd>
-              <dt>Thèmes</dt><dd>IE · Stratégie · Hybride (général)</dd>
-              <dt>Éthique</dt><dd>Anti-tromperie · Consentement · Minimalisme</dd>
-              <dt>Entrées rapides</dt>
-              <dd>
-                <a href="#cyoa">CYOA</a> ·
-                <a href="#ie">IE</a> ·
-                <a href="#hybrid">Hybride</a> ·
-                <a href="#jp">日本語</a>
-              </dd>
-            </dl>
-          </div>
-        </div>
-
-        <div class="hr"></div>
-
-        <h2>Mini-outil</h2>
-        <p class="small">Tape un mot-clé : ça filtre les sections (local, sans réseau).</p>
-        <input id="filter" placeholder="ex: IE, hybride, japonais…" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px" />
-        <p class="note" id="filterNote"></p>
-      </aside>
+    <div class="controls">
+      <div class="search" role="search">
+        <input id="search" placeholder="Search / Recherche / *Quaerere* / ‘u’ / Lorem…" />
+      </div>
+      <button class="btn primary" id="toggleFog">Mode Brouillard: OFF</button>
+      <span class="badge">Liens ↗ + domaine au survol</span>
     </div>
   </div>
 
+  <div class="layout">
+    <!-- LEFT SIDEBAR -->
+    <aside class="side">
+      <h2>Navigation</h2>
+
+      <div class="portlet">
+        <div class="ptitle">Portails</div>
+        <div class="pbody">
+          <a href="#ie">Intelligence économique</a>
+          <a href="#strategie">Stratégie</a>
+          <a href="#hybride">Guerre hybride</a>
+          <a href="#cyoa">Livre dont vous êtes le héros</a>
+          <a href="#jp">セクション（日本語）</a>
+          <a href="#refs">Références</a>
+          <small>Tip: <span class="mini">Ctrl</span>+<span class="mini">F</span> cherche aussi.</small>
+        </div>
+      </div>
+
+      <div class="portlet">
+        <div class="ptitle">Outils</div>
+        <div class="pbody">
+          <a href="#tools">Boîte à outils (fictive)</a>
+          <a href="#glossaire">Glossaire (brumeux)</a>
+          <a href="#notes">Notes & variations</a>
+        </div>
+      </div>
+
+      <div class="portlet">
+        <div class="ptitle">Langues actives (oui, elfiques pluriel)</div>
+        <div class="pbody">
+          <small>
+            FR · EN · LA · tlhIngan Hol (Klingon) · Quenya · Sindarin · Telerin · (Avari-ish) · High Valyrian · Lorem · 日本語
+          </small>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN ARTICLE -->
+    <main class="main">
+      <div class="tabs" role="tablist" aria-label="Tabs">
+        <div class="tab active" data-tab="article">Article</div>
+        <div class="tab" data-tab="discussion">Discussion</div>
+        <div class="tab" data-tab="read">Lire (CYOA)</div>
+        <div class="tab" data-tab="source">Source</div>
+      </div>
+
+      <!-- ARTICLE TAB -->
+      <section id="tab-article" class="tabpane readable fogify">
+        <h1 class="articleTitle">Intelligence économique · Stratégie militaire · Guerre hybride</h1>
+        <p class="subtitle">
+          Page encyclopédique (style wiki) + dispositif “Livre dont vous êtes le héros”.
+          <span class="clarity">Lecture volontairement polyglotte et confuse.</span>
+        </p>
+
+        <div class="hatnote">
+          <b>Notice:</b> Cette page est un <b>jeu</b> d’écriture et de repérage.
+          Elle aborde les notions à un niveau conceptuel; elle n’enseigne pas de tactiques ou méthodes nuisibles.
+        </div>
+
+        <div class="toc">
+          <div class="t">Sommaire</div>
+          <a href="#intro">1 Introduction</a>
+          <a href="#cyoa" class="lvl2">1.1 Livre dont vous êtes le héros (CYOA)</a>
+          <a href="#ie">2 Intelligence économique</a>
+          <a href="#ie-axes" class="lvl2">2.1 Axes (veille, protection, influence)</a>
+          <a href="#strategie">3 Stratégie (niveau général)</a>
+          <a href="#strategie-concepts" class="lvl2">3.1 Concepts (objectifs, moyens, contraintes)</a>
+          <a href="#hybride">4 Guerre hybride (niveau général)</a>
+          <a href="#hybride-lecture" class="lvl2">4.1 Lecture critique & résilience</a>
+          <a href="#jp">5 セクション（日本語）</a>
+          <a href="#refs">6 Références</a>
+        </div>
+
+        <section id="intro">
+          <h2>Introduction</h2>
+          <p class="mix">
+            FR: Ici, la carte n’est pas le territoire — mais sans carte, tu marches dans le brouillard.
+            EN: The point is not to win; it’s to <i>regain degrees of freedom</i>.
+            LA: <i>Primum vivere, deinde philosophari</i>.
+            tlhIngan Hol: <i>bIvalbe’ ‘e’ yImev</i> (si tu ne comprends pas, ralentis).
+            Quenya: <i>Elen síla lúmenn’ omentielvo</i>.
+            Sindarin: <i>Mae govannen, mellon</i>.
+            Telerin: <i>Elen síla i lómë</i> (variante).
+            Avari-ish: <i>naí elen…</i> (fragmentum).
+            High Valyrian: <i>Skoros ñuhyz syt?</i> — what is your name? (answer: your artifacts).
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
+          </p>
+
+          <div class="box">
+            <h3>Traduction (presque) utile</h3>
+            <div class="tagrow">
+              <span class="tag">IE = observer / protéger</span>
+              <span class="tag">Stratégie = choisir</span>
+              <span class="tag">Hybride = combiner des leviers</span>
+              <span class="tag">Jeu = apprendre sans honte</span>
+              <span class="tag">Brouillard = test de lecture</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- CYOA embedded -->
+        <section id="cyoa">
+          <h2>Livre dont vous êtes le héros</h2>
+          <div class="cyoa" id="cyoaBox">
+            <div class="hd">Page 1 — *Initium* / Begin / 開始 / “bIjatlh’a’?”</div>
+            <div class="bd">
+              <p class="mix">
+                FR: Une table. Un dossier. Une ville. Un mot: “Reprendre la main.”
+                EN: A choice is a tool.
+                LA: <i>Ars longa, vita brevis</i>.
+                Quenya: <i>Nai elen siluva lyenna</i>.
+                Sindarin: <i>Guren bêd enni</i>.
+                Telerin: <i>ínen i lassi lantar</i>.
+                tlhIngan Hol: <i>Heghlu’meH QaQ jajvam?</i> (non).
+                High Valyrian: <i>Valar dohaeris</i> (serve) — but today you serve yourself.
+                Lorem: ut enim ad minim veniam, quis nostrud exercitation.
+              </p>
+
+              <div class="choices">
+                <button class="choicebtn" data-go="p2">A) “Je veux voir (IE).”</button>
+                <button class="choicebtn" data-go="p3">B) “Je veux choisir (Stratégie).”</button>
+                <button class="choicebtn" data-go="p4">C) “Je veux résister au brouillard (Hybride).”</button>
+                <button class="choicebtn" data-go="p5">D) “Je veux le chaos polyglotte.”</button>
+              </div>
+
+              <div class="sep"></div>
+              <div class="langnoise" id="noise">
+FR/EN/LA/tlh/ELV+ (Quenya|Sindarin|Telerin|Avari-ish)/HV/Lorem:
+— “Clarity is power.” / “Scientia potentia est.”
+— *Elen síla…* / *Mae govannen…* / *Elen síla i lómë…*
+— *Skoros ñuhyz syt?* / Lorem ipsum…
+              </div>
+              <div class="fogHint">Astuce: Active “Mode Brouillard” pour rendre tout ça encore moins lisible.</div>
+            </div>
+          </div>
+
+          <div class="cyoa hidden" id="p2">
+            <div class="hd">Page 2 — IE: Veille / Protectio / “QI’”</div>
+            <div class="bd">
+              <p class="mix">
+                FR: Tu apprends à regarder sans t’épuiser.
+                EN: Watch signals, not noise.
+                LA: <i>Non multa sed multum</i>.
+                Quenya: <i>Questë</i> (interroger).
+                Sindarin: <i>Henneth</i> (fenêtre).
+                tlhIngan Hol: <i>De’ lIghlu’</i> (read data).
+                High Valyrian: <i>Umbi dohaerās</i> (we serve) → but with consent.
+                Lorem: duis aute irure dolor in reprehenderit.
+              </p>
+              <div class="choices">
+                <button class="choicebtn" data-jump="#ie">→ Aller à la section IE</button>
+                <button class="choicebtn" data-back>← Retour</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyoa hidden" id="p3">
+            <div class="hd">Page 3 — Stratégie: Ends / Ways / Means</div>
+            <div class="bd">
+              <p class="mix">
+                FR: Tu réduis le monde à trois colonnes.
+                EN: Ends, ways, means.
+                LA: <i>Festina lente</i>.
+                Quenya: <i>Ná</i> (être) — but be specific.
+                Sindarin: <i>Thalion</i> (steadfast).
+                Telerin: <i>lindë</i> (chant) — keep rhythm.
+                High Valyrian: <i>Vestri iksos issa</i> (today is your day).
+                Lorem: excepteur sint occaecat cupidatat.
+              </p>
+              <div class="choices">
+                <button class="choicebtn" data-jump="#strategie">→ Aller à la section Stratégie</button>
+                <button class="choicebtn" data-back>← Retour</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyoa hidden" id="p4">
+            <div class="hd">Page 4 — Hybride: multi-leviers, multi-récits</div>
+            <div class="bd">
+              <p class="mix">
+                FR: Le brouillard est un environnement.
+                EN: Hybrid environments combine domains.
+                LA: <i>Caveat lector</i>.
+                tlhIngan Hol: <i>yInlIj yIchenmoH</i> (improve your life).
+                Quenya: <i>Hrívë</i> (hiver) — endure.
+                Sindarin: <i>Dagor</i> (battle) — here: cognitive.
+                High Valyrian: <i>Yn kepa</i> (you will listen) → but only to evidence.
+                Lorem: sed ut perspiciatis unde omnis.
+              </p>
+              <div class="choices">
+                <button class="choicebtn" data-jump="#hybride">→ Aller à la section Hybride</button>
+                <button class="choicebtn" data-back>← Retour</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cyoa hidden" id="p5">
+            <div class="hd">Page 5 — Chaos polyglotte (inutile, donc parfait)</div>
+            <div class="bd">
+              <p class="mix" id="chaosText"></p>
+              <div class="choices">
+                <button class="choicebtn" id="regenChaos">Regénérer le chaos</button>
+                <button class="choicebtn" data-back>← Retour</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="ie">
+          <h2>Intelligence économique</h2>
+          <p class="mix">
+            FR: L’intelligence économique (IE) concerne la veille, la protection, et parfois l’influence.
+            EN: Competitive intelligence overlaps with information management.
+            LA: <i>Praemonitus praemunitus</i>.
+            Quenya: <i>cen-</i> (voir) + <i>quet-</i> (dire).
+            Sindarin: <i>tir-</i> (guard/observe).
+            Telerin: <i>cenë</i> (regarder).
+            High Valyrian: <i>kepus</i> (to listen).
+            Lorem ipsum dolor sit amet.
+          </p>
+
+          <div class="box" id="ie-axes">
+            <h3>Axes (au niveau “culture & autonomie”)</h3>
+            <ul class="mix">
+              <li><b>Veille</b> : choisir peu de sources, mais les suivre bien. <i>Non multa sed multum.</i></li>
+              <li><b>Protection</b> : documents, identité, exposition. <i>Caveat actor.</i></li>
+              <li><b>Influence</b> (soft) : rendre lisible, rendre partageable, rendre digne.</li>
+            </ul>
+            <div class="tagrow">
+              <span class="tag">signal > bruit</span>
+              <span class="tag">mémoire > panique</span>
+              <span class="tag">preuves > récits</span>
+            </div>
+          </div>
+
+          <p class="mix">
+            (Liens externes “vrais” mais propres) :
+            <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener"
+              href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">Wikipedia FR — IE</a></span>,
+            <span class="ext"><span class="ico">↗</span><a data-domain="oecd.org" target="_blank" rel="noopener"
+              href="https://www.oecd.org/">OECD (portail)</a></span>.
+          </p>
+        </section>
+
+        <section id="strategie">
+          <h2>Stratégie (niveau général)</h2>
+          <p class="mix">
+            FR: La stratégie relie objectifs, moyens, contraintes, temps.
+            EN: Ends / ways / means (concept).
+            LA: <i>Festina lente</i>.
+            Quenya: <i>tul-</i> (venir) — but with a path.
+            Sindarin: <i>rîdh</i> (crown / authority) — here: self-authority.
+            Telerin: <i>lindë</i> (chant) — keep tempo.
+            Lorem: sed do eiusmod tempor.
+          </p>
+
+          <div class="box" id="strategie-concepts">
+            <h3>Concepts (sans “manuel”)</h3>
+            <ul class="mix">
+              <li><b>But</b> : qu’est-ce qui change vraiment si ça marche ?</li>
+              <li><b>Moyens</b> : temps / énergie / réseau / compétences (réels, pas rêvés).</li>
+              <li><b>Contraintes</b> : santé / droits / sécurité / obligations.</li>
+              <li><b>Tempo</b> : rythme tenable (sinon tu perds).</li>
+            </ul>
+          </div>
+
+          <p class="mix">
+            Référence conceptuelle grand public :
+            <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener"
+              href="https://en.wikipedia.org/wiki/Strategy">Wikipedia EN — Strategy</a></span>.
+          </p>
+        </section>
+
+        <section id="hybride">
+          <h2>Guerre hybride (niveau général)</h2>
+          <p class="mix">
+            FR: “Hybride” décrit souvent un mélange de leviers (information, économie, cyber, diplomatie).
+            EN: Hybrid environments blend instruments of power.
+            LA: <i>Caveat lector</i> (et <i>caveat emptor</i> : attention aux vendeurs de peur).
+            tlhIngan Hol: <i>QIn vIlegh, QIn vIQoy</i> (I see/hear messages).
+            Quenya: <i>úvëa</i> (abundant) — too much at once.
+            Sindarin: <i>thangail</i> (needful) — keep what matters.
+            High Valyrian: <i>Ānogar</i> (to know).
+            Lorem: ut labore et dolore magna aliqua.
+          </p>
+
+          <div class="box" id="hybride-lecture">
+            <h3>Lecture critique (résilience)</h3>
+            <ul class="mix">
+              <li><b>Éviter</b> : “tout est complot” / “tout est simple”.</li>
+              <li><b>Faire</b> : recouper, dater, citer, comparer des sources.</li>
+              <li><b>Protéger</b> : réduire l’exposition au flux, conserver des preuves, garder un rythme.</li>
+            </ul>
+          </div>
+
+          <p class="mix">
+            Références grand public :
+            <span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener"
+              href="https://en.wikipedia.org/wiki/Hybrid_warfare">Wikipedia EN — Hybrid warfare</a></span>,
+            <span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener"
+              href="https://www.nato.int/cps/en/natohq/topics_156338.htm">NATO — hybrid threats topic</a></span>.
+          </p>
+        </section>
+
+        <section id="jp" class="jp">
+          <h2>セクション（日本語）— ここは「あなたのリンク」置き場</h2>
+          <p>見つけやすいように赤い枠です。リンクは全部 <b>dl.ouaisfi.eu/haha</b> にしています。</p>
+          <h3>リンク１</h3>
+          <p><span class="ext"><span class="ico">↗</span>
+            <a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a>
+          </span></p>
+          <h3>リンク２</h3>
+          <p><span class="ext"><span class="ico">↗</span>
+            <a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a>
+          </span></p>
+          <h3>リンク３（差し替え用）</h3>
+          <p><span class="ext"><span class="ico">↗</span>
+            <a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a>
+          </span></p>
+        </section>
+
+        <section id="glossaire">
+          <h2>Glossaire (brumeux)</h2>
+          <div class="box">
+            <h3>Entrées</h3>
+            <ul class="mix">
+              <li><b>Veille</b> — FR: regarder; EN: monitor; LA: <i>vigilare</i>; Quenya: <i>cen-</i>; Sindarin: <i>tir-</i>; Lorem: …</li>
+              <li><b>Signal</b> — FR: ce qui compte; EN: actionable; LA: <i>signum</i>; tlh: <i>QIn</i>; HV: <i>ānogar</i>; …</li>
+              <li><b>Brouillard</b> — FR: confusion; EN: fog; LA: <i>caligo</i>; Quenya: <i>hiswë</i>; Sindarin: <i>hith</i>; …</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="tools">
+          <h2>Boîte à outils (fictive, style wiki)</h2>
+          <p class="mix">
+            FR: Outils de lecture et d’organisation (pas “d’opérations”).
+            EN: Tools for clarity.
+            Lorem: consectetur adipiscing elit.
+          </p>
+          <div class="box">
+            <h3>Quelques liens généraux</h3>
+            <p class="mix">
+              <span class="ext"><span class="ico">↗</span><a data-domain="diagrams.net" target="_blank" rel="noopener"
+                href="https://www.diagrams.net/">diagrams.net</a></span>
+              ·
+              <span class="ext"><span class="ico">↗</span><a data-domain="activitywatch.net" target="_blank" rel="noopener"
+                href="https://activitywatch.net/">ActivityWatch</a></span>
+              ·
+              <span class="ext"><span class="ico">↗</span><a data-domain="logseq.com" target="_blank" rel="noopener"
+                href="https://logseq.com/">Logseq</a></span>
+            </p>
+          </div>
+        </section>
+
+        <section id="refs" class="refs">
+          <h2>Références</h2>
+          <ol>
+            <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener"
+              href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">Wikipedia FR — Intelligence économique</a></span></li>
+            <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener"
+              href="https://en.wikipedia.org/wiki/Strategy">Wikipedia EN — Strategy</a></span></li>
+            <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener"
+              href="https://en.wikipedia.org/wiki/Hybrid_warfare">Wikipedia EN — Hybrid warfare</a></span></li>
+            <li><span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener"
+              href="https://www.nato.int/cps/en/natohq/topics_156338.htm">NATO — Hybrid threats topic</a></span></li>
+          </ol>
+        </section>
+
+        <div class="cats">
+          Catégories :
+          <a href="#ie">Intelligence économique</a>
+          <a href="#strategie">Stratégie</a>
+          <a href="#hybride">Guerre hybride</a>
+          <a href="#jp">日本語</a>
+          <a href="#cyoa">CYOA</a>
+        </div>
+
+        <div class="footer">
+          Si tu veux “encore plus Wikipédia” : je peux ajouter (1) page “Discussion” remplie, (2) historique d’édition fictif,
+          (3) page “Portail” + (4) pages séparées multi-articles.
+        </div>
+      </section>
+
+      <!-- DISCUSSION TAB -->
+      <section id="tab-discussion" class="tabpane hidden readable fogify">
+        <h1 class="articleTitle">Discussion: Intelligence économique · Stratégie · Guerre hybride</h1>
+        <p class="subtitle">Page de discussion (fictive) — mélange volontairement confus.</p>
+        <div class="box">
+          <h3>Thread #1 — “This is not a manual”</h3>
+          <p class="mix">
+            EN: Keep it conceptual. FR: pas de mode d’emploi nuisible.
+            LA: <i>Mens sana in corpore sano</i>.
+            Quenya: <i>lúmë</i> (time) — time matters.
+            Sindarin: <i>bach</i> (trade) — economy matters.
+            Lorem: sed ut perspiciatis.
+          </p>
+        </div>
+        <div class="box">
+          <h3>Thread #2 — “Brouillard”</h3>
+          <p class="mix">
+            FR: Le brouillard est un test de lecture, pas un piège.
+            EN: The structure stays legible even if the text becomes noise.
+            tlhIngan Hol: <i>yIjatlh!</i> (speak) — but cite sources.
+            High Valyrian: <i>Ānogar</i> (know).
+            Lorem: nemo enim ipsam voluptatem.
+          </p>
+        </div>
+      </section>
+
+      <!-- READ TAB -->
+      <section id="tab-read" class="tabpane hidden readable fogify">
+        <h1 class="articleTitle">Lire — Livre dont vous êtes le héros (plein écran)</h1>
+        <p class="subtitle">Le même CYOA, mais isolé. Active le Brouillard si tu veux tout rendre illisible.</p>
+        <div id="cyoaClone"></div>
+      </section>
+
+      <!-- SOURCE TAB -->
+      <section id="tab-source" class="tabpane hidden readable">
+        <h1 class="articleTitle">Source</h1>
+        <p class="subtitle">Aperçu minimal (structure). Pour éditer : ouvre le fichier et modifie.</p>
+        <div class="box">
+          <h3>Rappels</h3>
+          <ul>
+            <li>Le “Mode Brouillard” augmente la confusion textuelle.</li>
+            <li>Les sections japonaises sont volontairement repérables (bord rouge).</li>
+            <li>Les liens externes restent identifiables au survol (domaine), pour éviter tout pattern trompeur.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="right">
+      <h2>Infobox</h2>
+      <div class="infobox">
+        <div class="hd">Encyclopaedia Ludica</div>
+        <div class="bd">
+          <dl>
+            <dt>Nature</dt><dd>Clone wiki + CYOA + brouillard</dd>
+            <dt>Langues</dt><dd>FR · EN · LA · Klingon · Elfiques (Quenya/Sindarin/Telerin/Avari-ish) · HV · Lorem · 日本語</dd>
+            <dt>But</dt><dd>Jeu de lecture / repérage / montage en compétences</dd>
+            <dt>Section repérable</dt><dd><a href="#jp">日本語リンク</a></dd>
+            <dt>Mode</dt><dd><span class="mini">Brouillard</span> = confusion max</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <h2>Filtre local</h2>
+      <p style="margin:0 0 6px;color:var(--mut);font-size:13px">Tape un mot-clé (cache les sections non-matching).</p>
+      <input id="filter" style="width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px" placeholder="ex: hybride / valyrian / 日本語 / lorem" />
+      <p id="filterNote" style="margin:6px 0 0;color:var(--mut);font-size:12px"></p>
+    </aside>
+  </div>
+</div>
+
 <script>
-  // CYOA controls
-  (function(){
-    const choices = ["p2","p3","p4"].map(id=>document.getElementById(id));
-    const show = (id)=>{
-      choices.forEach(c=>c.hidden = (c.id!==id));
-      document.getElementById("cyoa").scrollIntoView({behavior:"smooth",block:"start"});
-    };
-    document.querySelectorAll("[data-go]").forEach(btn=>{
-      btn.addEventListener("click", ()=>show(btn.getAttribute("data-go")));
-    });
-    document.querySelectorAll("[data-back]").forEach(btn=>{
+(() => {
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+  // Tabs
+  const tabs = $$(".tab");
+  const panes = {
+    article: $("#tab-article"),
+    discussion: $("#tab-discussion"),
+    read: $("#tab-read"),
+    source: $("#tab-source"),
+  };
+  tabs.forEach(t => t.addEventListener("click", () => {
+    tabs.forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    Object.values(panes).forEach(p=>p.classList.add("hidden"));
+    panes[t.dataset.tab].classList.remove("hidden");
+
+    // Clone CYOA into read tab (once)
+    if(t.dataset.tab === "read"){
+      const cloneHost = $("#cyoaClone");
+      if(!cloneHost.dataset.ready){
+        const original = $("#cyoaBox").parentElement.cloneNode(true);
+        // Keep only the CYOA section
+        const only = original.querySelector("#cyoa");
+        cloneHost.innerHTML = "";
+        cloneHost.appendChild(only.cloneNode(true));
+        cloneHost.dataset.ready = "1";
+        wireCYOA(cloneHost);
+      }
+    }
+  }));
+
+  // CYOA wiring
+  function wireCYOA(root=document){
+    const box = $("#cyoaBox", root) || $("#cyoa", root);
+    const p2 = $("#p2", root);
+    const p3 = $("#p3", root);
+    const p4 = $("#p4", root);
+    const p5 = $("#p5", root);
+    const pages = [p2,p3,p4,p5].filter(Boolean);
+
+    function hideAll(){ pages.forEach(p=>p.classList.add("hidden")); }
+
+    $$(".choicebtn[data-go]", root).forEach(btn=>{
       btn.addEventListener("click", ()=>{
-        choices.forEach(c=>c.hidden=true);
-        document.getElementById("cyoa").scrollIntoView({behavior:"smooth",block:"start"});
+        hideAll();
+        const id = btn.getAttribute("data-go");
+        const el = $("#"+id, root);
+        if(el) el.classList.remove("hidden");
+        ( $("#cyoa", root) || box ).scrollIntoView({behavior:"smooth", block:"start"});
       });
     });
-    document.querySelectorAll("[data-jump]").forEach(btn=>{
+
+    $$(".choicebtn[data-back]", root).forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        hideAll();
+        ( $("#cyoa", root) || box ).scrollIntoView({behavior:"smooth", block:"start"});
+      });
+    });
+
+    $$(".choicebtn[data-jump]", root).forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const sel = btn.getAttribute("data-jump");
-        const el = document.querySelector(sel);
-        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+        const target = document.querySelector(sel);
+        if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
       });
     });
-  })();
 
-  // Local filter (simple)
-  (function(){
-    const filter = document.getElementById("filter");
-    const note = document.getElementById("filterNote");
-    const sections = Array.from(document.querySelectorAll("main section"));
-    const normalize = s => (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-    const apply = ()=>{
-      const q = normalize(filter.value.trim());
-      let shown = 0;
-      sections.forEach(sec=>{
-        if(!q){ sec.style.display=""; shown++; return; }
-        const hay = normalize(sec.innerText);
-        const ok = hay.includes(q);
-        sec.style.display = ok ? "" : "none";
-        if(ok) shown++;
-      });
-      note.textContent = q ? `Filtre actif : ${shown} section(s) visible(s).` : "";
-    };
-    filter.addEventListener("input", apply);
-  })();
+    // Chaos page text generator
+    const chaosEl = $("#chaosText", root);
+    const regen = $("#regenChaos", root);
+    const pool = [
+      `FR: “Je cherche un fil.”`,
+      `EN: “The fog is an environment.”`,
+      `LA: “Scientia potentia est.”`,
+      `tlhIngan Hol: “Qapla’!”`,
+      `Quenya: “Elen síla lúmenn’ omentielvo.”`,
+      `Sindarin: “Mae govannen.”`,
+      `Telerin: “Elen síla i lómë.”`,
+      `Avari-ish: “naí… elen…”`,
+      `High Valyrian: “Skoros ñuhyz syt?”`,
+      `Lorem: “Lorem ipsum dolor sit amet…”`,
+      `日本語: 「これはリンクではない、ただの霧だ。」`,
+    ];
+    function genChaos(){
+      const n = 14 + Math.floor(Math.random()*10);
+      let out = [];
+      for(let i=0;i<n;i++){
+        out.push(pool[Math.floor(Math.random()*pool.length)]);
+      }
+      out.push(`— ${new Date().toISOString().slice(0,19)}Z —`);
+      if(chaosEl) chaosEl.textContent = out.join(" ");
+    }
+    if(regen) regen.addEventListener("click", genChaos);
+    if(chaosEl) genChaos();
+  }
+  wireCYOA(document);
 
-  // Top search just focuses filter (keeps the wiki-like UX)
-  (function(){
-    const q = document.getElementById("q");
-    const f = document.getElementById("filter");
-    q.addEventListener("keydown",(e)=>{
-      if(e.key==="Enter"){
-        f.value = q.value;
-        f.dispatchEvent(new Event("input"));
-        location.hash="#";
-        f.scrollIntoView({behavior:"smooth",block:"center"});
+  // Fog mode (max confusion)
+  const toggleFog = $("#toggleFog");
+  let fog = false;
+  function fogifyText(){
+    // Add extra multilingual noise in every ".mix" paragraph when fog is ON
+    const extras = [
+      "FR: …",
+      "EN: …",
+      "LA: *sic transit* …",
+      "tlh: QIn …",
+      "Quenya: nai …",
+      "Sindarin: hith …",
+      "Telerin: lindë …",
+      "HV: ānogar …",
+      "Lorem: sed do eiusmod …",
+      "日本語: 霧 …"
+    ];
+    $$(".mix").forEach(p=>{
+      if(!p.dataset.base) p.dataset.base = p.textContent;
+      if(fog){
+        const base = p.dataset.base;
+        const add = Array.from({length: 6 + Math.floor(Math.random()*8)}, ()=>extras[Math.floor(Math.random()*extras.length)]).join(" ");
+        p.textContent = base + "  " + add + "  " + add.split("").reverse().join("").slice(0,120);
+      }else{
+        p.textContent = p.dataset.base;
       }
     });
-  })();
+  }
+  toggleFog.addEventListener("click", ()=>{
+    fog = !fog;
+    document.body.classList.toggle("fog", fog);
+    toggleFog.textContent = "Mode Brouillard: " + (fog ? "ON" : "OFF");
+    fogifyText();
+  });
+
+  // Search -> forwards to filter
+  const search = $("#search");
+  const filter = $("#filter");
+  search.addEventListener("keydown",(e)=>{
+    if(e.key==="Enter"){
+      filter.value = search.value;
+      filter.dispatchEvent(new Event("input"));
+    }
+  });
+
+  // Filter sections locally
+  const filterNote = $("#filterNote");
+  const sections = $$("main section");
+  const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  filter.addEventListener("input", ()=>{
+    const q = norm(filter.value.trim());
+    let shown = 0;
+    sections.forEach(sec=>{
+      if(!q){ sec.style.display=""; shown++; return; }
+      const hay = norm(sec.innerText);
+      const ok = hay.includes(q);
+      sec.style.display = ok ? "" : "none";
+      if(ok) shown++;
+    });
+    filterNote.textContent = q ? `Filtre actif: ${shown} section(s) visible(s).` : "";
+  });
+})();
 </script>
 </body>
 </html>
