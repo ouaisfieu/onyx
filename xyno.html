@@ -1,0 +1,1909 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<title>Portail • Lieux de liens (BXL) — Workspace open data & collaboration</title>
+<style>
+  :root{
+    --bg0:#05070b; --bg1:#070c12;
+    --panel:rgba(12,18,32,.78);
+    --panel2:rgba(12,18,32,.92);
+    --line:rgba(255,255,255,.12);
+    --txt:#eaf1ff;
+    --mut:rgba(234,241,255,.70);
+    --good:#86fbd6;
+    --lilac:#d7a8ff;
+    --warn:#ffd36a;
+    --bad:#ff6a8b;
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --glass: blur(14px) saturate(140%);
+    --r24:24px; --r20:20px; --r16:16px; --r14:14px;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    --scale: 1;
+  }
+  [data-theme="light"]{
+    --bg0:#f6f7fb; --bg1:#ffffff;
+    --panel:rgba(255,255,255,.74);
+    --panel2:rgba(255,255,255,.92);
+    --line:rgba(0,0,0,.10);
+    --txt:#0c1222;
+    --mut:rgba(15,20,35,.70);
+    --shadow: 0 20px 70px rgba(15,20,35,.12);
+  }
+  [data-font="large"]{ --scale: 1.12; }
+  [data-font="xlarge"]{ --scale: 1.20; }
+  [data-motion="reduced"] .grain,
+  [data-motion="reduced"] .scan{display:none!important;}
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; overflow:hidden;
+    font-family:var(--sans);
+    font-size: calc(14px * var(--scale));
+    color:var(--txt);
+    background:
+      radial-gradient(900px 600px at 15% 10%, color-mix(in oklab, var(--good) 18%, transparent), transparent 60%),
+      radial-gradient(900px 600px at 85% 15%, color-mix(in oklab, var(--lilac) 16%, transparent), transparent 55%),
+      radial-gradient(900px 650px at 55% 95%, color-mix(in oklab, var(--good) 12%, transparent), transparent 55%),
+      linear-gradient(180deg,var(--bg0),var(--bg1));
+  }
+  .scan,.grain{position:fixed; inset:0; pointer-events:none; mix-blend-mode:overlay}
+  .scan{opacity:.12;background:linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px);background-size:100% 3px}
+  .grain{
+    opacity:.09;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    background-size:220px 220px
+  }
+
+  /* Layout */
+  .root{
+    position:fixed; inset:0; z-index:5;
+    display:grid;
+    grid-template-columns: 360px 1fr 440px;
+    grid-template-rows: auto 1fr;
+    gap:12px;
+    padding:12px;
+    padding-top: calc(12px + env(safe-area-inset-top));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+  @media(max-width:1200px){ .root{grid-template-columns: 340px 1fr} .right{display:none} }
+  @media(max-width:900px){ .root{grid-template-columns: 1fr} .left,.right{display:none} .fab{display:block} }
+
+  .panel{
+    border-radius:var(--r24);
+    background: var(--panel);
+    border:1px solid var(--line);
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--glass);
+    overflow:hidden;
+    min-height:0;
+  }
+  .topbar{
+    grid-column: 1 / -1;
+    display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    padding:10px;
+    border-radius:var(--r24);
+    background:rgba(0,0,0,.14);
+    border:1px solid var(--line);
+    backdrop-filter: var(--glass);
+    box-shadow: var(--shadow);
+  }
+  .brand{display:flex; gap:10px; align-items:center; flex:1; min-width: 240px}
+  .sig{
+    width:44px; height:44px; border-radius:14px;
+    border:1px solid var(--line);
+    display:grid; place-items:center;
+    background:
+      radial-gradient(18px 18px at 30% 30%, color-mix(in oklab, var(--good) 36%, transparent), rgba(0,0,0,.05)),
+      radial-gradient(18px 18px at 70% 70%, color-mix(in oklab, var(--lilac) 30%, transparent), rgba(0,0,0,.05)),
+      linear-gradient(180deg, rgba(13,20,34,.85), rgba(8,12,20,.85));
+    box-shadow: 0 12px 40px rgba(0,0,0,.28), 0 0 30px color-mix(in oklab, var(--good) 18%, transparent);
+  }
+  .sig span{font-weight:950; letter-spacing:.08em; font-family:var(--mono); font-size:12px; opacity:.95}
+  .title{min-width:0}
+  .title .h{font-weight:950; letter-spacing:.06em; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .title .s{margin-top:2px; color:var(--mut); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+  .btn{
+    height:36px; padding:0 12px; border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.14);
+    color:var(--txt);
+    cursor:pointer;
+    font-weight:900; letter-spacing:.02em;
+    user-select:none;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{
+    border-color: color-mix(in oklab, var(--good) 40%, var(--line));
+    background: linear-gradient(180deg, color-mix(in oklab, var(--good) 18%, transparent), rgba(0,0,0,.10));
+    box-shadow: 0 0 26px color-mix(in oklab, var(--good) 14%, transparent);
+  }
+  .btn.lilac{
+    border-color: color-mix(in oklab, var(--lilac) 40%, var(--line));
+    background: linear-gradient(180deg, color-mix(in oklab, var(--lilac) 18%, transparent), rgba(0,0,0,.10));
+  }
+  .btn.danger{
+    border-color: color-mix(in oklab, var(--bad) 45%, var(--line));
+    background: linear-gradient(180deg, color-mix(in oklab, var(--bad) 14%, transparent), rgba(0,0,0,.10));
+  }
+  .btn[disabled]{opacity:.45; cursor:not-allowed}
+
+  .field{
+    height:36px; padding:0 10px; border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.10);
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--mut);
+  }
+  .field input[type="text"]{
+    width:260px; max-width: 62vw;
+    background:transparent; border:0; outline:none;
+    color:var(--txt); font-family:var(--mono); font-size:12px;
+  }
+  .pill{
+    height:36px; padding:0 10px; border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.10);
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--mut);
+  }
+  .pill input{accent-color: var(--good)}
+
+  .left{grid-row:2; display:flex; flex-direction:column; gap:12px; min-height:0}
+  .center{grid-row:2; min-height:0}
+  .right{grid-row:2; display:flex; flex-direction:column; gap:12px; min-height:0}
+
+  .phead{
+    padding:12px;
+    border-bottom:1px solid color-mix(in oklab, var(--line) 80%, transparent);
+    display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+  }
+  .phead .h{font-weight:950; letter-spacing:.08em; font-family:var(--mono); font-size:12px}
+  .pbody{padding:12px; overflow:auto; min-height:0}
+
+  .tabs{display:flex; gap:8px; flex-wrap:wrap}
+  .tab{
+    height:30px; padding:0 10px; border-radius:999px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.08);
+    color:var(--mut);
+    cursor:pointer;
+    font-weight:900; font-size:12px;
+  }
+  .tab.active{
+    color:var(--txt);
+    border-color: color-mix(in oklab, var(--good) 42%, var(--line));
+    background: color-mix(in oklab, var(--good) 12%, transparent);
+  }
+
+  .kpis{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px}
+  .kpi{
+    border-radius:16px;
+    border:1px solid color-mix(in oklab, var(--line) 78%, transparent);
+    background:rgba(0,0,0,.12);
+    padding:10px;
+    min-height:72px;
+  }
+  .kpi .t{font-size:11px;color:var(--mut)}
+  .kpi .v{font-family:var(--mono);font-weight:950;font-size:20px;margin-top:4px}
+
+  .hint{
+    border-left:6px solid color-mix(in oklab, var(--good) 56%, transparent);
+    background:color-mix(in oklab, var(--good) 10%, transparent);
+    border:1px solid color-mix(in oklab, var(--good) 18%, var(--line));
+    border-radius:16px;
+    padding:10px 12px;
+    color:color-mix(in oklab, var(--txt) 82%, transparent);
+    font-size:12px; line-height:1.45;
+  }
+  .hint.warn{
+    border-left-color: color-mix(in oklab, var(--warn) 70%, transparent);
+    background: color-mix(in oklab, var(--warn) 10%, transparent);
+    border-color: color-mix(in oklab, var(--warn) 18%, var(--line));
+  }
+
+  .list{
+    border:1px solid color-mix(in oklab, var(--line) 78%, transparent);
+    border-radius:18px;
+    overflow:hidden;
+    background:rgba(0,0,0,.10);
+  }
+  .item{
+    padding:10px 12px;
+    border-bottom:1px solid color-mix(in oklab, var(--line) 65%, transparent);
+    display:flex; gap:10px; align-items:flex-start;
+    cursor:pointer;
+  }
+  .item:last-child{border-bottom:0}
+  .badge{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:0 0 auto;opacity:.95}
+  .meta{flex:1; min-width:0}
+  .id{font-family:var(--mono); font-size:12px; font-weight:950; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .sub{font-size:12px; color:var(--mut); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .r{font-family:var(--mono); font-size:11px; color:color-mix(in oklab, var(--mut) 92%, transparent); white-space:nowrap}
+
+  .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+  .sep{height:1px;background:color-mix(in oklab, var(--line) 70%, transparent); margin:12px 0}
+
+  .chip{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid color-mix(in oklab, var(--line) 78%, transparent);
+    background:rgba(0,0,0,.10);
+    color:color-mix(in oklab, var(--txt) 86%, transparent);
+    user-select:none;
+    cursor:pointer;
+  }
+  .chip.good{border-color:color-mix(in oklab, var(--good) 40%, var(--line)); background:color-mix(in oklab, var(--good) 10%, transparent)}
+  .chip.lilac{border-color:color-mix(in oklab, var(--lilac) 40%, var(--line)); background:color-mix(in oklab, var(--lilac) 10%, transparent)}
+  .chip.warn{border-color:color-mix(in oklab, var(--warn) 40%, var(--line)); background:color-mix(in oklab, var(--warn) 10%, transparent)}
+  .chip.bad{border-color:color-mix(in oklab, var(--bad) 42%, var(--line)); background:color-mix(in oklab, var(--bad) 10%, transparent)}
+
+  textarea, pre.code{
+    width:100%;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.12);
+    color:var(--txt);
+    font-family:var(--mono);
+    font-size:12px; line-height:1.45;
+    padding:10px;
+    outline:none;
+  }
+  textarea{min-height:130px; resize:vertical}
+  pre.code{overflow:auto; max-height: 260px; margin:0}
+
+  /* Canvas view (safe, light) */
+  canvas{display:block; width:100%; height:100%;}
+  .canvasWrap{position:relative; height:100%; min-height: 520px;}
+  .canvasHud{
+    position:absolute; left:12px; right:12px; top:12px;
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+    pointer-events:none;
+  }
+  .canvasHud .chip, .canvasHud .btn{pointer-events:auto}
+
+  /* Modals */
+  .modalWrap{
+    position:fixed; inset:0; z-index:60;
+    display:none; align-items:center; justify-content:center;
+    padding:14px;
+  }
+  .modalWrap.open{display:flex}
+  .scrim{position:absolute; inset:0; background:rgba(0,0,0,.62)}
+  .modal{
+    position:relative;
+    width:min(920px, 96vw);
+    max-height:min(92vh, 920px);
+    border-radius:24px;
+    background:var(--panel2);
+    border:1px solid var(--line);
+    box-shadow: var(--shadow);
+    backdrop-filter: var(--glass);
+    overflow:hidden;
+    display:flex; flex-direction:column; min-height:0;
+  }
+  .mhd{padding:12px;border-bottom:1px solid color-mix(in oklab, var(--line) 80%, transparent);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .mhd .h{font-weight:950; letter-spacing:.08em; font-family:var(--mono); font-size:12px}
+  .mbd{padding:12px; overflow:auto; min-height:0}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  @media(max-width:780px){ .grid2{grid-template-columns:1fr} }
+
+  /* Export pulse */
+  @keyframes neonPulse{
+    0%,72%{ box-shadow: 0 0 0 rgba(215,168,255,0); }
+    74%{ box-shadow: 0 0 22px rgba(215,168,255,.55), 0 0 60px rgba(215,168,255,.25); }
+    86%{ box-shadow: 0 0 10px rgba(215,168,255,.35), 0 0 30px rgba(215,168,255,.18); }
+    100%{ box-shadow: 0 0 0 rgba(215,168,255,0); }
+  }
+  .pulseLilac{ animation: neonPulse 6s ease-in-out 1; }
+
+  /* Toast */
+  .toast{
+    position:fixed; right:12px; bottom:12px; z-index:80;
+    padding:10px 12px; border-radius:14px;
+    border:1px solid var(--line);
+    background:rgba(0,0,0,.40);
+    backdrop-filter: var(--glass);
+    box-shadow: var(--shadow);
+    color:var(--txt);
+    max-width:min(520px, 92vw);
+    opacity:0; transform: translateY(8px);
+    transition: .18s ease;
+    pointer-events:none;
+  }
+  .toast.on{opacity:1; transform: translateY(0)}
+  :focus-visible{ outline:2px solid color-mix(in oklab, var(--good) 60%, transparent); outline-offset:2px; }
+
+  /* Mobile */
+  .fab{display:none; position:fixed; right:12px; bottom:12px; z-index:55; padding-bottom: env(safe-area-inset-bottom);}
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div class="grain"></div>
+
+<div class="root" id="root">
+  <div class="topbar">
+    <div class="brand">
+      <div class="sig" aria-hidden="true"><span>LDL</span></div>
+      <div class="title">
+        <div class="h">Workspace • portail ouvert (données ouvertes + collaboration)</div>
+        <div class="s">BXL · Santé mentale · “lieux de liens” → EP / insertion / socioculturel</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn primary" id="btnOnboard">Onboarding</button>
+      <button class="btn lilac" id="btnExport">EXPORTER</button>
+      <button class="btn" id="btnImport">Importer</button>
+      <button class="btn" id="btnDocs">Docs</button>
+      <button class="btn" id="btnSettings" title="Confort / Accessibilité">⚙︎</button>
+      <button class="btn" id="btnCenter" title="Recentrer la vue">↺</button>
+    </div>
+
+    <div class="pill" title="Affiche les noms réels si présents dans le dataset (sinon rien ne change).">
+      <span>Noms réels</span><input id="reveal" type="checkbox"/>
+    </div>
+
+    <div class="field" title="Exemples : type:place tag:accueil_bas_seuil layer:ASTRO conf:>=0.75 zone:Z-1000">
+      <label>Filtre</label>
+      <input id="filter" type="text" spellcheck="false" placeholder="type:place tag:accueil_bas_seuil conf:>=0.75" />
+    </div>
+  </div>
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="panel">
+      <div class="phead">
+        <div class="h">Navigation</div>
+        <div class="tabs" role="tablist" aria-label="Modules">
+          <button class="tab active" data-tab="explore" role="tab" aria-selected="true">Explorer</button>
+          <button class="tab" data-tab="contrib" role="tab">Contribuer</button>
+          <button class="tab" data-tab="routes" role="tab">Parcours</button>
+        </div>
+      </div>
+
+      <div class="pbody" id="tabExplore">
+        <div class="kpis">
+          <div class="kpi"><div class="t">Entités</div><div class="v" id="kEnt">0</div></div>
+          <div class="kpi"><div class="t">Liens</div><div class="v" id="kRel">0</div></div>
+          <div class="kpi"><div class="t">Zones</div><div class="v" id="kZon">0</div></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row">
+          <span class="chip good" data-quick="layer:ASTRO" title="Lieux de liens / bas seuil">ASTRO</span>
+          <span class="chip lilac" data-quick="layer:TAROT" title="Services institutionnels">TAROT</span>
+          <span class="chip" data-quick="layer:NEUTRE" title="Réseaux / coordination">NEUTRE</span>
+          <span class="chip" data-quick="" title="Réinitialise le filtre">Tout</span>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="hint">
+          <b>Simple</b> : clique un nœud → fiche à droite.<br/>
+          <b>Créer un lien</b> : Shift + clic sur 2 nœuds → lien “connecte”.<br/>
+          <b>Déplacer un nœud</b> : Alt + glisser. <b>Pan</b> : glisser le fond. <b>Zoom</b> : molette.
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="list" id="entityList" aria-label="Liste d'entités"></div>
+      </div>
+
+      <div class="pbody" id="tabContrib" style="display:none">
+        <div class="hint">
+          Contribution bas seuil : <b>note</b>, <b>tag</b>, <b>tâche</b>. Puis <b>EXPORTER</b> et partager le fichier.
+        </div>
+        <div class="sep"></div>
+
+        <div class="row">
+          <button class="btn" id="btnAddNote">+ Note</button>
+          <button class="btn" id="btnAddTag">+ Tag</button>
+          <button class="btn" id="btnAddTask">+ Tâche</button>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="hint warn">
+          ⚠️ Stockage local (localStorage) : ça peut disparaître (mode privé / nettoyage / politique IT). Exporte souvent.
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="list">
+          <div class="item" style="cursor:default">
+            <div class="meta">
+              <div class="id">Ticket Markdown (offline)</div>
+              <div class="sub">Copiable dans un mail, GitHub, Nextcloud, doc partagé.</div>
+            </div>
+          </div>
+          <div style="padding:10px 12px">
+            <textarea id="ticketMd" spellcheck="false" placeholder="# Ticket
+- Quoi ?
+- Où ?
+- Pourquoi ?
+- Preuve / lien ?
+- Action proposée ?"></textarea>
+            <div class="row" style="margin-top:10px">
+              <button class="btn" id="btnCopyTicket">Copier</button>
+              <button class="btn danger" id="btnClearTicket">Vider</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pbody" id="tabRoutes" style="display:none">
+        <div class="hint">
+          Parcours = suite d’étapes “accueil bas seuil → relais → EP / insertion / socioculturel”.
+        </div>
+
+        <div class="sep"></div>
+        <div class="row">
+          <button class="btn" id="btnNewRoute">+ Nouveau</button>
+          <button class="btn" id="btnAddToRoute" disabled>+ Ajouter la sélection</button>
+          <button class="btn danger" id="btnClearRoute">Réinitialiser</button>
+        </div>
+
+        <div class="sep"></div>
+        <div class="list" id="routeList"></div>
+
+        <div class="sep"></div>
+        <div class="list">
+          <div class="item" style="cursor:default">
+            <div class="meta">
+              <div class="id">Export parcours (Markdown)</div>
+              <div class="sub">Partageable avec toutes les parties prenantes.</div>
+            </div>
+          </div>
+          <div style="padding:10px 12px">
+            <pre class="code" id="routeMd"></pre>
+            <div class="row" style="margin-top:10px">
+              <button class="btn" id="btnCopyRoute">Copier</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="phead">
+        <div class="h">Session</div>
+        <div class="r" id="sessionBadge">local • autosave</div>
+      </div>
+      <div class="pbody">
+        <div class="row">
+          <button class="btn" id="btnSnapshot">Snapshot</button>
+          <button class="btn danger" id="btnReset">Réinitialiser</button>
+        </div>
+        <div class="sep"></div>
+        <pre class="code" id="log"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER -->
+  <div class="center panel">
+    <div class="phead">
+      <div class="h">Vue</div>
+      <div class="tabs">
+        <button class="tab active" id="btnModeGraph">Graph</button>
+        <button class="tab" id="btnModeZones">Zones</button>
+        <button class="tab" id="btnModeList">Liste</button>
+      </div>
+    </div>
+    <div class="pbody" style="padding:0; height:100%">
+      <div class="canvasWrap">
+        <canvas id="cv" aria-label="Graphe des entités"></canvas>
+        <div class="canvasHud">
+          <span class="chip good" id="hudTip">Tip: Shift+clic (lien) • Alt+drag (déplace) • Molette (zoom)</span>
+        </div>
+      </div>
+      <div class="list" id="listView" style="display:none; margin:12px"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="panel">
+      <div class="phead">
+        <div class="h">Fiche</div>
+        <div class="row">
+          <button class="btn" id="btnBack" title="Retour (Alt+←)">⟵</button>
+          <button class="btn" id="btnFwd" title="Avancer (Alt+→)">⟶</button>
+          <button class="btn" id="btnPin" title="Épingler / désépingler">📌</button>
+        </div>
+      </div>
+      <div class="pbody" id="inspector">
+        <div class="hint">Sélectionne un nœud pour afficher sa fiche.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="phead">
+        <div class="h">Notes & tâches</div>
+        <div class="row">
+          <button class="btn" id="btnAddNote2">+ Note</button>
+          <button class="btn" id="btnAddTask2">+ Tâche</button>
+        </div>
+      </div>
+      <div class="pbody">
+        <div class="list" id="notesList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE -->
+<div class="fab">
+  <button class="btn primary" id="btnMobileInspector">Fiche</button>
+</div>
+
+<!-- MODAL -->
+<div class="modalWrap" id="modal" aria-hidden="true">
+  <div class="scrim"></div>
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Modal">
+    <div class="mhd">
+      <div class="h" id="mTitle">—</div>
+      <div class="row">
+        <button class="btn" id="mClose">✕</button>
+      </div>
+    </div>
+    <div class="mbd" id="mBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" aria-live="polite"></div>
+
+<input id="fileJson" type="file" accept="application/json" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"/>
+
+<script>
+(()=>{"use strict";
+
+/* ============ STABILITÉ: no deps, no eval, no fancy APIs required ============ */
+/* Dataset accepté:
+   A) Format "NYXO-like": { zones:[], entities:[], links:[], notes:[] }
+   B) Format "resources": [{id,name,type,tags,address,description,links,...}]
+   -> converti en entities/links/zones internes
+*/
+
+const LS_KEY = "ldl_workspace_v2";
+const $ = (id)=>document.getElementById(id);
+const ui = {
+  // top
+  btnOnboard:$("btnOnboard"), btnExport:$("btnExport"), btnImport:$("btnImport"),
+  btnDocs:$("btnDocs"), btnSettings:$("btnSettings"), btnCenter:$("btnCenter"),
+  reveal:$("reveal"), filter:$("filter"),
+  // tabs
+  tabBtns:[...document.querySelectorAll(".tab[data-tab]")],
+  tabExplore:$("tabExplore"), tabContrib:$("tabContrib"), tabRoutes:$("tabRoutes"),
+  // explore
+  kEnt:$("kEnt"), kRel:$("kRel"), kZon:$("kZon"),
+  entityList:$("entityList"),
+  // modes
+  btnModeGraph:$("btnModeGraph"), btnModeZones:$("btnModeZones"), btnModeList:$("btnModeList"),
+  listView:$("listView"),
+  // canvas
+  cv:$("cv"),
+  // inspector + notes
+  inspector:$("inspector"), notesList:$("notesList"),
+  btnBack:$("btnBack"), btnFwd:$("btnFwd"), btnPin:$("btnPin"),
+  btnAddNote2:$("btnAddNote2"), btnAddTask2:$("btnAddTask2"),
+  // contrib
+  btnAddNote:$("btnAddNote"), btnAddTag:$("btnAddTag"), btnAddTask:$("btnAddTask"),
+  ticketMd:$("ticketMd"), btnCopyTicket:$("btnCopyTicket"), btnClearTicket:$("btnClearTicket"),
+  // routes
+  btnNewRoute:$("btnNewRoute"), btnAddToRoute:$("btnAddToRoute"), btnClearRoute:$("btnClearRoute"),
+  routeList:$("routeList"), routeMd:$("routeMd"), btnCopyRoute:$("btnCopyRoute"),
+  // session
+  sessionBadge:$("sessionBadge"), log:$("log"), btnSnapshot:$("btnSnapshot"), btnReset:$("btnReset"),
+  // modal
+  modal:$("modal"), mTitle:$("mTitle"), mBody:$("mBody"), mClose:$("mClose"),
+  // toast
+  toast:$("toast"),
+  // file
+  fileJson:$("fileJson"),
+  // mobile
+  btnMobileInspector:$("btnMobileInspector"),
+};
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const nowISO=()=>new Date().toISOString();
+const uid=(p="id")=>`${p}_${Math.random().toString(16).slice(2)}_${Date.now().toString(16)}`;
+const esc=(s)=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const sleep=(ms)=>new Promise(r=>setTimeout(r,ms));
+
+function toast(msg){
+  ui.toast.textContent=msg;
+  ui.toast.classList.add("on");
+  clearTimeout(toast._t);
+  toast._t=setTimeout(()=>ui.toast.classList.remove("on"),1800);
+}
+function log(msg){
+  const t=new Date().toLocaleTimeString();
+  ui.log.textContent = `[${t}] ${msg}\n` + ui.log.textContent;
+}
+
+/* ---------- Theme + a11y ---------- */
+function applyPrefs(p){
+  document.documentElement.dataset.theme = p.theme || "dark";
+  if(p.font) document.documentElement.dataset.font = p.font; else delete document.documentElement.dataset.font;
+  if(p.motion) document.documentElement.dataset.motion = p.motion; else delete document.documentElement.dataset.motion;
+}
+function badgeColor(layer){
+  const L=(layer||"").toUpperCase();
+  if(L==="ASTRO") return getCSS("--good");
+  if(L==="TAROT") return getCSS("--lilac");
+  if(L==="ALERTE") return getCSS("--bad");
+  return "rgba(234,241,255,.55)";
+}
+function getCSS(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+
+/* ---------- Internal DB ---------- */
+const db = {
+  meta:{ dataset:"ldl-workspace", scope:"be-brussels", exportedAt: nowISO(), version:"2" },
+  zones:[],
+  entities:[],
+  links:[],
+  notes:[],  // {id, entityId, kind:note|task, text, createdAt, done}
+  routes:[], // {id, title, entityIds:[]}
+};
+
+let prefs = { theme:"dark", font:"", motion:"" };
+let mode = "GRAPH"; // GRAPH | ZONES | LIST
+let view = { x:0, y:0, z:1 };
+let selectedId = null;
+let pinnedId = null;
+let navHist = [];
+let navIdx = -1;
+let linkFrom = null;
+let currentRouteId = null;
+
+/* ---------- Normalizers ---------- */
+function normZone(z){
+  const out = Object.assign({id:uid("zone"), x:0,y:0, opacity:0.18, layer:"NEUTRE", label:"zone"}, z||{});
+  out.id=String(out.id||uid("zone"));
+  out.x=Number.isFinite(+out.x)?+out.x:0;
+  out.y=Number.isFinite(+out.y)?+out.y:0;
+  out.opacity=clamp(+out.opacity||0.18,0.05,0.45);
+  out.layer=String(out.layer||"NEUTRE").toUpperCase();
+  out.label=String(out.label||out.id);
+  return out;
+}
+function normEntity(e){
+  const out = Object.assign({
+    id: uid("ent"),
+    type:"place",
+    layer:"NEUTRE",
+    zone: db.zones[0]?.id || "Z-unknown",
+    confidence:0.65,
+    display:{ masked_name:"", real_name:null, summary:"" },
+    tags:[],
+    fields:{},
+    x:0,y:0
+  }, e||{});
+  out.id=String(out.id||uid("ent"));
+  out.type=String(out.type||"place").toLowerCase();
+  out.layer=String(out.layer||"NEUTRE").toUpperCase();
+  out.zone=String(out.zone||db.zones[0]?.id||"Z-unknown");
+  out.confidence=clamp(+out.confidence||0.65,0,1);
+  out.display=out.display||{};
+  out.display.masked_name=String(out.display.masked_name || out.display.public || out.display.name || out.id);
+  out.display.real_name = (out.display.real_name===null || out.display.real_name===undefined) ? null : String(out.display.real_name);
+  out.display.summary=String(out.display.summary||"");
+  out.tags=Array.isArray(out.tags)?out.tags.map(String):[];
+  out.fields=(out.fields && typeof out.fields==="object")?out.fields:{};
+  out.x=Number.isFinite(+out.x)?+out.x:0;
+  out.y=Number.isFinite(+out.y)?+out.y:0;
+  return out;
+}
+function normLink(l){
+  const out = Object.assign({ id:uid("lnk"), type:"connecte", from:"", to:"", confidence:0.6, weight:1 }, l||{});
+  out.id=String(out.id||uid("lnk"));
+  out.type=String(out.type||"connecte").toLowerCase();
+  out.from=String(out.from||"");
+  out.to=String(out.to||"");
+  out.confidence=clamp(+out.confidence||0.6,0,1);
+  out.weight=clamp(+out.weight||1,0.2,6);
+  return out;
+}
+
+/* ---------- Filter parsing ---------- */
+function parseFilter(txt){
+  const q=(txt||"").trim();
+  const out={text:"", type:null, tag:null, confOp:null, confVal:null, zone:null, layer:null};
+  if(!q) return out;
+  for(const p of q.split(/\s+/).filter(Boolean)){
+    const m=p.match(/^([a-zA-Z_]+)\:(.+)$/);
+    if(m){
+      const k=m[1].toLowerCase(), v=m[2];
+      if(k==="type") out.type=v.toLowerCase();
+      else if(k==="tag") out.tag=v.toLowerCase();
+      else if(k==="zone") out.zone=v;
+      else if(k==="layer") out.layer=v.toUpperCase();
+      else if(k==="conf"||k==="confidence"){
+        const mm=v.match(/^(>=|<=|>|<|=)?\s*([0-9]*\.?[0-9]+)$/);
+        if(mm){ out.confOp=mm[1]||">="; out.confVal=parseFloat(mm[2]); }
+      }
+    }else out.text+=(out.text?" ":"")+p;
+  }
+  out.text=out.text.toLowerCase();
+  return out;
+}
+function matchConf(val, op, thr){
+  if(thr===null||thr===undefined||!Number.isFinite(thr)) return true;
+  if(op===">") return val>thr;
+  if(op===">=") return val>=thr;
+  if(op==="<") return val<thr;
+  if(op==="<=") return val<=thr;
+  if(op==="=") return Math.abs(val-thr)<1e-9;
+  return val>=thr;
+}
+function getName(e){
+  const reveal=!!ui.reveal.checked;
+  const real=e?.display?.real_name;
+  return (reveal && real) ? real : (e?.display?.masked_name || e?.id || "");
+}
+function filteredEntities(){
+  const f=parseFilter(ui.filter.value);
+  const text=f.text;
+  return db.entities.filter(e=>{
+    if(f.type && e.type!==f.type) return false;
+    if(f.layer && e.layer!==f.layer) return false;
+    if(f.zone && e.zone!==f.zone) return false;
+    if(f.tag && !e.tags.some(t=>String(t).toLowerCase()===f.tag)) return false;
+    if(!matchConf(e.confidence, f.confOp||">=", f.confVal)) return false;
+    if(text){
+      const blob=(getName(e)+" "+(e.display?.summary||"")+" "+(e.tags||[]).join(" ")+" "+e.id).toLowerCase();
+      if(!blob.includes(text)) return false;
+    }
+    return true;
+  });
+}
+
+/* ---------- Canvas graph (light, stable) ---------- */
+const cv=ui.cv;
+const ctx=cv.getContext("2d",{alpha:true});
+let dpr=1;
+
+function resize(){
+  dpr=Math.max(1, Math.min(2, window.devicePixelRatio||1));
+  const w=cv.clientWidth||1, h=cv.clientHeight||1;
+  cv.width=Math.floor(w*dpr);
+  cv.height=Math.floor(h*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+window.addEventListener("resize", resize, {passive:true});
+
+function toScreen(x,y){
+  const w=cv.clientWidth, h=cv.clientHeight;
+  return { sx:(x+view.x)*view.z + w/2, sy:(y+view.y)*view.z + h/2 };
+}
+function toWorld(sx,sy){
+  const w=cv.clientWidth, h=cv.clientHeight;
+  return { x:(sx-w/2)/view.z - view.x, y:(sy-h/2)/view.z - view.y };
+}
+
+function seedPositions(){
+  // position around zone centers
+  const zmap=new Map(db.zones.map(z=>[z.id,z]));
+  let i=0;
+  for(const e of db.entities){
+    const z=zmap.get(e.zone) || db.zones[0] || {x:0,y:0};
+    const a=(i++/Math.max(1,db.entities.length))*Math.PI*2;
+    const r=60 + (i%12)*18;
+    e.x=(z.x||0)+Math.cos(a)*r;
+    e.y=(z.y||0)+Math.sin(a)*r;
+  }
+}
+
+function draw(){
+  const w=cv.clientWidth, h=cv.clientHeight;
+  ctx.clearRect(0,0,w,h);
+
+  const ents=filteredEntities();
+  const emap=new Map(ents.map(e=>[e.id,e]));
+
+  // zones
+  if(mode==="ZONES"){
+    for(const z of db.zones){
+      const Z=toScreen(z.x,z.y);
+      const size=170*view.z;
+      ctx.globalAlpha=clamp(z.opacity,0.06,0.40);
+      ctx.fillStyle=badgeColor(z.layer);
+      ctx.beginPath(); ctx.arc(Z.sx,Z.sy,size,0,Math.PI*2); ctx.fill();
+
+      ctx.globalAlpha=0.22;
+      ctx.strokeStyle="rgba(255,255,255,.22)";
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.arc(Z.sx,Z.sy,size,0,Math.PI*2); ctx.stroke();
+
+      ctx.globalAlpha=0.85;
+      ctx.fillStyle="rgba(234,241,255,.85)";
+      ctx.font=`900 ${12*view.z}px ${getCSS("--mono")||"ui-monospace"}`;
+      ctx.fillText(z.label, Z.sx+10*view.z, Z.sy-10*view.z);
+    }
+  }
+
+  // links
+  ctx.save();
+  for(const l of db.links){
+    const a=emap.get(l.from), b=emap.get(l.to);
+    if(!a||!b) continue;
+    const A=toScreen(a.x,a.y), B=toScreen(b.x,b.y);
+    const alpha=0.12+0.22*l.confidence;
+    ctx.globalAlpha=1;
+    ctx.strokeStyle=`rgba(234,241,255,${alpha})`;
+    ctx.lineWidth=Math.max(1, Math.min(4,l.weight))*view.z;
+    ctx.beginPath(); ctx.moveTo(A.sx,A.sy); ctx.lineTo(B.sx,B.sy); ctx.stroke();
+  }
+  ctx.restore();
+
+  // nodes + labels
+  for(const e of ents){
+    const S=toScreen(e.x,e.y);
+    const r=(e.id===selectedId ? 10 : 7)*view.z;
+    ctx.globalAlpha=0.95;
+    ctx.fillStyle=badgeColor(e.layer);
+    ctx.beginPath(); ctx.arc(S.sx,S.sy,r,0,Math.PI*2); ctx.fill();
+
+    if(e.id===selectedId){
+      ctx.globalAlpha=0.35;
+      ctx.strokeStyle="rgba(234,241,255,.85)";
+      ctx.lineWidth=2*view.z;
+      ctx.beginPath(); ctx.arc(S.sx,S.sy,r+5*view.z,0,Math.PI*2); ctx.stroke();
+    }
+
+    const label=getName(e);
+    if(label){
+      ctx.globalAlpha=0.88;
+      ctx.font=`900 ${12*view.z}px ${getCSS("--mono")||"ui-monospace"}`;
+      ctx.fillStyle="rgba(234,241,255,.86)";
+      ctx.fillText(label, S.sx+(12*view.z), S.sy+(4*view.z));
+    }
+  }
+}
+
+function pickNode(sx,sy){
+  const w=toWorld(sx,sy);
+  const ents=filteredEntities();
+  let best=null, bestD=1e9;
+  for(const e of ents){
+    const dx=e.x-w.x, dy=e.y-w.y;
+    const d=dx*dx+dy*dy;
+    if(d<bestD){ bestD=d; best=e; }
+  }
+  const thresh=(16/view.z)*(16/view.z);
+  return (best && bestD<thresh) ? best : null;
+}
+
+let isDragging=false, dragStart=null, dragNode=null;
+
+cv.addEventListener("mousedown",(ev)=>{
+  if(ev.button!==0) return;
+  const rect=cv.getBoundingClientRect();
+  const sx=ev.clientX-rect.left, sy=ev.clientY-rect.top;
+  const node=pickNode(sx,sy);
+
+  isDragging=true;
+  dragStart={ sx, sy, vx:view.x, vy:view.y };
+  dragNode=node;
+
+  // Shift+click link
+  if(ev.shiftKey && node){
+    if(!linkFrom){
+      linkFrom=node.id;
+      log(`Lien: 1/2 = ${node.id}`);
+      selectEntity(node.id,{push:true});
+      return;
+    }else{
+      if(linkFrom!==node.id){
+        db.links.push(normLink({type:"connecte", from:linkFrom, to:node.id, confidence:0.65, weight:1}));
+        log(`Lien créé: ${linkFrom} → ${node.id}`);
+        linkFrom=null;
+        autosaveSoon();
+        updateKPIs();
+      }
+      selectEntity(node.id,{push:true});
+      draw();
+      return;
+    }
+  }
+
+  if(node){ selectEntity(node.id,{push:true}); draw(); }
+},{passive:true});
+
+window.addEventListener("mousemove",(ev)=>{
+  if(!isDragging) return;
+  const rect=cv.getBoundingClientRect();
+  const sx=ev.clientX-rect.left, sy=ev.clientY-rect.top;
+
+  if(dragNode && ev.altKey){
+    const w=toWorld(sx,sy);
+    dragNode.x=w.x; dragNode.y=w.y;
+    autosaveSoon();
+    draw();
+    return;
+  }
+  const dx=(sx-dragStart.sx)/view.z;
+  const dy=(sy-dragStart.sy)/view.z;
+  view.x=dragStart.vx+dx;
+  view.y=dragStart.vy+dy;
+  draw();
+},{passive:true});
+
+window.addEventListener("mouseup",()=>{ isDragging=false; dragStart=null; dragNode=null; },{passive:true});
+
+cv.addEventListener("wheel",(ev)=>{
+  ev.preventDefault();
+  const rect=cv.getBoundingClientRect();
+  const sx=ev.clientX-rect.left, sy=ev.clientY-rect.top;
+  const delta=Math.sign(ev.deltaY);
+  const old=view.z;
+  const next=clamp(view.z*(delta>0?0.92:1.08),0.45,2.2);
+  const pt=toWorld(sx,sy);
+  view.z=next;
+  const pt2=toWorld(sx,sy);
+  view.x += (pt2.x-pt.x);
+  view.y += (pt2.y-pt.y);
+  if(Math.abs(next-old)>1e-6) draw();
+},{passive:false});
+
+/* ---------- Rendering: list + inspector + notes + routes ---------- */
+function getEntity(id){ return db.entities.find(e=>e.id===id) || null; }
+function outgoing(id){ return db.links.filter(l=>l.from===id); }
+function incoming(id){ return db.links.filter(l=>l.to===id); }
+
+function renderEntityList(){
+  const ents=filteredEntities().slice().sort((a,b)=>getName(a).localeCompare(getName(b),"fr"));
+  ui.entityList.innerHTML = ents.slice(0,220).map(e=>{
+    const dot=badgeColor(e.layer);
+    return `<div class="item" data-id="${esc(e.id)}" tabindex="0" role="button">
+      <div class="badge" style="background:${dot}"></div>
+      <div class="meta">
+        <div class="id">${esc(getName(e))}</div>
+        <div class="sub">${esc(e.display?.summary || e.type)}</div>
+      </div>
+      <div class="r">${esc((e.confidence||0).toFixed(2))}</div>
+    </div>`;
+  }).join("") || `<div class="hint">Aucune entité (ou filtre trop restrictif).</div>`;
+
+  ui.entityList.querySelectorAll(".item").forEach(it=>{
+    const id=it.getAttribute("data-id");
+    it.addEventListener("click",()=>selectEntity(id,{push:true}));
+    it.addEventListener("keydown",(e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); selectEntity(id,{push:true}); }});
+  });
+}
+
+function renderListView(){
+  const ents=filteredEntities().slice().sort((a,b)=>getName(a).localeCompare(getName(b),"fr"));
+  ui.listView.innerHTML = ents.map(e=>{
+    const dot=badgeColor(e.layer);
+    const tags=(e.tags||[]).slice(0,7).map(t=>`<span class="chip" data-qt="tag:${esc(String(t))}">${esc(String(t))}</span>`).join(" ");
+    return `<div class="item" data-id="${esc(e.id)}">
+      <div class="badge" style="background:${dot}"></div>
+      <div class="meta">
+        <div class="id">${esc(getName(e))}</div>
+        <div class="sub">${esc(e.display?.summary || e.type)}</div>
+        <div class="row" style="margin-top:6px">${tags}</div>
+      </div>
+      <div class="r">${esc((e.confidence||0).toFixed(2))}</div>
+    </div>`;
+  }).join("") || `<div class="hint">Aucune entité.</div>`;
+
+  ui.listView.querySelectorAll(".item").forEach(it=>{
+    const id=it.getAttribute("data-id");
+    it.addEventListener("click",()=>selectEntity(id,{push:true}));
+  });
+  ui.listView.querySelectorAll(".chip[data-qt]").forEach(ch=>{
+    ch.addEventListener("click",(ev)=>{
+      ev.stopPropagation();
+      ui.filter.value=ch.getAttribute("data-qt")||"";
+      renderAll();
+    });
+  });
+}
+
+function renderInspector(){
+  const id = pinnedId || selectedId;
+  if(!id){ ui.inspector.innerHTML = `<div class="hint">Sélectionne un nœud pour afficher sa fiche.</div>`; return; }
+  const e=getEntity(id);
+  if(!e){ ui.inspector.innerHTML = `<div class="hint">Entité introuvable (${esc(id)}).</div>`; return; }
+
+  const name=esc(getName(e));
+  const layer=esc(e.layer);
+  const zone=esc(e.zone);
+  const conf=(e.confidence||0).toFixed(2);
+  const tags=(e.tags||[]).map(t=>`<span class="chip" data-qt="tag:${esc(String(t))}">${esc(String(t))}</span>`).join(" ");
+  const summary=e.display?.summary ? `<div class="hint">${esc(e.display.summary)}</div>` : `<div class="hint warn">Résumé manquant. Ajoute une note ou un champ.</div>`;
+
+  const relOut=outgoing(id).slice(0,40).map(l=>{
+    const to=getEntity(l.to);
+    const nm=esc(getName(to||{id:l.to, display:{masked_name:l.to}}));
+    const typ=esc(l.type||"");
+    return `<span class="chip" data-jump="${esc(l.to)}">→ ${nm} <span style="opacity:.7">(${typ})</span></span>`;
+  }).join(" ");
+  const relIn=incoming(id).slice(0,40).map(l=>{
+    const fr=getEntity(l.from);
+    const nm=esc(getName(fr||{id:l.from, display:{masked_name:l.from}}));
+    const typ=esc(l.type||"");
+    return `<span class="chip" data-jump="${esc(l.from)}">← ${nm} <span style="opacity:.7">(${typ})</span></span>`;
+  }).join(" ");
+
+  const fields=e.fields && typeof e.fields==="object" ? e.fields : {};
+  const fieldKeys=Object.keys(fields);
+  const fieldRows=fieldKeys.slice(0,30).map(k=>{
+    const v=fields[k];
+    return `<div class="item" style="cursor:default">
+      <div class="meta">
+        <div class="id">${esc(k)}</div>
+        <div class="sub">${esc(typeof v==="string"?v:JSON.stringify(v))}</div>
+      </div>
+    </div>`;
+  }).join("");
+
+  ui.inspector.innerHTML = `
+    <div class="hint"><b>Fiche</b> — ${name}</div>
+    <div class="sep"></div>
+
+    <div class="row">
+      <span class="chip good" data-qt="layer:${layer}">${layer}</span>
+      <span class="chip" data-qt="zone:${zone}">${zone}</span>
+      <span class="chip" data-qt="type:${esc(e.type)}">${esc(e.type)}</span>
+      <span class="chip">${conf}</span>
+    </div>
+
+    <div class="sep"></div>
+    ${summary}
+
+    <div class="sep"></div>
+    <div class="hint"><b>Tags</b></div>
+    <div class="row" style="margin-top:8px">${tags || `<span class="hint warn">Aucun tag.</span>`}</div>
+
+    <div class="sep"></div>
+    <div class="row">
+      <button class="btn" data-act="note">+ Note</button>
+      <button class="btn" data-act="tag">+ Tag</button>
+      <button class="btn" data-act="task">+ Tâche</button>
+      <button class="btn" data-act="center">Centrer</button>
+    </div>
+
+    <div class="sep"></div>
+    <div class="hint"><b>Relations</b></div>
+    <div class="row" style="margin-top:8px">${relOut || `<span class="hint warn">Aucune sortante.</span>`}</div>
+    <div class="row" style="margin-top:8px">${relIn || `<span class="hint warn">Aucune entrante.</span>`}</div>
+
+    <div class="sep"></div>
+    <div class="hint"><b>Champs (structurés)</b></div>
+    <div class="list" style="margin-top:10px">${fieldRows || `<div class="hint warn">Aucun champ.</div>`}</div>
+  `;
+
+  ui.inspector.querySelectorAll("[data-qt]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      ui.filter.value = el.getAttribute("data-qt") || "";
+      renderAll();
+    });
+  });
+  ui.inspector.querySelectorAll("[data-jump]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const to=el.getAttribute("data-jump");
+      if(to) selectEntity(to,{push:true});
+    });
+  });
+  ui.inspector.querySelectorAll("button[data-act]").forEach(b=>{
+    b.addEventListener("click",()=>{
+      const act=b.getAttribute("data-act");
+      if(act==="note") addNote(id,"note");
+      if(act==="task") addNote(id,"task");
+      if(act==="tag") addTag(id);
+      if(act==="center") centerOn(id);
+    });
+  });
+}
+
+function renderNotes(){
+  const notes=db.notes.slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  ui.notesList.innerHTML = notes.slice(0,80).map(n=>{
+    const e=getEntity(n.entityId);
+    const dot=badgeColor(e?.layer||"NEUTRE");
+    const kind=n.kind==="task" ? "🧩" : "📝";
+    const done=n.done ? " (fait)" : "";
+    return `<div class="item" data-nid="${esc(n.id)}" style="cursor:default">
+      <div class="badge" style="background:${dot}"></div>
+      <div class="meta">
+        <div class="id">${kind} ${esc(getName(e||{id:n.entityId, display:{masked_name:n.entityId}}))}${done}</div>
+        <div class="sub">${esc(n.text||"")}</div>
+      </div>
+      <div class="r">${esc(String(n.createdAt||"").slice(0,10))}</div>
+    </div>`;
+  }).join("") || `<div class="hint">Pas encore de notes/tâches.</div>`;
+
+  ui.notesList.querySelectorAll(".item").forEach(it=>{
+    const nid=it.getAttribute("data-nid");
+    it.addEventListener("dblclick",()=>{
+      const n=db.notes.find(x=>x.id===nid);
+      if(n?.entityId) selectEntity(n.entityId,{push:true});
+    });
+  });
+}
+
+function updateKPIs(){
+  ui.kEnt.textContent=String(db.entities.length);
+  ui.kRel.textContent=String(db.links.length);
+  ui.kZon.textContent=String(db.zones.length);
+}
+
+function setTab(name){
+  ui.tabBtns.forEach(t=>t.classList.toggle("active", t.dataset.tab===name));
+  ui.tabExplore.style.display = (name==="explore") ? "" : "none";
+  ui.tabContrib.style.display = (name==="contrib") ? "" : "none";
+  ui.tabRoutes.style.display = (name==="routes") ? "" : "none";
+}
+
+function setMode(m){
+  mode=m;
+  ui.btnModeGraph.classList.toggle("active", m==="GRAPH");
+  ui.btnModeZones.classList.toggle("active", m==="ZONES");
+  ui.btnModeList.classList.toggle("active", m==="LIST");
+
+  if(m==="LIST"){
+    ui.listView.style.display="";
+  }else{
+    ui.listView.style.display="none";
+  }
+  renderAll();
+}
+
+/* ---------- Navigation (back/fwd stable) ---------- */
+function updateNavButtons(){
+  ui.btnBack.disabled = !(navIdx>0);
+  ui.btnFwd.disabled = !(navIdx>=0 && navIdx<navHist.length-1);
+}
+function selectEntity(id,{push=true}={}){
+  if(!id) return;
+  selectedId=String(id);
+
+  if(push){
+    if(navIdx<navHist.length-1) navHist=navHist.slice(0,navIdx+1);
+    if(navHist[navHist.length-1]!==selectedId){
+      navHist.push(selectedId);
+      navIdx=navHist.length-1;
+    }else{
+      navIdx=navHist.length-1;
+    }
+  }
+
+  ui.btnAddToRoute.disabled = !selectedId || !currentRouteId;
+  renderTicket();
+  renderInspector();
+  updateNavButtons();
+  autosaveSoon();
+  draw();
+}
+function goBack(){
+  if(!(navIdx>0)) return;
+  navIdx--;
+  selectedId=navHist[navIdx]||null;
+  renderAll();
+  centerOn(selectedId);
+}
+function goFwd(){
+  if(!(navIdx>=0 && navIdx<navHist.length-1)) return;
+  navIdx++;
+  selectedId=navHist[navIdx]||null;
+  renderAll();
+  centerOn(selectedId);
+}
+function centerOn(id){
+  const e=getEntity(id);
+  if(!e) return;
+  view.x=-e.x; view.y=-e.y;
+  draw();
+}
+
+/* ---------- Contrib ---------- */
+function addNote(entityId, kind){
+  const e=getEntity(entityId);
+  openModal(kind==="task"?"Nouvelle tâche":"Nouvelle note", `
+    <div class="hint">Sur : <b>${esc(getName(e||{id:entityId,display:{masked_name:entityId}}))}</b></div>
+    <div class="sep"></div>
+    <textarea id="noteText" spellcheck="false" placeholder="${kind==="task"?"Ex: Vérifier horaires / contact / accessibilité":"Ex: Info utile (source, contexte, précision)"}"></textarea>
+    <div class="sep"></div>
+    <div class="row">
+      <button class="btn primary" id="saveNote">Enregistrer</button>
+      <button class="btn danger" id="cancelNote">Annuler</button>
+    </div>
+  `);
+  $("saveNote").onclick=()=>{
+    const text=$("noteText").value.trim();
+    if(!text) return toast("Texte manquant.");
+    db.notes.unshift({ id:uid("note"), entityId, kind, text, createdAt:nowISO(), done:false });
+    closeModal();
+    toast(kind==="task"?"Tâche ajoutée.":"Note ajoutée.");
+    renderNotes();
+    renderTicket();
+    autosaveSoon();
+  };
+  $("cancelNote").onclick=closeModal;
+}
+
+function addTag(entityId){
+  const e=getEntity(entityId);
+  openModal("Ajouter un tag", `
+    <div class="hint">Sur : <b>${esc(getName(e||{id:entityId,display:{masked_name:entityId}}))}</b></div>
+    <div class="sep"></div>
+    <div class="hint warn">Tag = mot simple en minuscules (ex: accueil_bas_seuil, isolement, multilingue)</div>
+    <div class="sep"></div>
+    <div class="field" style="height:auto; padding:8px 10px">
+      <label style="min-width:66px">tag</label>
+      <input id="tagText" type="text" spellcheck="false" placeholder="accueil_bas_seuil" />
+    </div>
+    <div class="sep"></div>
+    <div class="row">
+      <button class="btn primary" id="saveTag">Ajouter</button>
+      <button class="btn danger" id="cancelTag">Annuler</button>
+    </div>
+  `);
+  $("saveTag").onclick=()=>{
+    const t=$("tagText").value.trim().toLowerCase();
+    if(!t) return toast("Tag manquant.");
+    const ent=getEntity(entityId);
+    if(!ent) return toast("Entité introuvable.");
+    ent.tags = Array.from(new Set([...(ent.tags||[]), t]));
+    closeModal();
+    toast("Tag ajouté.");
+    renderInspector();
+    renderTicket();
+    autosaveSoon();
+    draw();
+  };
+  $("cancelTag").onclick=closeModal;
+}
+
+function renderTicket(){
+  const id=pinnedId||selectedId;
+  if(!id){ return; }
+  const e=getEntity(id);
+  const name=getName(e||{id,display:{masked_name:id}});
+  const notes=db.notes.filter(n=>n.entityId===id).slice(0,5);
+  const nl=notes.map(n=>`- ${n.kind==="task"?"[ ]":"•"} ${n.text.replace(/\n/g," ")}`).join("\n");
+  ui.ticketMd.value =
+`# Ticket — ${name}
+- id: ${id}
+- type: ${e?.type||"?"}
+- layer: ${e?.layer||"?"}
+- zone: ${e?.zone||"?"}
+- confiance: ${(e?.confidence??0).toFixed?e.confidence.toFixed(2):"?"}
+
+## Constat / info
+${(e?.display?.summary||"").trim() ? e.display.summary : "—"}
+
+## Notes / tâches liées
+${nl || "- —"}
+
+## Action proposée
+- —`;
+}
+
+async function copyText(text){
+  try{
+    await navigator.clipboard.writeText(text);
+    toast("Copié.");
+  }catch(e){
+    // fallback
+    openModal("Copier", `<div class="hint">Copie manuelle :</div><div class="sep"></div><textarea spellcheck="false">${esc(text)}</textarea>`);
+  }
+}
+
+/* ---------- Routes ---------- */
+function ensureRoute(){
+  if(currentRouteId && db.routes.find(r=>r.id===currentRouteId)) return;
+  if(!db.routes.length){
+    const r={id:uid("route"), title:"Parcours 1", entityIds:[]};
+    db.routes.unshift(r);
+    currentRouteId=r.id;
+  }else currentRouteId=db.routes[0].id;
+}
+function renderRoutes(){
+  ensureRoute();
+  const r=db.routes.find(x=>x.id===currentRouteId);
+  ui.btnAddToRoute.disabled = !selectedId || !r;
+
+  ui.routeList.innerHTML = db.routes.map(rt=>{
+    const active = rt.id===currentRouteId;
+    const count = (rt.entityIds||[]).length;
+    return `<div class="item" data-rid="${esc(rt.id)}" style="${active?'background:rgba(134,251,214,.08)':''}">
+      <div class="meta">
+        <div class="id">${esc(rt.title || rt.id)}</div>
+        <div class="sub">${count} étape(s)</div>
+      </div>
+      <div class="r">${active?"actif":""}</div>
+    </div>`;
+  }).join("") || `<div class="hint">Aucun parcours.</div>`;
+
+  ui.routeList.querySelectorAll(".item").forEach(it=>{
+    const rid=it.getAttribute("data-rid");
+    it.addEventListener("click",()=>{
+      currentRouteId=rid;
+      renderRoutes();
+      autosaveSoon();
+    });
+  });
+
+  // Export markdown
+  const lines=[];
+  lines.push(`# Parcours — ${r?.title||"—"}`);
+  lines.push(`- id: ${r?.id||"—"}`);
+  lines.push("");
+  lines.push("## Étapes");
+  (r?.entityIds||[]).forEach((eid,i)=>{
+    const e=getEntity(eid);
+    lines.push(`${i+1}. **${getName(e||{id:eid,display:{masked_name:eid}})}** — \`${eid}\``);
+  });
+  lines.push("");
+  lines.push("## Règle d’or");
+  lines.push("- Bas seuil d’abord (lien / accueil), puis passerelles (EP / insertion / socioculturel).");
+  ui.routeMd.textContent=lines.join("\n");
+}
+
+/* ---------- Autosave / Load ---------- */
+let autosaveTimer=null;
+function autosaveSoon(){
+  clearTimeout(autosaveTimer);
+  autosaveTimer=setTimeout(()=>save(), 240);
+}
+function snapshot(){
+  save();
+  const payload=exportPayload();
+  const key="snapshot_"+new Date().toISOString().replace(/[:.]/g,"-");
+  try{ localStorage.setItem(key, JSON.stringify(payload)); }catch(e){}
+  toast("Snapshot local créé.");
+  log("Snapshot sauvegardé.");
+}
+function save(){
+  const payload={
+    prefs,
+    db,
+    view,
+    mode,
+    selectedId,
+    pinnedId,
+    navHist,
+    navIdx,
+    currentRouteId
+  };
+  try{
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+    ui.sessionBadge.textContent="local • autosave";
+  }catch(e){
+    ui.sessionBadge.textContent="local • autosave (échec)";
+    log("ERREUR save: "+e.message);
+  }
+}
+function load(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw) return false;
+    const p=JSON.parse(raw);
+    prefs = Object.assign(prefs, p.prefs||{});
+    applyPrefs(prefs);
+    // hydrate
+    Object.assign(db, p.db||{});
+    view = p.view || view;
+    mode = p.mode || mode;
+    selectedId = p.selectedId || null;
+    pinnedId = p.pinnedId || null;
+    navHist = Array.isArray(p.navHist)?p.navHist:[];
+    navIdx = Number.isFinite(p.navIdx)?p.navIdx:-1;
+    currentRouteId = p.currentRouteId || null;
+    return true;
+  }catch(e){
+    log("ERREUR load: "+e.message);
+    return false;
+  }
+}
+
+/* ---------- Import / Export ---------- */
+function exportPayload(){
+  db.meta.exportedAt = nowISO();
+  return { meta: db.meta, prefs, db, view, mode, selectedId, pinnedId, navHist, navIdx, currentRouteId };
+}
+function downloadJSON(obj, filename){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+function exportAll(){
+  save();
+  const payload=exportPayload();
+  downloadJSON(payload, `ldl_export_${new Date().toISOString().slice(0,10)}.json`);
+  toast("Export téléchargé.");
+  log("Export JSON généré.");
+}
+function detectAndImport(json){
+  // A) payload export
+  if(json && json.db && json.prefs){
+    prefs = Object.assign(prefs, json.prefs||{});
+    applyPrefs(prefs);
+    // replace DB
+    db.zones = (json.db.zones||[]).map(normZone);
+    db.entities = (json.db.entities||[]).map(normEntity);
+    db.links = (json.db.links||[]).map(normLink);
+    db.notes = Array.isArray(json.db.notes)?json.db.notes:[];
+    db.routes = Array.isArray(json.db.routes)?json.db.routes:[];
+    view = json.view || view;
+    mode = json.mode || mode;
+    selectedId = json.selectedId || null;
+    pinnedId = json.pinnedId || null;
+    navHist = Array.isArray(json.navHist)?json.navHist:[];
+    navIdx = Number.isFinite(json.navIdx)?json.navIdx:-1;
+    currentRouteId = json.currentRouteId || null;
+    save();
+    renderAll();
+    toast("Import OK (workspace).");
+    log("Import: workspace complet.");
+    return true;
+  }
+
+  // B) NYXO-like dataset
+  if(json && (Array.isArray(json.entities) || Array.isArray(json.zones) || Array.isArray(json.links))){
+    db.zones = (json.zones||[]).map(normZone);
+    if(!db.zones.length) db.zones=[normZone({id:"Z-unknown",label:"Z-unknown",x:0,y:0,layer:"NEUTRE"})];
+    db.entities = (json.entities||[]).map(normEntity);
+    db.links = (json.links||[]).map(normLink);
+    db.notes = Array.isArray(json.notes)?json.notes:[];
+    db.routes = Array.isArray(json.routes)?json.routes:[];
+    seedPositions();
+    save();
+    renderAll();
+    toast("Import OK (dataset).");
+    log("Import: dataset NYXO-like.");
+    return true;
+  }
+
+  // C) resources array (simple catalogue)
+  if(Array.isArray(json)){
+    // create minimal zones by commune (privacy bucket)
+    const zonesMap=new Map();
+    function zoneIdFor(r){
+      const c=(r?.address?.commune || r?.commune || "Z-unknown").toString().trim();
+      const zid=("Z-"+c).replace(/\s+/g,"_").slice(0,60);
+      if(!zonesMap.has(zid)){
+        zonesMap.set(zid, normZone({id:zid,label:c||"Z-unknown", x:(zonesMap.size%6)*220-500, y:Math.floor(zonesMap.size/6)*220-200, layer:"NEUTRE", opacity:0.14}));
+      }
+      return zid;
+    }
+    db.zones=[normZone({id:"Z-unknown",label:"Z-unknown",x:0,y:0,layer:"NEUTRE",opacity:0.14})];
+    db.entities=[];
+    db.links=[];
+    db.notes=[];
+    db.routes=[];
+
+    for(const r of json){
+      const zid=zoneIdFor(r);
+      const layerGuess = (r.type||"").toString().toLowerCase().includes("lieu") ? "ASTRO" : "NEUTRE";
+      db.entities.push(normEntity({
+        id: String(r.id||uid("ent")),
+        type: String(r.type||"place").toLowerCase(),
+        layer: r.layer ? String(r.layer).toUpperCase() : layerGuess,
+        zone: zid,
+        confidence: Number.isFinite(+r.confidence)?+r.confidence:0.65,
+        display:{
+          masked_name: String(r.name||r.title||r.id||"Sans nom"),
+          real_name: r.real_name ?? null,
+          summary: String(r.short||r.summary||"")
+        },
+        tags: Array.isArray(r.tags)?r.tags:[],
+        fields: {
+          address: r.address || null,
+          contact: r.contact || null,
+          links: r.links || null,
+          description: r.description || null
+        }
+      }));
+    }
+    // add generated zones
+    db.zones = Array.from(zonesMap.values());
+    if(!db.zones.length) db.zones=[normZone({id:"Z-unknown",label:"Z-unknown",x:0,y:0,layer:"NEUTRE"})];
+    seedPositions();
+    save();
+    renderAll();
+    toast("Import OK (resources).");
+    log("Import: tableau resources converti.");
+    return true;
+  }
+
+  return false;
+}
+
+/* ---------- Modal ---------- */
+function openModal(title, html){
+  ui.mTitle.textContent=title;
+  ui.mBody.innerHTML=html;
+  ui.modal.classList.add("open");
+  ui.modal.setAttribute("aria-hidden","false");
+}
+function closeModal(){
+  ui.modal.classList.remove("open");
+  ui.modal.setAttribute("aria-hidden","true");
+}
+ui.mClose.onclick=closeModal;
+ui.modal.addEventListener("click",(e)=>{ if(e.target.classList.contains("scrim")) closeModal(); });
+
+/* ---------- Settings / Docs / Onboarding ---------- */
+function showOnboarding(){
+  openModal("Onboarding (3 clics) — trouver sa place & contribuer", `
+    <div class="grid2">
+      <div class="hint">
+        <b>1) Charger des données</b><br/>
+        • Importer ton JSON (dataset / export / resources).<br/>
+        • Ou charger l’exemple intégré (léger).<br/><br/>
+        <b>2) Choisir un rôle</b><br/>
+        • adapte les raccourcis proposés.<br/><br/>
+        <b>3) Commencer</b><br/>
+        • clique une entité → fiche → note/tag → exporter.
+      </div>
+      <div class="hint warn">
+        <b>Éthique & sécurité (court)</b><br/>
+        • Anonyme par défaut (noms réels désactivés).<br/>
+        • “Zone” = bucket (ex: commune), pas d’adresse précise imposée.<br/>
+        • Stockage local + export manuel → contrôle côté utilisateur.
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="row">
+      <button class="btn primary" id="obSample">Charger exemple</button>
+      <button class="btn" id="obImport">Importer .json</button>
+      <button class="btn lilac" id="obGo">Aller explorer</button>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="hint">
+      Raccourcis : <span class="chip">layer:ASTRO</span> <span class="chip">tag:accueil_bas_seuil</span> <span class="chip">conf:>=0.75</span>
+    </div>
+  `);
+
+  $("obSample").onclick=()=>{ loadSample(); closeModal(); };
+  $("obImport").onclick=()=>{ ui.fileJson.click(); };
+  $("obGo").onclick=()=>{ closeModal(); setTab("explore"); };
+}
+
+function showDocs(){
+  openModal("Docs — règles simples (copiables)", `
+    <div class="hint">
+      <b>But</b> : rendre évident le parcours “accueil bas seuil → lien → passerelles (EP / insertion / socioculturel)”.<br/>
+      <b>Open data</b> : export JSON, contributions sous forme de tickets Markdown.
+    </div>
+    <div class="sep"></div>
+    <pre class="code"># Contribution bas seuil
+1) Sélectionner une entité
+2) Ajouter une NOTE ou un TAG (ou une TÂCHE)
+3) EXPORTER et partager le fichier
+4) (option) Copier le ticket Markdown pour mail/GitHub/Nextcloud
+
+# Conventions tags (exemples)
+accueil_bas_seuil, convivialité, isolement, pair-aidance, multilingue, accessibilité, orientation
+
+# Filtre
+type:place tag:accueil_bas_seuil layer:ASTRO conf:>=0.75 zone:Z-1000</pre>
+  `);
+}
+
+function showSettings(){
+  openModal("Confort / Accessibilité", `
+    <div class="grid2">
+      <div class="hint">
+        <b>Thème</b><br/>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="thDark">Sombre</button>
+          <button class="btn" id="thLight">Clair</button>
+        </div>
+        <div class="sep"></div>
+        <b>Taille</b><br/>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="fsN">Normal</button>
+          <button class="btn" id="fsL">Grand</button>
+          <button class="btn" id="fsXL">Très grand</button>
+        </div>
+        <div class="sep"></div>
+        <b>Mouvement</b><br/>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" id="moOn">Normal</button>
+          <button class="btn" id="moOff">Réduit</button>
+        </div>
+      </div>
+      <div class="hint warn">
+        <b>Rappel</b><br/>
+        • Si tu bosses longtemps : export régulier.<br/>
+        • Si l’IT nettoie le navigateur : snapshot + export.<br/><br/>
+        <div class="row">
+          <button class="btn lilac" id="doSnap">Snapshot</button>
+          <button class="btn primary" id="doExport">Exporter</button>
+        </div>
+      </div>
+    </div>
+  `);
+  $("thDark").onclick=()=>{ prefs.theme="dark"; applyPrefs(prefs); save(); };
+  $("thLight").onclick=()=>{ prefs.theme="light"; applyPrefs(prefs); save(); };
+  $("fsN").onclick=()=>{ prefs.font=""; applyPrefs(prefs); save(); };
+  $("fsL").onclick=()=>{ prefs.font="large"; applyPrefs(prefs); save(); };
+  $("fsXL").onclick=()=>{ prefs.font="xlarge"; applyPrefs(prefs); save(); };
+  $("moOn").onclick=()=>{ prefs.motion=""; applyPrefs(prefs); save(); };
+  $("moOff").onclick=()=>{ prefs.motion="reduced"; applyPrefs(prefs); save(); };
+  $("doSnap").onclick=()=>snapshot();
+  $("doExport").onclick=()=>exportAll();
+}
+
+/* ---------- Sample data (tiny but representative) ---------- */
+function loadSample(){
+  db.zones = [
+    normZone({id:"Z-1000",label:"1000 Bruxelles",x:-200,y:-40,layer:"NEUTRE",opacity:0.14}),
+    normZone({id:"Z-1060",label:"1060 Saint-Gilles",x:120,y:-40,layer:"NEUTRE",opacity:0.14}),
+    normZone({id:"Z-1190",label:"1190 Forest",x:-40,y:180,layer:"NEUTRE",opacity:0.14}),
+  ];
+  db.entities = [
+    normEntity({
+      id:"ldl_circuit",
+      type:"place",
+      layer:"ASTRO",
+      zone:"Z-1000",
+      confidence:0.82,
+      display:{ masked_name:"Circuit (lieu de liens)", real_name:null, summary:"Accueil bas seuil, ateliers, sorties, lien social." },
+      tags:["accueil_bas_seuil","atelier","convivialité","orientation"],
+      fields:{ website:"https://circuitantoninartaud.be", contact_email:"circuit.csmantoninartaud@gmail.com" }
+    }),
+    normEntity({
+      id:"ldl_delta",
+      type:"place",
+      layer:"ASTRO",
+      zone:"Z-1190",
+      confidence:0.78,
+      display:{ masked_name:"Le Delta (Forest)", real_name:null, summary:"Accueil sans condition, activités spontanées, rompre l’isolement." },
+      tags:["accueil_bas_seuil","isolement","activité","convivialité"],
+      fields:{ website:"https://delta-forest.be", contact_phone:"0472/35.74.09" }
+    }),
+    normEntity({
+      id:"ep_pass",
+      type:"education_permanente",
+      layer:"NEUTRE",
+      zone:"Z-1060",
+      confidence:0.64,
+      display:{ masked_name:"Passerelle EP (exemple)", real_name:null, summary:"Ateliers, débats, compréhension, action collective." },
+      tags:["education_permanente","orientation"],
+      fields:{ note:"Remplace par une vraie structure EP" }
+    }),
+    normEntity({
+      id:"isp_relais",
+      type:"insertion",
+      layer:"NEUTRE",
+      zone:"Z-1060",
+      confidence:0.62,
+      display:{ masked_name:"Relais ISP (exemple)", real_name:null, summary:"Accompagnement, rythme, compétences, administratif." },
+      tags:["insertion","orientation"],
+      fields:{ note:"Remplace par un acteur ISP" }
+    }),
+    normEntity({
+      id:"ligne_107",
+      type:"hotline",
+      layer:"TAROT",
+      zone:"Z-1000",
+      confidence:0.70,
+      display:{ masked_name:"Télé-Accueil 107", real_name:null, summary:"Écoute francophone 24/7." },
+      tags:["orientation","ecoute"],
+      fields:{ phone:"107" }
+    })
+  ];
+  db.links = [
+    normLink({from:"ldl_circuit", to:"ep_pass", type:"oriente", confidence:0.55, weight:1}),
+    normLink({from:"ldl_circuit", to:"isp_relais", type:"oriente", confidence:0.55, weight:1}),
+    normLink({from:"ldl_delta", to:"ep_pass", type:"oriente", confidence:0.50, weight:1}),
+    normLink({from:"ldl_delta", to:"isp_relais", type:"oriente", confidence:0.50, weight:1}),
+    normLink({from:"ldl_circuit", to:"ligne_107", type:"informe", confidence:0.40, weight:1}),
+  ];
+  db.notes = [];
+  db.routes = [{ id:uid("route"), title:"Parcours 1 — bas seuil → passerelles", entityIds:["ldl_circuit","ep_pass","isp_relais"] }];
+  currentRouteId = db.routes[0].id;
+
+  seedPositions();
+  view={x:0,y:0,z:1};
+  selectedId=null; pinnedId=null; navHist=[]; navIdx=-1;
+  autosaveSoon();
+  renderAll();
+  toast("Exemple chargé.");
+  log("Sample chargé.");
+}
+
+/* ---------- Render all ---------- */
+function renderAll(){
+  updateKPIs();
+  renderEntityList();
+  renderInspector();
+  renderNotes();
+  renderRoutes();
+
+  if(mode==="LIST"){
+    ui.listView.style.display="";
+    renderListView();
+  }else{
+    ui.listView.style.display="none";
+  }
+  updateNavButtons();
+  draw();
+}
+
+/* ---------- Events wiring ---------- */
+ui.tabBtns.forEach(b=>b.addEventListener("click",()=>setTab(b.dataset.tab)));
+
+document.querySelectorAll("[data-quick]").forEach(ch=>{
+  ch.addEventListener("click",()=>{
+    ui.filter.value = ch.getAttribute("data-quick")||"";
+    renderAll();
+  });
+});
+
+ui.btnModeGraph.onclick=()=>setMode("GRAPH");
+ui.btnModeZones.onclick=()=>setMode("ZONES");
+ui.btnModeList.onclick=()=>setMode("LIST");
+
+ui.btnCenter.onclick=()=>{
+  view.x=0; view.y=0; view.z=1;
+  draw();
+  toast("Recentré.");
+};
+
+ui.filter.addEventListener("input",()=>{ renderAll(); autosaveSoon(); });
+
+ui.reveal.addEventListener("change",()=>{ renderAll(); autosaveSoon(); });
+
+ui.btnBack.onclick=goBack;
+ui.btnFwd.onclick=goFwd;
+
+window.addEventListener("keydown",(e)=>{
+  if(e.altKey && e.key==="ArrowLeft"){ e.preventDefault(); goBack(); }
+  if(e.altKey && e.key==="ArrowRight"){ e.preventDefault(); goFwd(); }
+  if(e.key==="Escape"){ closeModal(); }
+});
+
+ui.btnPin.onclick=()=>{
+  if(pinnedId){
+    pinnedId=null; ui.btnPin.textContent="📌"; log("Fiche: désépinglée");
+  }else{
+    pinnedId=selectedId; ui.btnPin.textContent="📍"; log("Fiche: épinglée");
+  }
+  renderInspector(); autosaveSoon();
+};
+
+ui.btnAddNote.onclick=()=>{ if(!selectedId) return toast("Sélectionne une entité."); addNote(selectedId,"note"); };
+ui.btnAddTask.onclick=()=>{ if(!selectedId) return toast("Sélectionne une entité."); addNote(selectedId,"task"); };
+ui.btnAddTag.onclick=()=>{ if(!selectedId) return toast("Sélectionne une entité."); addTag(selectedId); };
+
+ui.btnAddNote2.onclick=()=>{ if(!selectedId) return toast("Sélectionne une entité."); addNote(selectedId,"note"); };
+ui.btnAddTask2.onclick=()=>{ if(!selectedId) return toast("Sélectionne une entité."); addNote(selectedId,"task"); };
+
+ui.btnCopyTicket.onclick=()=>copyText(ui.ticketMd.value||"");
+ui.btnClearTicket.onclick=()=>{ ui.ticketMd.value=""; toast("Ticket vidé."); };
+
+ui.btnNewRoute.onclick=()=>{
+  const r={id:uid("route"), title:`Parcours ${db.routes.length+1}`, entityIds:[]};
+  db.routes.unshift(r);
+  currentRouteId=r.id;
+  renderRoutes();
+  autosaveSoon();
+  toast("Parcours créé.");
+};
+ui.btnAddToRoute.onclick=()=>{
+  ensureRoute();
+  const r=db.routes.find(x=>x.id===currentRouteId);
+  if(!r || !selectedId) return;
+  if(!r.entityIds.includes(selectedId)) r.entityIds.push(selectedId);
+  renderRoutes();
+  autosaveSoon();
+  toast("Ajouté au parcours.");
+};
+ui.btnClearRoute.onclick=()=>{
+  ensureRoute();
+  const r=db.routes.find(x=>x.id===currentRouteId);
+  if(!r) return;
+  r.entityIds=[];
+  renderRoutes();
+  autosaveSoon();
+  toast("Parcours réinitialisé.");
+};
+ui.btnCopyRoute.onclick=()=>copyText(ui.routeMd.textContent||"");
+
+ui.btnSnapshot.onclick=snapshot;
+ui.btnReset.onclick=()=>{
+  if(!confirm("Réinitialiser le workspace local ? (tu peux exporter avant)")) return;
+  localStorage.removeItem(LS_KEY);
+  // reset everything
+  db.zones=[]; db.entities=[]; db.links=[]; db.notes=[]; db.routes=[];
+  selectedId=null; pinnedId=null; navHist=[]; navIdx=-1; currentRouteId=null;
+  view={x:0,y:0,z:1}; mode="GRAPH";
+  renderAll();
+  toast("Réinitialisé.");
+  log("Reset local.");
+};
+
+ui.btnExport.onclick=exportAll;
+ui.btnImport.onclick=()=>ui.fileJson.click();
+ui.btnDocs.onclick=showDocs;
+ui.btnSettings.onclick=showSettings;
+ui.btnOnboard.onclick=showOnboarding;
+
+ui.fileJson.addEventListener("change", async ()=>{
+  const f=ui.fileJson.files && ui.fileJson.files[0];
+  ui.fileJson.value="";
+  if(!f) return;
+  try{
+    const txt=await f.text();
+    const json=JSON.parse(txt);
+    if(!detectAndImport(json)){
+      toast("Format non reconnu.");
+      log("Import: format non reconnu.");
+    }
+  }catch(e){
+    toast("Import impossible.");
+    log("Import ERREUR: "+e.message);
+  }
+});
+
+/* ---------- Export pulse + pause reminder ---------- */
+setInterval(()=>{ ui.btnExport.classList.add("pulseLilac"); setTimeout(()=>ui.btnExport.classList.remove("pulseLilac"),6500); }, 180000);
+setInterval(()=>{ toast("Pause recommandée (50 min)."); }, 3000000);
+
+/* ---------- Mobile: open inspector ---------- */
+ui.btnMobileInspector.onclick=()=>{
+  // simple: toggle mode LIST on mobile for access + open inspector if selected
+  if(mode!=="LIST"){ setMode("LIST"); }
+  toast("Mode liste (mobile). Sélectionne un item → fiche.");
+};
+
+/* ---------- Init ---------- */
+(function init(){
+  // prefs default
+  try{
+    const loaded=load();
+    applyPrefs(prefs);
+    if(!loaded || !db.entities.length){
+      // empty: load sample so it "just works"
+      loadSample();
+    }else{
+      // normalize loaded
+      db.zones=(db.zones||[]).map(normZone);
+      if(!db.zones.length) db.zones=[normZone({id:"Z-unknown",label:"Z-unknown",x:0,y:0,layer:"NEUTRE",opacity:0.14})];
+      db.entities=(db.entities||[]).map(normEntity);
+      db.links=(db.links||[]).map(normLink);
+      db.notes=Array.isArray(db.notes)?db.notes:[];
+      db.routes=Array.isArray(db.routes)?db.routes:[];
+      if(!db.entities.some(e=>Number.isFinite(e.x) && Number.isFinite(e.y))) seedPositions();
+      renderAll();
+      toast("Session restaurée.");
+      log("Session restaurée depuis localStorage.");
+    }
+  }catch(e){
+    log("Init ERREUR: "+e.message);
+    loadSample();
+  }
+  // Canvas sizing
+  setTimeout(()=>{ resize(); draw(); }, 30);
+})();
+
+})();</script>
+</body>
+</html>
