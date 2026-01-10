@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>!NYXO / !NiXÖ — Saison 0 · Mission 2</title>
+
+<style>
+:root{
+  --bg:#0b0e11;
+  --panel:#11161c;
+  --grid:#1b2330;
+  --txt:#d6efe3;
+  --mut:#9bb7b0;
+  --green:#8fffd2;
+  --lilac:#c7a8ff;
+  --warn:#ffd27a;
+  --bad:#ff7aa5;
+  --ok:#7affb0;
+  --accent:linear-gradient(90deg,var(--green),var(--lilac));
+  --mono:'Courier New', monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);}
+
+body{
+  background:
+    linear-gradient(180deg,#0b0e11,#06080b),
+    repeating-linear-gradient(to right,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px),
+    repeating-linear-gradient(to bottom,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px);
+}
+
+.container{max-width:1100px;margin:auto;padding:3rem 1.5rem 5rem;}
+.logo{
+  font-size:2.6rem;letter-spacing:.15em;margin:0;
+  background:var(--accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{color:var(--mut);margin:.7rem 0 2.2rem;line-height:1.5;}
+.panel{
+  background:rgba(17,22,28,.88);
+  border:1px solid #222a36;
+  border-radius:16px;
+  padding:2.4rem;
+  box-shadow:0 0 55px rgba(0,0,0,.65);
+}
+
+h2{
+  color:var(--lilac);
+  letter-spacing:.2em;
+  font-size:1rem;
+  margin:2.3rem 0 .9rem;
+}
+p{line-height:1.8;font-size:1rem;margin:.8rem 0;}
+ul{padding-left:1.4rem;margin:.6rem 0;}
+li{margin:.55rem 0;line-height:1.65;}
+
+.kbd{
+  display:inline-block;
+  padding:.1rem .45rem;
+  border:1px solid #2b3442;
+  border-bottom-color:#1f2631;
+  border-radius:6px;
+  background:#0c1016;
+  color:var(--green);
+}
+
+.hr{height:1px;background:#222a36;margin:2rem 0;}
+.small{font-size:.92rem;color:var(--mut);}
+
+.callout{
+  margin:1.6rem 0;
+  padding:1.3rem 1.3rem;
+  border-left:4px solid;
+  border-image:var(--accent) 1;
+  background:#0d1218;
+  border-radius:10px;
+}
+.callout strong{color:var(--green);}
+
+.mission{
+  margin-top:1.6rem;
+  padding:1.8rem;
+  border:1px dashed #2a3342;
+  border-radius:14px;
+  background:#0c1016;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:980px){
+  .grid{grid-template-columns:1.05fr .95fr;}
+}
+
+.card{
+  background:#0c1016;
+  border:1px solid #222a36;
+  border-radius:14px;
+  padding:1.2rem;
+}
+
+.card h3{
+  margin:.1rem 0 .7rem;
+  color:var(--green);
+  letter-spacing:.12em;
+  font-size:1rem;
+}
+
+.card h4{
+  margin:1.1rem 0 .55rem;
+  color:var(--lilac);
+  letter-spacing:.12em;
+  font-size:.95rem;
+}
+
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.25rem .6rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  color:var(--mut);
+  font-size:.85rem;
+  margin:.2rem .3rem .2rem 0;
+}
+.badge i{
+  width:.55rem;height:.55rem;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(143,255,210,.35);
+  display:inline-block;
+}
+.badge.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.35);}
+.badge.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.30);}
+.badge.ok i{background:var(--ok);box-shadow:0 0 14px rgba(122,255,176,.30);}
+.badge.bad i{background:var(--bad);box-shadow:0 0 14px rgba(255,122,165,.30);}
+
+label{display:block;margin:.8rem 0 .4rem;color:var(--mut);font-size:.9rem;}
+textarea,input,select{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:.85rem .9rem;
+}
+textarea{min-height:120px;resize:vertical;}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+button{
+  cursor:pointer;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+}
+button:hover{border-color:#3a475a;}
+button.primary{
+  border:0;
+  background:var(--accent);
+  color:#091015;
+  font-weight:700;
+}
+button.danger{
+  border:1px solid #4a2432;
+  background:#180b11;
+  color:#ffd6e3;
+}
+.preview{
+  border-radius:14px;
+  border:1px solid #222a36;
+  background:#0b0f15;
+  padding:1.2rem;
+  margin-top:1rem;
+}
+.preview .title{
+  font-weight:700;
+  letter-spacing:.08em;
+  margin:0 0 .4rem;
+  color:var(--lilac);
+}
+.preview .meta{
+  color:var(--mut);
+  font-size:.88rem;
+  margin-bottom:.8rem;
+}
+.preview .content{
+  white-space:pre-wrap;
+  line-height:1.7;
+  font-size:.98rem;
+}
+.preview .tags{
+  margin-top:.9rem;
+  display:flex;flex-wrap:wrap;gap:.4rem;
+}
+.tag{
+  font-size:.82rem;
+  padding:.18rem .55rem;
+  border-radius:999px;
+  border:1px solid #2a3342;
+  color:var(--mut);
+}
+.tag.ok{border-color:#2e4a3a;color:#bfffe0;}
+.tag.warn{border-color:#4a4330;color:#fff0c8;}
+.tag.bad{border-color:#4a2432;color:#ffd6e3;}
+
+.footer{
+  margin-top:2.4rem;
+  padding-top:1.5rem;
+  border-top:1px dashed #2a3342;
+  color:var(--mut);
+  font-size:.9rem;
+  line-height:1.6;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#0c1016;border:1px solid #2a3342;color:var(--txt);
+  padding:.75rem .9rem;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  max-width:min(860px,92vw);
+}
+.toast.show{opacity:1;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1 class="logo">!NYXO / !NiXÖ</h1>
+  <div class="subtitle">
+    Saison 0 · <span class="kbd">Mission 2</span><br>
+    <span class="small">Rendre visible une production <strong>sans exposer les personnes</strong> — et préparer les premiers échos entre lieux.</span>
+  </div>
+
+  <div class="panel">
+
+    <p>
+      Mission 1 a créé une trace et une passerelle.
+      Mission 2 ajoute une couche : <strong>la visibilité juste</strong>.
+      Pas pour “communiquer”, mais pour que ce qui est fait puisse exister au-delà du moment.
+    </p>
+
+    <div class="callout">
+      <strong>Idée simple :</strong> on peut montrer une production (objet, idée, méthode, mini-tuto, récit)
+      <strong>sans montrer les personnes</strong>, sans extraction, et sans forcer la publication.
+      La visibilité est un outil… pas une obligation.
+    </div>
+
+    <h2>RÈGLE D’OR : VISIBILITÉ ≠ EXPOSITION</h2>
+    <ul>
+      <li><strong>Visibilité</strong> : on met en valeur une production, un geste, un savoir-faire.</li>
+      <li><strong>Exposition</strong> : on met des personnes en vitrine (visages, histoires intimes, identifiants).</li>
+      <li>Mission 2 vise la visibilité <strong>sans</strong> exposition, sauf accord explicite.</li>
+    </ul>
+
+    <div class="hr"></div>
+
+    <h2>MISSION 2 — EN 3 GESTES</h2>
+    <div class="mission">
+      <div class="badge"><i></i> 15–25 minutes</div>
+      <div class="badge purple"><i></i> Reproductible</div>
+      <div class="badge warn"><i></i> Consentement si personnes identifiables</div>
+
+      <div class="grid" style="margin-top:1rem;">
+        <div class="card">
+          <h3>Geste A — Choisir un “artefact”</h3>
+          <p class="small">
+            Un artefact n’est pas forcément un objet. C’est <strong>quelque chose qui peut circuler</strong>.
+          </p>
+          <ul>
+            <li>un objet (céramique, affiche, collage…)</li>
+            <li>un mini-texte (10 lignes), un extrait</li>
+            <li>un mini-tuto (3 étapes)</li>
+            <li>une recette, une méthode, une idée testée</li>
+            <li>une photo d’un lieu (sans personnes identifiables)</li>
+          </ul>
+
+          <h4>Geste B — Ajouter un contexte sobre</h4>
+          <ul>
+            <li>où / quand (sans détails sensibles)</li>
+            <li>à quoi ça sert (usage, sens, bénéfice)</li>
+            <li>ce que ça rend possible (un “après”)</li>
+          </ul>
+
+          <h4>Geste C — Préparer un “écho” (optionnel)</h4>
+          <ul>
+            <li>une question à poser ailleurs</li>
+            <li>une invitation douce à répliquer</li>
+            <li>une variante “chez vous, comment… ?”</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Checklist éthique (rapide)</h3>
+          <p class="small">Cochez mentalement. Si un point coince, on adapte.</p>
+
+          <div class="badge ok"><i></i> OK si : pas de noms</div><br>
+          <div class="badge ok"><i></i> OK si : pas de visage</div><br>
+          <div class="badge ok"><i></i> OK si : pas de détails intimes</div><br>
+          <div class="badge warn"><i></i> Accord si : voix / identité</div><br>
+          <div class="badge warn"><i></i> Accord si : photo de personnes</div><br>
+          <div class="badge bad"><i></i> Stop si : risque pour quelqu’un</div>
+
+          <div class="callout" style="margin-top:1.2rem;">
+            <strong>Critère :</strong> si la publication peut nuire, même légèrement, on ne publie pas.
+            On peut garder l’artefact en interne, ou le rendre plus abstrait.
+          </div>
+
+          <h4>Trois options de sortie</h4>
+          <ul>
+            <li><strong>0%</strong> : garder pour soi / le lieu</li>
+            <li><strong>50%</strong> : partager en interne (équipe / groupe)</li>
+            <li><strong>100%</strong> : publier en “vitrine” (si ok)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <h2>GÉNÉRATEUR D’ARTEFACT (OPTIONNEL)</h2>
+      <p class="small">
+        Cet outil ne collecte rien. Tout reste sur votre appareil.
+        Il produit une “fiche artefact” copiable, prête à afficher ou à publier.
+      </p>
+
+      <div class="grid" style="margin-top:.8rem;">
+        <div class="card">
+          <h3>Entrées</h3>
+
+          <label for="kind">Type d’artefact</label>
+          <select id="kind">
+            <option value="OBJET">Objet / création</option>
+            <option value="RECIT">Récit court</option>
+            <option value="TUTO">Mini-tuto</option>
+            <option value="METHODE">Méthode / astuce</option>
+            <option value="PHOTO">Photo (sans personnes identifiables)</option>
+            <option value="IDEA">Idée testée</option>
+          </select>
+
+          <label for="title">Titre sobre (sans noms)</label>
+          <input id="title" placeholder="Ex : Tasse en grès — première cuisson / Une astuce pour se repérer / Trois étapes utiles..." />
+
+          <label for="where">Contexte (lieu / moment) — optionnel</label>
+          <input id="where" placeholder="Ex : atelier du jeudi / sortie culturelle / permanence numérique..." />
+
+          <label for="desc">Description (5–12 lignes)</label>
+          <textarea id="desc" placeholder="Décrivez l’artefact, son sens, son usage. Pas d’infos intimes, pas d’identifiants."></textarea>
+
+          <label for="steps">Si mini-tuto : 3 étapes (optionnel)</label>
+          <textarea id="steps" placeholder="1) ...&#10;2) ...&#10;3) ..."></textarea>
+
+          <label for="echo">Écho inter-lieux (question / invitation) — optionnel</label>
+          <textarea id="echo" placeholder="Ex : Chez vous, quelles activités méritent un “après” ? / Comment vous évitez l’exposition des personnes ?"></textarea>
+
+          <label for="privacy">Niveau de diffusion</label>
+          <select id="privacy">
+            <option value="INTERNE">Interne (au lieu / au groupe)</option>
+            <option value="PARTAGE">Partage restreint (partenaires)</option>
+            <option value="PUBLIC">Public (vitrine)</option>
+          </select>
+
+          <div class="btnrow">
+            <button class="primary" id="gen">Générer la fiche</button>
+            <button id="copy">Copier</button>
+            <button class="danger" id="reset">Réinitialiser</button>
+          </div>
+
+          <p class="small">
+            Conseil : si vous hésitez, choisissez <strong>Interne</strong>. La visibilité peut venir plus tard.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Prévisualisation</h3>
+          <div class="preview" id="pv">
+            <div class="title">Aperçu</div>
+            <div class="meta">—</div>
+            <div class="content" id="pvContent">Remplissez à gauche puis “Générer”.</div>
+            <div class="tags" id="pvTags"></div>
+          </div>
+
+          <label for="out">Sortie (copiable)</label>
+          <textarea id="out" readonly placeholder="La fiche artefact apparaîtra ici."></textarea>
+
+          <div class="callout">
+            <strong>Critère de réussite :</strong> si l’artefact peut circuler (même en interne)
+            <strong>sans exposer les personnes</strong>, la mission est accomplie.
+          </div>
+
+          <h4>Préparer la Mission 3</h4>
+          <p class="small">
+            La prochaine mission proposera un acte de coopération simple :
+            <strong>faire voyager un artefact</strong> (ou sa version texte) vers un autre lieu,
+            et recevoir un écho en retour.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2>FERMETURE DE BOUCLE</h2>
+    <p>
+      Au début, il y avait une question : comment reprendre prise sur le réel sans qu’on nous l’explique d’en haut ?
+      Mission 2 répond par un geste : <strong>rendre visible sans exposer</strong>.
+      C’est une forme de respect : du travail fait, des personnes, et du lieu.
+    </p>
+
+    <div class="footer">
+      Saison 0 · Mission 2 — Document reproductible · Low-tech par défaut · Visibilité sans exposition<br>
+      Astuce : une bonne visibilité n’attire pas l’attention sur les personnes, mais sur ce qui rend la vie plus possible.
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const kind = $("kind"), title = $("title"), where = $("where"), desc = $("desc"), steps = $("steps"), echo = $("echo"), privacy = $("privacy");
+  const out = $("out"), pv = $("pv"), pvContent = $("pvContent"), pvTags = $("pvTags");
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1900);
+  }
+
+  function clean(s){
+    return (s||"").trim().replace(/\s+\n/g,"\n").replace(/\n{3,}/g,"\n\n");
+  }
+
+  function tag(label, cls){
+    const d = document.createElement("span");
+    d.className = "tag " + (cls||"");
+    d.textContent = label;
+    return d;
+  }
+
+  function build(){
+    const k = kind.value;
+    const t = clean(title.value);
+    const w = clean(where.value);
+    const d = clean(desc.value);
+    const s = clean(steps.value);
+    const e = clean(echo.value);
+    const p = privacy.value;
+
+    if(!t && !d && !s && !e){
+      showToast("Ajoutez au moins un titre ou une description.");
+      return null;
+    }
+
+    const stamp = new Date();
+    const iso = stamp.toISOString().replace("T"," ").slice(0,19) + "Z";
+
+    const lines = [];
+    lines.push("!NYXO // SAISON_0 :: MISSION_2 :: ARTEFACT");
+    lines.push("HORODATAGE : " + iso);
+    lines.push("TYPE       : " + k);
+    if(t) lines.push("TITRE      : " + t);
+    if(w) lines.push("CONTEXTE   : " + w);
+    lines.push("DIFFUSION  : " + p);
+    lines.push("");
+    if(d){
+      lines.push("DESCRIPTION :");
+      lines.push(d);
+      lines.push("");
+    }
+    if(s){
+      lines.push("MINI-TUTO (optionnel) :");
+      lines.push(s);
+      lines.push("");
+    }
+    if(e){
+      lines.push("ECHO (optionnel) :");
+      lines.push(e);
+      lines.push("");
+    }
+    lines.push("ETHIQUE : visibilité sans exposition · pas de noms/visages sans accord · si doute, diffusion interne");
+    return {text: lines.join("\n"), meta:{k,t,w,d,s,e,p,iso}};
+  }
+
+  function updatePreview(meta){
+    pvTags.innerHTML = "";
+    pv.querySelector(".meta").textContent = `Type: ${meta.k} · Diffusion: ${meta.p} · ${meta.iso}`;
+    const bits = [];
+    if(meta.t) bits.push(meta.t);
+    if(meta.w) bits.push("Contexte: " + meta.w);
+    if(meta.d) bits.push(meta.d);
+    if(meta.s) bits.push("\nMini-tuto:\n" + meta.s);
+    if(meta.e) bits.push("\nÉcho:\n" + meta.e);
+    pvContent.textContent = bits.join("\n\n") || "—";
+
+    pvTags.appendChild(tag("Saison 0", "ok"));
+    pvTags.appendChild(tag("Mission 2", "ok"));
+    pvTags.appendChild(tag("Sans exposition", "ok"));
+    if(meta.p === "PUBLIC") pvTags.appendChild(tag("Public", "warn"));
+    if(meta.p === "PARTAGE") pvTags.appendChild(tag("Partage restreint", "warn"));
+    if(meta.p === "INTERNE") pvTags.appendChild(tag("Interne", "ok"));
+    if(meta.e) pvTags.appendChild(tag("Écho prêt", "ok"));
+    else pvTags.appendChild(tag("Écho optionnel", ""));
+  }
+
+  $("gen").addEventListener("click", ()=>{
+    const built = build();
+    if(!built) return;
+    out.value = built.text;
+    updatePreview(built.meta);
+    showToast("Fiche artefact générée.");
+  });
+
+  $("copy").addEventListener("click", async ()=>{
+    const text = out.value.trim();
+    if(!text){ showToast("Rien à copier."); return; }
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Copié dans le presse-papiers.");
+    }catch(e){
+      out.focus(); out.select();
+      document.execCommand("copy");
+      showToast("Copie tentée (mode compat).");
+    }
+  });
+
+  $("reset").addEventListener("click", ()=>{
+    kind.value = "OBJET";
+    title.value = "";
+    where.value = "";
+    desc.value = "";
+    steps.value = "";
+    echo.value = "";
+    privacy.value = "INTERNE";
+    out.value = "";
+    pv.querySelector(".meta").textContent = "—";
+    pvContent.textContent = "Remplissez à gauche puis “Générer”.";
+    pvTags.innerHTML = "";
+    showToast("Réinitialisé.");
+  });
+
+})();
+</script>
+</body>
+</html>
