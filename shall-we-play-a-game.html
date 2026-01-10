@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Starter Kit — Précarité → Autonomie (sans bullshit)</title>
+
+<style>
+:root{
+  --bg:#0b0e11;
+  --panel:#11161c;
+  --grid:#1b2330;
+  --txt:#d6efe3;
+  --mut:#9bb7b0;
+  --green:#8fffd2;
+  --lilac:#c7a8ff;
+  --warn:#ffd27a;
+  --bad:#ff7aa5;
+  --ok:#7affb0;
+  --accent:linear-gradient(90deg,var(--green),var(--lilac));
+  --mono:'Courier New', monospace;
+  --radius:16px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);}
+
+body{
+  background:
+    linear-gradient(180deg,#0b0e11,#06080b),
+    repeating-linear-gradient(to right,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px),
+    repeating-linear-gradient(to bottom,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px);
+}
+
+.container{max-width:1180px;margin:auto;padding:3rem 1.5rem 5rem;}
+.brand{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:.8rem;
+  margin-bottom:.7rem;
+}
+.logo{
+  font-size:2.2rem;letter-spacing:.12em;margin:0;
+  background:var(--accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.25rem .65rem;border:1px solid #2a3342;border-radius:999px;
+  color:var(--mut);font-size:.9rem;background:rgba(12,16,22,.6);
+}
+.badge i{
+  width:.55rem;height:.55rem;border-radius:50%;
+  background:var(--green);box-shadow:0 0 14px rgba(143,255,210,.35);
+  display:inline-block;
+}
+.badge.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.35);}
+.badge.ok i{background:var(--ok);box-shadow:0 0 14px rgba(122,255,176,.30);}
+.badge.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.30);}
+
+.subtitle{color:var(--mut);line-height:1.6;margin:0 0 2rem;}
+
+.panel{
+  background:rgba(17,22,28,.88);
+  border:1px solid #222a36;
+  border-radius:var(--radius);
+  padding:2.2rem;
+  box-shadow:0 0 55px rgba(0,0,0,.65);
+}
+
+.hero{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1.2rem;
+}
+@media (min-width:980px){
+  .hero{grid-template-columns:1.2fr .8fr;}
+}
+
+h2{
+  color:var(--lilac);
+  letter-spacing:.18em;
+  font-size:1rem;
+  margin:2.1rem 0 .9rem;
+}
+
+p{line-height:1.8;font-size:1rem;margin:.8rem 0;}
+.small{font-size:.92rem;color:var(--mut);}
+.hr{height:1px;background:#222a36;margin:1.8rem 0;}
+
+.callout{
+  margin:1.2rem 0;
+  padding:1.2rem 1.2rem;
+  border-left:4px solid;
+  border-image:var(--accent) 1;
+  background:#0d1218;
+  border-radius:12px;
+}
+.callout strong{color:var(--green);}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:980px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+
+.card{
+  background:#0c1016;
+  border:1px solid #222a36;
+  border-radius:14px;
+  padding:1.2rem;
+}
+.card h3{
+  margin:.2rem 0 .7rem;
+  color:var(--green);
+  letter-spacing:.10em;
+  font-size:1.05rem;
+}
+.card p{margin:.6rem 0;}
+.card ul{padding-left:1.25rem;margin:.6rem 0;}
+.card li{margin:.45rem 0;line-height:1.6;}
+
+.kbd{
+  display:inline-block;
+  padding:.1rem .45rem;
+  border:1px solid #2b3442;
+  border-bottom-color:#1f2631;
+  border-radius:6px;
+  background:#0c1016;
+  color:var(--green);
+}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+button, a.btn{
+  cursor:pointer;text-decoration:none;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+button:hover, a.btn:hover{border-color:#3a475a;}
+button.primary, a.btn.primary{
+  border:0;background:var(--accent);color:#091015;font-weight:800;
+}
+a.btn.small{padding:.65rem .85rem;font-size:.9rem;}
+
+.tools{
+  display:grid;grid-template-columns:1fr;gap:.8rem;margin-top:1rem;
+}
+@media (min-width:980px){
+  .tools{grid-template-columns:1fr 1fr;}
+}
+.tool{
+  background:#0c1016;border:1px solid #222a36;border-radius:14px;padding:1rem;
+}
+.tool b{color:var(--lilac);}
+.tool .tagline{color:var(--mut);font-size:.9rem;margin-top:.25rem;}
+
+label{display:block;margin:.75rem 0 .35rem;color:var(--mut);font-size:.9rem;}
+textarea,input,select{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:.85rem .9rem;
+}
+textarea{min-height:120px;resize:vertical;}
+
+.preview{
+  border-radius:14px;border:1px solid #222a36;background:#0b0f15;padding:1rem;
+}
+.preview .title{font-weight:800;letter-spacing:.08em;color:var(--lilac);margin:0 0 .35rem;}
+.preview .content{white-space:pre-wrap;line-height:1.7;font-size:.98rem;color:var(--txt);}
+.preview .meta{color:var(--mut);font-size:.88rem;margin:.5rem 0 0;}
+
+.footer{
+  margin-top:2.4rem;
+  padding-top:1.6rem;
+  border-top:1px dashed #2a3342;
+  color:var(--mut);
+  font-size:.9rem;
+  line-height:1.6;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#0c1016;border:1px solid #2a3342;color:var(--txt);
+  padding:.75rem .9rem;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  max-width:min(980px,92vw);
+}
+.toast.show{opacity:1;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="brand">
+    <h1 class="logo">Starter Kit — Précarité → Autonomie</h1>
+    <span class="badge ok"><i></i> Gratuit</span>
+    <span class="badge"><i></i> Copiable</span>
+    <span class="badge purple"><i></i> Low-tech</span>
+    <span class="badge warn"><i></i> Sans culpabilisation</span>
+  </div>
+
+  <p class="subtitle">
+    Un kit d’outils concrets pour <strong>reprendre la main sur sa vie</strong> — pas en “se motivant”, mais en gagnant du contrôle réel sur :
+    <strong>le temps</strong>, <strong>l’argent</strong>, <strong>la compréhension</strong>, <strong>la production</strong>, <strong>les opportunités</strong>.
+    <br><span class="small">Utilisable seul·e, en groupe, en association. Pas besoin d’y croire pour que ça marche.</span>
+  </p>
+
+  <div class="panel">
+    <div class="hero">
+      <div>
+        <div class="callout">
+          <strong>Promesse honnête :</strong> ce kit ne promet pas le bonheur.
+          Il aide à réduire le flou, la honte et l’impuissance en rendant l’action <em>plus simple</em> que l’inaction.
+        </div>
+
+        <h2>COMMENCER EN 10 MINUTES</h2>
+        <p>
+          Choisissez <strong>un seul</strong> module. Pas les cinq.
+          Le but est de produire une petite preuve de contrôle (même minuscule).
+        </p>
+
+        <div class="btnrow">
+          <a class="btn primary" href="#modules">Ouvrir les 5 modules</a>
+          <button id="quickStart">Faire un plan 7 jours (générateur)</button>
+          <a class="btn" href="#outils">Outils numériques (recommandés)</a>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>POUR QUI ?</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Pour les personnes</h3>
+            <ul>
+              <li>reprendre du pouvoir sans se justifier</li>
+              <li>se prouver qu’on peut avancer malgré la fatigue</li>
+              <li>transformer l’effort en quelque chose qui compte</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Pour les équipes / lieux</h3>
+            <ul>
+              <li>un cadre simple pour accompagner sans “charger”</li>
+              <li>des supports imprimables et réutilisables</li>
+              <li>une progression visible sans mise en concurrence</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Règles de base (anti-bullshit)</h3>
+          <ul>
+            <li><strong>Pas de honte :</strong> le point de départ est légitime</li>
+            <li><strong>Pas d’évaluation :</strong> pas de notes, pas de classement</li>
+            <li><strong>Petit & réel :</strong> une micro-action vaut mieux qu’un grand plan</li>
+            <li><strong>Réversible :</strong> pause/stop possible à tout moment</li>
+            <li><strong>Confidentialité :</strong> anonymisation par défaut si partage</li>
+          </ul>
+          <p class="small">
+            Astuce : si vous ne savez pas par où commencer, prenez <span class="kbd">Temps</span>.
+            Le contrôle du temps rend tout le reste plus possible.
+          </p>
+        </div>
+
+        <div class="card" style="margin-top:1rem;">
+          <h3>1 question qui ouvre une porte</h3>
+          <div class="preview">
+            <div class="title">Question</div>
+            <div class="content">Qu’est-ce qui, cette semaine,
+me rendrait “un peu plus capable”,
+sans me demander d’être un autre ?</div>
+            <div class="meta">Si vous avez une réponse, même floue : vous pouvez commencer.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2 id="modules">LES 5 MODULES (ENTRÉE PAR N’IMPORTE OÙ)</h2>
+
+    <div class="grid">
+      <div class="card">
+        <h3>1) Temps & Énergie</h3>
+        <p><strong>But :</strong> voir clair dans ses journées et reprendre du choix.</p>
+        <ul>
+          <li>journal 5 lignes</li>
+          <li>timeboxing réaliste</li>
+          <li>réduction de fatigue décisionnelle</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn small primary" href="#plan7">Plan 7 jours (temps)</a>
+          <a class="btn small" href="#outils">Outils</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>2) Argent & Survie matérielle</h3>
+        <p><strong>But :</strong> fin du flou financier, moins d’angoisse, plus de décisions possibles.</p>
+        <ul>
+          <li>budget minimal</li>
+          <li>droits & aides (cartographie)</li>
+          <li>scénarios “si… alors…”</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn small" href="#plan7">Plan 7 jours (argent)</a>
+          <a class="btn small" href="#outils">Outils</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>3) Comprendre le jeu</h3>
+        <p><strong>But :</strong> comprendre les règles réelles (institutions, systèmes, langage).</p>
+        <ul>
+          <li>cartes mentales</li>
+          <li>glossaire anti-jargon</li>
+          <li>décryptage collectif</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn small" href="#plan7">Plan 7 jours (comprendre)</a>
+          <a class="btn small" href="#outils">Outils</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>4) Produire de la valeur</h3>
+        <p><strong>But :</strong> transformer l’effort en “actif” (portfolio, méthode, trace).</p>
+        <ul>
+          <li>documentation minimale</li>
+          <li>portfolio vivant</li>
+          <li>capitalisation sans s’épuiser</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn small" href="#plan7">Plan 7 jours (produire)</a>
+          <a class="btn small" href="#outils">Outils</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>5) Créer des opportunités</h3>
+        <p><strong>But :</strong> arrêter de dépendre du hasard, construire un réseau utile.</p>
+        <ul>
+          <li>mémoire relationnelle</li>
+          <li>suivi d’échanges</li>
+          <li>demandes claires</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn small" href="#plan7">Plan 7 jours (opportunités)</a>
+          <a class="btn small" href="#outils">Outils</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Mode “Atelier” (pour lieux)</h3>
+        <p><strong>But :</strong> 1 module = 1 séance sans prérequis.</p>
+        <ul>
+          <li>supports imprimables</li>
+          <li>rythme adaptable</li>
+          <li>pas d’évaluation</li>
+        </ul>
+        <div class="btnrow">
+          <a class="btn small" href="#plan7">Plan 7 jours (atelier)</a>
+          <a class="btn small" href="#outils">Outils</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2 id="outils">OUTILS NUMÉRIQUES (RECOMMANDÉS, SANS PIÈGE)</h2>
+    <p class="small">
+      Objectif : des outils qui aident vraiment (temps / budget / notes / production / réseau),
+      sans extraction de données, et souvent open source.
+    </p>
+
+    <div class="tools">
+      <div class="tool">
+        <b>Temps</b> — ActivityWatch, Super Productivity
+        <div class="tagline">Voir où passe le temps, réduire la fatigue décisionnelle.</div>
+      </div>
+      <div class="tool">
+        <b>Notes / journal</b> — Logseq, Joplin, Zettlr
+        <div class="tagline">Journal 5 lignes, fiches pratiques, mémoire personnelle.</div>
+      </div>
+      <div class="tool">
+        <b>Budget</b> — Firefly III, GnuCash, LibreOffice Calc
+        <div class="tagline">Budget minimal, scénarios, lisibilité financière.</div>
+      </div>
+      <div class="tool">
+        <b>Cartes & schémas</b> — Freeplane, diagrams.net (draw.io), Excalidraw
+        <div class="tagline">Comprendre des systèmes, faire des plans visuels.</div>
+      </div>
+      <div class="tool">
+        <b>Fichiers / partage</b> — Nextcloud, Syncthing
+        <div class="tagline">Reprendre la main sur ses documents, partager sans dépendance.</div>
+      </div>
+      <div class="tool">
+        <b>Réseau utile</b> — Monica CRM, Kanboard / Focalboard
+        <div class="tagline">Suivre des échanges, transformer un contact en option.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Note :</strong> ce site n’impose aucun outil. Le kit doit fonctionner aussi avec un carnet papier.
+      Le numérique sert uniquement à rendre les choses plus faciles.
+    </div>
+
+    <div class="hr"></div>
+
+    <h2 id="plan7">GÉNÉRATEUR — PLAN 7 JOURS (UNE PREUVE DE CONTRÔLE)</h2>
+    <p class="small">
+      Ce générateur ne collecte rien. Il crée un plan réaliste, minimal, copiable.
+      Choisissez un module, puis un niveau d’énergie. Le plan s’adapte.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Entrées</h3>
+
+        <label for="module">Module prioritaire</label>
+        <select id="module">
+          <option value="TEMPS">Temps & Énergie</option>
+          <option value="ARGENT">Argent & Survie matérielle</option>
+          <option value="COMPRENDRE">Comprendre le jeu</option>
+          <option value="PRODUIRE">Produire de la valeur</option>
+          <option value="OPPORTUNITES">Créer des opportunités</option>
+          <option value="ATELIER">Mode Atelier (pour lieux)</option>
+        </select>
+
+        <label for="energy">Niveau d’énergie réaliste (aucune honte)</label>
+        <select id="energy">
+          <option value="BAS">Bas (fatigue / brouillard)</option>
+          <option value="MOYEN">Moyen (tenable)</option>
+          <option value="HAUT">Haut (bonne semaine)</option>
+        </select>
+
+        <label for="constraint">Contrainte principale (optionnel)</label>
+        <input id="constraint" placeholder="Ex : santé / enfant / rendez-vous / stress / pas d’ordi..." />
+
+        <label for="goal">Mini objectif concret (1 phrase)</label>
+        <input id="goal" placeholder="Ex : voir clair sur mon budget / publier une page / reprendre un rythme..." />
+
+        <div class="btnrow">
+          <button class="primary" id="gen">Générer mon plan</button>
+          <button id="copy">Copier</button>
+          <button class="danger" id="reset">Réinitialiser</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Sortie</h3>
+        <div class="preview">
+          <div class="title">Plan 7 jours</div>
+          <div class="content" id="planOut">Choisissez un module et générez.</div>
+          <div class="meta" id="planMeta"></div>
+        </div>
+
+        <label for="outText">Texte copiable</label>
+        <textarea id="outText" readonly placeholder="Le plan apparaîtra ici."></textarea>
+
+        <div class="callout">
+          <strong>Règle :</strong> si le plan vous épuise à la lecture, il est trop gros.
+          Réduisez-le jusqu’à ce qu’il soit “possible même un mauvais jour”.
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Starter Kit — Précarité → Autonomie · Document vivant · Copiable · Adaptable<br>
+      Si vous êtes un lieu/équipe : imprimez cette page, choisissez 1 module, et testez 1 semaine. Le reste viendra.
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1850);
+  }
+
+  function stamp(){
+    const d = new Date();
+    return d.toISOString().replace("T"," ").slice(0,19) + "Z";
+  }
+
+  function clean(s){
+    return (s||"").trim().replace(/\s+\n/g,"\n").replace(/\n{3,}/g,"\n\n");
+  }
+
+  function microTasks(mod, energy){
+    const tasks = {
+      TEMPS: {
+        BAS: [
+          "Jour 1 (5 min) : écrire 5 lignes (ce qui prend du temps / ce qui fatigue / ce qui aide).",
+          "Jour 2 (5 min) : choisir 1 bloc de 20 min pour soi (même faible).",
+          "Jour 3 (3 min) : supprimer 1 micro-contrainte évitable (notification, onglet, obligation inutile).",
+          "Jour 4 (10 min) : lister 3 obligations + 1 choix (même petit).",
+          "Jour 5 (5 min) : noter 1 moment où vous avez tenu (preuve).",
+          "Jour 6 (10 min) : planifier 2 blocs de 20 min max (pas plus).",
+          "Jour 7 (5 min) : écrire “ce que je garde / ce que je lâche”."
+        ],
+        MOYEN: [
+          "Jour 1 (10 min) : journal 5 lignes + repérer 1 fuite de temps.",
+          "Jour 2 (15 min) : timebox 2 blocs (30 min max chacun).",
+          "Jour 3 (10 min) : préparer un “plan mauvais jour” (1 seule action possible).",
+          "Jour 4 (15 min) : faire 1 bloc profond (sans notifications).",
+          "Jour 5 (10 min) : écrire 5 lignes : ce qui marche / ce qui bloque.",
+          "Jour 6 (20 min) : organiser demain (3 priorités max).",
+          "Jour 7 (10 min) : bilan : 1 victoire, 1 ajustement."
+        ],
+        HAUT: [
+          "Jour 1 (20 min) : audit doux (temps/énergie) + 3 leviers possibles.",
+          "Jour 2 (25 min) : mettre en place ActivityWatch ou un journal numérique.",
+          "Jour 3 (30 min) : semaine type (2 blocs profonds, 1 bloc admin, 1 bloc repos).",
+          "Jour 4 (25 min) : réduire 2 sources de distraction récurrentes.",
+          "Jour 5 (30 min) : tester un rituel “fin de journée” (5 lignes).",
+          "Jour 6 (30 min) : préparer une page “moi en 1 page” (ce que je fais, ce que je veux).",
+          "Jour 7 (20 min) : bilan + plan 7 jours suivant."
+        ]
+      },
+      ARGENT: {
+        BAS: [
+          "Jour 1 (10 min) : noter dépenses fixes + 3 dépenses variables récentes.",
+          "Jour 2 (10 min) : lister 3 dépenses “compressibles” (sans se juger).",
+          "Jour 3 (10 min) : faire une photo/scan de 3 documents importants (local).",
+          "Jour 4 (10 min) : écrire 1 question claire à poser (CPAS, mutuelle, service…).",
+          "Jour 5 (10 min) : créer 3 catégories : vital / utile / optionnel.",
+          "Jour 6 (15 min) : estimer un budget semaine (même approximatif).",
+          "Jour 7 (10 min) : écrire “ce que je dois protéger financièrement”."
+        ],
+        MOYEN: [
+          "Jour 1 (20 min) : budget minimal (entrées / fixes / variables).",
+          "Jour 2 (20 min) : repérer 1 fuite + 1 action simple (stopper ou réduire).",
+          "Jour 3 (25 min) : scénarios : si -50€/mois, si +50€/mois (que change-t-on).",
+          "Jour 4 (20 min) : organiser documents (dossier unique).",
+          "Jour 5 (20 min) : préparer 1 démarche (mail, appel, RDV).",
+          "Jour 6 (20 min) : tester un outil (Calc / Firefly III / GnuCash).",
+          "Jour 7 (15 min) : bilan : 1 chose clarifiée."
+        ],
+        HAUT: [
+          "Jour 1 (30 min) : setup Firefly III ou GnuCash (ou modèle Calc).",
+          "Jour 2 (30 min) : saisir 1 mois (même incomplet).",
+          "Jour 3 (25 min) : créer 3 objectifs réalistes (sécurité / dette / projet).",
+          "Jour 4 (30 min) : plan “droits & aides” (liste + contacts).",
+          "Jour 5 (25 min) : automatiser 1 rappel (facture / échéance).",
+          "Jour 6 (30 min) : plan 90 jours (3 actions, pas plus).",
+          "Jour 7 (20 min) : bilan + prochaine semaine."
+        ]
+      },
+      COMPRENDRE: {
+        BAS: [
+          "Jour 1 (10 min) : écrire 5 lignes : “ce que je subis / ce que je veux”.",
+          "Jour 2 (10 min) : définir 5 mots qui reviennent (administratif, droits…).",
+          "Jour 3 (10 min) : chercher 1 explication simple (source officielle).",
+          "Jour 4 (10 min) : faire 1 schéma : acteurs / décisions / conséquences.",
+          "Jour 5 (10 min) : écrire 1 question claire à poser à un service.",
+          "Jour 6 (10 min) : noter 1 règle réelle découverte.",
+          "Jour 7 (10 min) : mini-bilan : ce que je comprends mieux."
+        ],
+        MOYEN: [
+          "Jour 1 (20 min) : carte mentale “ma situation” (acteurs, règles, leviers).",
+          "Jour 2 (20 min) : glossaire perso (10 mots traduits).",
+          "Jour 3 (25 min) : lire 1 source fiable et résumer en 10 lignes.",
+          "Jour 4 (20 min) : identifier 2 leviers d’action réalistes.",
+          "Jour 5 (25 min) : préparer 1 démarche (mail/appel) avec vocabulaire clair.",
+          "Jour 6 (20 min) : transformer une règle en “checklist”.",
+          "Jour 7 (15 min) : bilan + prochaine question."
+        ],
+        HAUT: [
+          "Jour 1 (30 min) : schéma complet (diagrams.net) de votre système.",
+          "Jour 2 (30 min) : écrire une fiche “comment ça marche” (1 page).",
+          "Jour 3 (30 min) : vérifier 2 sources contradictoires (fact-check).",
+          "Jour 4 (30 min) : cartographier 5 acteurs utiles + contacts.",
+          "Jour 5 (30 min) : écrire une version vulgarisée pour un proche.",
+          "Jour 6 (25 min) : créer un mini-kit réutilisable (checklist + fiche).",
+          "Jour 7 (20 min) : bilan + plan suivant."
+        ]
+      },
+      PRODUIRE: {
+        BAS: [
+          "Jour 1 (10 min) : lister 3 choses que vous savez faire (même petites).",
+          "Jour 2 (15 min) : écrire 10 lignes sur 1 compétence (sans se vendre).",
+          "Jour 3 (15 min) : faire 1 artefact simple (texte, photo d’objet, mini-tuto).",
+          "Jour 4 (10 min) : donner un titre + une utilité à l’artefact.",
+          "Jour 5 (15 min) : ranger l’artefact dans un dossier clair.",
+          "Jour 6 (15 min) : écrire 1 mini-portfolio (1 page).",
+          "Jour 7 (10 min) : bilan : 1 preuve produite."
+        ],
+        MOYEN: [
+          "Jour 1 (25 min) : choisir 1 production utile (texte/tuto/page).",
+          "Jour 2 (25 min) : produire V1 (pas parfait).",
+          "Jour 3 (20 min) : rendre lisible (titre, étapes, contexte).",
+          "Jour 4 (25 min) : publier en interne (ou garder local).",
+          "Jour 5 (20 min) : améliorer 1 point (clarté).",
+          "Jour 6 (25 min) : créer une page portfolio simple.",
+          "Jour 7 (15 min) : bilan + prochaine production."
+        ],
+        HAUT: [
+          "Jour 1 (30 min) : choisir un format (site statique / PDF / tuto).",
+          "Jour 2 (40 min) : produire V1 complet.",
+          "Jour 3 (30 min) : publier (GitHub Pages/Nextcloud) + lien.",
+          "Jour 4 (30 min) : feedback (1 personne) + ajustements.",
+          "Jour 5 (30 min) : rendre forkable (structure claire).",
+          "Jour 6 (30 min) : documenter (README simple).",
+          "Jour 7 (20 min) : bilan + plan suivant."
+        ]
+      },
+      OPPORTUNITES: {
+        BAS: [
+          "Jour 1 (10 min) : lister 3 personnes/lieux utiles (sans pression).",
+          "Jour 2 (10 min) : écrire 1 demande claire (sans la envoyer).",
+          "Jour 3 (10 min) : choisir 1 contact à relancer (ou remercier).",
+          "Jour 4 (10 min) : préparer 1 message court.",
+          "Jour 5 (10 min) : envoyer 1 message (si possible).",
+          "Jour 6 (10 min) : noter la réponse / ou noter “pas de réponse”.",
+          "Jour 7 (10 min) : bilan : 1 option créée."
+        ],
+        MOYEN: [
+          "Jour 1 (20 min) : créer une mini-liste contacts (5) + pourquoi.",
+          "Jour 2 (20 min) : envoyer 1 message clair (objectif + demande).",
+          "Jour 3 (15 min) : noter le suivi (date, réponse, prochaine action).",
+          "Jour 4 (20 min) : identifier 1 opportunité réaliste (appel, atelier, rencontre).",
+          "Jour 5 (20 min) : préparer une “présentation 6 lignes”.",
+          "Jour 6 (20 min) : envoyer 1 second message (ou relance).",
+          "Jour 7 (15 min) : bilan + ajustement."
+        ],
+        HAUT: [
+          "Jour 1 (30 min) : installer Monica CRM (ou tableur simple).",
+          "Jour 2 (30 min) : structurer 15 contacts + tags.",
+          "Jour 3 (30 min) : 2 messages ciblés + 1 demande concrète.",
+          "Jour 4 (30 min) : transformer 1 artefact (module produire) en “preuve”.",
+          "Jour 5 (30 min) : proposer 1 micro-collaboration à un lieu.",
+          "Jour 6 (30 min) : organiser un mini échange (même asynchrone).",
+          "Jour 7 (20 min) : bilan + plan suivant."
+        ]
+      },
+      ATELIER: {
+        BAS: [
+          "Jour 1 (10 min) : choisir 1 module à tester en groupe.",
+          "Jour 2 (15 min) : préparer 1 support imprimable (1 page).",
+          "Jour 3 (10 min) : définir limites (pas d’expo, pas de collecte).",
+          "Jour 4 (15 min) : faire 1 mini séance (20–30 min).",
+          "Jour 5 (10 min) : récolter 1 retour anonyme (1 phrase).",
+          "Jour 6 (15 min) : ajuster le support.",
+          "Jour 7 (10 min) : bilan + décision (pause/continue)."
+        ],
+        MOYEN: [
+          "Jour 1 (20 min) : préparer une séance 45 min (1 module).",
+          "Jour 2 (20 min) : préparer outils (papier + 1 outil numérique).",
+          "Jour 3 (45 min) : animer la séance (sans évaluation).",
+          "Jour 4 (20 min) : écrire un log d’équipe.",
+          "Jour 5 (20 min) : produire 1 artefact non exposant.",
+          "Jour 6 (20 min) : préparer une seconde séance.",
+          "Jour 7 (15 min) : bilan + plan."
+        ],
+        HAUT: [
+          "Jour 1 (30 min) : définir 4 séances (1 module chacune).",
+          "Jour 2 (30 min) : préparer supports + charte 1 page.",
+          "Jour 3 (60 min) : séance 1 + trace + artefact.",
+          "Jour 4 (30 min) : ajuster + planifier séance 2.",
+          "Jour 5 (60 min) : séance 2.",
+          "Jour 6 (30 min) : organiser mémoire (dossier, anonymisation).",
+          "Jour 7 (20 min) : bilan + diffusion interne."
+        ]
+      }
+    };
+    return (tasks[mod] && tasks[mod][energy]) ? tasks[mod][energy] : [];
+  }
+
+  const moduleSel = $("module");
+  const energySel = $("energy");
+  const constraint = $("constraint");
+  const goal = $("goal");
+  const planOut = $("planOut");
+  const planMeta = $("planMeta");
+  const outText = $("outText");
+
+  function buildPlan(){
+    const mod = moduleSel.value;
+    const energy = energySel.value;
+    const c = clean(constraint.value);
+    const g = clean(goal.value) || "Créer une preuve de contrôle (même petite).";
+    const tasks = microTasks(mod, energy);
+
+    const lines = [];
+    lines.push("STARTER KIT — PLAN 7 JOURS");
+    lines.push("HORODATAGE : " + stamp());
+    lines.push("MODULE     : " + mod);
+    lines.push("ÉNERGIE    : " + energy);
+    if(c) lines.push("CONTRAINTE : " + c);
+    lines.push("OBJECTIF   : " + g);
+    lines.push("");
+    lines.push("RÈGLE : si c’est trop lourd, on réduit. Plan valable même les mauvais jours.");
+    lines.push("");
+
+    tasks.forEach((t,i)=>lines.push((i+1) + ") " + t));
+    lines.push("");
+    lines.push("BILAN (2 min) :");
+    lines.push("- Une chose clarifiée :");
+    lines.push("- Une chose possible maintenant :");
+    lines.push("- Un ajustement pour la semaine suivante :");
+
+    const text = lines.join("\n");
+    planOut.textContent = text;
+    outText.value = text;
+
+    planMeta.textContent = "Astuce : une action minuscule répétée 7 jours = une vraie preuve. Pas besoin de “motivation”.";
+  }
+
+  $("gen").addEventListener("click", ()=>{
+    buildPlan();
+    showToast("Plan généré.");
+  });
+
+  $("copy").addEventListener("click", async ()=>{
+    const text = outText.value.trim();
+    if(!text){ showToast("Rien à copier."); return; }
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Copié.");
+    }catch(e){
+      outText.focus(); outText.select();
+      document.execCommand("copy");
+      showToast("Copie tentée (compat).");
+    }
+  });
+
+  $("reset").addEventListener("click", ()=>{
+    moduleSel.value="TEMPS";
+    energySel.value="BAS";
+    constraint.value="";
+    goal.value="";
+    planOut.textContent="Choisissez un module et générez.";
+    planMeta.textContent="";
+    outText.value="";
+    showToast("Réinitialisé.");
+  });
+
+  $("quickStart").addEventListener("click", ()=>{
+    // defaults that tend to work
+    moduleSel.value="TEMPS";
+    energySel.value="BAS";
+    goal.value="Voir clair sur mes journées et retrouver un minimum de choix.";
+    constraint.value="";
+    buildPlan();
+    location.hash = "#plan7";
+    showToast("Quick start prêt (Temps · énergie basse).");
+  });
+})();
+</script>
+</body>
+</html>
