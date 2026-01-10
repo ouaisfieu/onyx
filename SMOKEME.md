@@ -48,3 +48,7 @@ if (canLabel){
 ```
 
 Si tu appliques le **fix simple**, ton switch “Labels” redevient “bête et méchant” : ON = visible, OFF = invisible, sans surprise.
+
+
+
+
