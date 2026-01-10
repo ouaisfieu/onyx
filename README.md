@@ -416,7 +416,7 @@ Chaque **lieu de lien** devient :
 * un **terrain de jeu local**
 * un **point d’ancrage humain**
 
-Exemple pilote : **WOPS**
+Exemple pilote : **Astro**
 
 * siège central
 * entités satellites (SSM, centres de jour, centres de nuit, etc.)
@@ -484,7 +484,7 @@ Progressivement :
 
 Exemple très fort :
 
-> *Une création en céramique du WOPS
+> *Une création en céramique du Astro
 > se retrouve valorisée par un autre lieu,
 > commentée par un troisième,
 > hébergée par une plateforme commune.*
@@ -602,7 +602,7 @@ La clé du succès sera :
 ## 8. Prochaines briques possibles (au choix)
 
 1. cartographier les **lieux de lien bruxellois** (méthodo simple)
-2. écrire le **prologue ARG du WOPS (pilote)**
+2. écrire le **prologue ARG du Astro (pilote)**
 3. définir le **format standard d’un ARG local**
 4. concevoir la **base de connaissance humaine**
 5. préparer le **discours de présentation aux directions**
@@ -639,7 +639,7 @@ deux lectures **complémentaires mais non redondantes** du même projet.
 
 ---
 
-## A. Contact du WOPS à titre personnel (pilote 642)
+## A. Contact du Astro à titre personnel (pilote 642)
 
 ### Ce que tu fais bien
 
@@ -647,7 +647,7 @@ deux lectures **complémentaires mais non redondantes** du même projet.
 * tu passes par la **relation humaine**, pas par un concept
 * tu proposes un **terrain concret**, localisé, incarné
 
-### Ce que le WOPS va surtout évaluer (même inconsciemment)
+### Ce que le Astro va surtout évaluer (même inconsciemment)
 
 * **toi** avant le projet
 * ta capacité à comprendre leurs publics
@@ -781,7 +781,7 @@ Parfait. Voici **un kit opérationnel complet**, prêt à l’emploi, **sans te 
 
 ---
 
-## A — Message **personnel** au WOPS
+## A — Message **personnel** au Astro
 
 > **Objectif** : déclencher un micro-pilote discret à la **642**, sans jargon, sans “ARG” en façade.
 
@@ -853,7 +853,7 @@ Pour le collectif
 
 ![Image](https://osoc17.github.io/rideaway-data/images/brusselsregioncyclingroutes.png)
 
-| Axe observé       | Contact A — WOPS     | Contact B — Partenaires     |
+| Axe observé       | Contact A — Astro     | Contact B — Partenaires     |
 | ----------------- | -------------------- | --------------------------- |
 | Réaction initiale | Confiance / prudence | Curiosité / cadrage         |
 | Mot qui revient   | “Concret”, “terrain” | “Gouvernance”, “méthode”    |
@@ -1144,7 +1144,7 @@ Juste pour m'assurer que je cible parfaitement la recherche : pourrais-tu préci
 ...
 
 
-Très bien. Je vais lancer une recherche approfondie centrée sur Bruxelles pour cartographier et comprendre les écosystèmes gravitant autour du WOPS et du Babelzin, ainsi que leurs réseaux élargis. Je chercherai aussi des exemples inspirants d’ARG à visée sociale et intersectorielle, les leviers mobilisables, et les structures relais locales à intégrer dans ton plan.
+Très bien. Je vais lancer une recherche approfondie centrée sur Bruxelles pour cartographier et comprendre les écosystèmes gravitant autour du Astro et du Babelzin, ainsi que leurs réseaux élargis. Je chercherai aussi des exemples inspirants d’ARG à visée sociale et intersectorielle, les leviers mobilisables, et les structures relais locales à intégrer dans ton plan.
 
 Je te tiendrai informé·e des résultats dès que possible. Tu peux poursuivre ici pendant ce temps.
 
@@ -1155,7 +1155,7 @@ Donc, **concrètement**, ta “recherche approfondie” te sert à faire 3 chose
 
 1. **verrouiller les bons points d’entrée** (les “portes” qui s’ouvrent vraiment)
 2. **calibrer le pilote** pour qu’il soit acceptable et désirable *sans faire peur*
-3. **préparer l’extension en réseau** (WOPS ↔ Babel’Zin ↔ Informaticien Public ↔ Article 27 ↔ autres lieux de liens)
+3. **préparer l’extension en réseau** (Astro ↔ Tarot ↔ Informaticien Public ↔ Article 27 ↔ autres lieux de liens)
 
 Voici les conclusions actionnables, basées sur les infos vérifiées en ligne.
 
@@ -1163,31 +1163,31 @@ Voici les conclusions actionnables, basées sur les infos vérifiées en ligne.
 
 ## 1) Ce que ta recherche confirme sur tes 2 cibles
 
-### WOPS : structure “multi-couches” parfaite pour un pilote 642
+### Astro : structure “multi-couches” parfaite pour un pilote 642
 
-WOPS se présente comme un ensemble de services (SSM, centre de jour, centre de nuit, lieu de liens) et donne les coordonnées / accès pour contacter et orienter selon service. ([Wops][1])
-Le centre de nuit est **localisé** (Houba de Strooper, 1020) et indique son cadre d’accueil et de séjour. ([Wops][2])
+Astro se présente comme un ensemble de services (SSM, centre de jour, centre de nuit, lieu de liens) et donne les coordonnées / accès pour contacter et orienter selon service. ([Astro][1])
+Le centre de nuit est **localisé** (Houba de Strooper, 1020) et indique son cadre d’accueil et de séjour. ([Astro][2])
 
 **Conclusion stratégique :**
-WOPS est idéal pour ton modèle “siège + satellites”, parce que tu peux démarrer **par un point précis** (ex. lieu de liens / activité) et ensuite **faire circuler** doucement vers d’autres entités, sans jamais “réformer” l’institution. ([Wops][1])
+Astro est idéal pour ton modèle “siège + satellites”, parce que tu peux démarrer **par un point précis** (ex. lieu de liens / activité) et ensuite **faire circuler** doucement vers d’autres entités, sans jamais “réformer” l’institution. ([Astro][1])
 
 ---
 
-### Babel’Zin : “lieu de liens” déjà orienté co-construction + créativité + sorties
+### Tarot : “lieu de liens” déjà orienté co-construction + créativité + sorties
 
-Babel’Zin affiche clairement ses coordonnées (Auderghem, chaussée de Wavre 1688) et un modèle bas-seuil. ([Babel'zin][3])
+Tarot affiche clairement ses coordonnées (Auderghem, chaussée de Wavre 1688) et un modèle bas-seuil. ([Babel'zin][3])
 Le programme mentionne un “Studio Babel” (photo/projets médias), des ateliers créatifs, percussion, théâtre… parfait pour des quêtes “bonus” reliées à des productions. ([Babel'zin][4])
-Et surtout : Babel’Zin a déjà une **porte intersectorielle culturelle** via Article 27 (comité culturel + logique durable). ([Article 27 Bruxelles][5])
+Et surtout : Tarot a déjà une **porte intersectorielle culturelle** via Article 27 (comité culturel + logique durable). ([Article 27 Bruxelles][5])
 
 **Conclusion stratégique :**
-Babel’Zin est l’endroit parfait pour tester ton réalisme magique “bienveillant” : un lieu où la narration peut être poétique, ludique, et où les productions (créatives/médiatiques) peuvent être valorisées très facilement. ([Babel'zin][4])
+Tarot est l’endroit parfait pour tester ton réalisme magique “bienveillant” : un lieu où la narration peut être poétique, ludique, et où les productions (créatives/médiatiques) peuvent être valorisées très facilement. ([Babel'zin][4])
 
 ---
 
 ## 2) Le “pont” évident entre les deux : Article 27 + Lieux de liens
 
 Article 27 explique que ses comités culturels sont **durables**, installés au sein des associations, avec des règles/missions définies par les membres. ([Article 27 Bruxelles][6])
-Le comité culturel Babel’Zin ↔ Article 27 existe déjà officiellement (2024). ([Article 27 Bruxelles][5])
+Le comité culturel Tarot ↔ Article 27 existe déjà officiellement (2024). ([Article 27 Bruxelles][5])
 
 **Conclusion stratégique :**
 Ton ARG n’a pas besoin de convaincre “tout le monde” d’un coup : tu peux **t’accrocher à une dynamique déjà légitime** (comités culturels Article 27) pour diffuser vers d’autres structures partenaires, sans que ce soit perçu comme “un projet de plus”. ([Article 27 Bruxelles][6])
@@ -1209,8 +1209,8 @@ L’IP est ton **bras armé “inclusion numérique”** et ton garde-fou : tu p
 
 ### Pilote en 2 pistes (ta méthode A/B), mais avec un troisième “rail” discret
 
-* **A : WOPS** = pilote “terrain” (peu de jargon) ([Wops][1])
-* **B : Babel’Zin + partenaires** = pilote “co-construction” (on peut nommer l’expérimentation) ([Babel'zin][4])
+* **A : Astro** = pilote “terrain” (peu de jargon) ([Astro][1])
+* **B : Tarot + partenaires** = pilote “co-construction” (on peut nommer l’expérimentation) ([Babel'zin][4])
 * **Rail discret : IP** = sécurisation inclusion numérique + diffusion intersectorielle ([Le réseau des IP][7])
 
 ### Format recommandé : “Micro-saison 0” (4 à 6 semaines)
@@ -1228,8 +1228,8 @@ L’IP est ton **bras armé “inclusion numérique”** et ton garde-fou : tu p
 
 Là, ta recherche en ligne doit maintenant viser **des données manquantes** :
 
-1. **le “WOPS 642”** : vérifier où tu places exactement la 642 dans l’écosystème (adresse, entité, type de dispositif, porte d’entrée réelle côté équipe)
-2. **le réseau concret IP Bruxelles** : repérer 3–5 points IP proches des zones WOPS/Babel’Zin pour sécuriser les quêtes numériques ([Le réseau des IP][7])
+1. **le “Astro 642”** : vérifier où tu places exactement la 642 dans l’écosystème (adresse, entité, type de dispositif, porte d’entrée réelle côté équipe)
+2. **le réseau concret IP Bruxelles** : repérer 3–5 points IP proches des zones Astro/Tarot pour sécuriser les quêtes numériques ([Le réseau des IP][7])
 3. **autres lieux de liens** “compatibles” (via LBSM + Article 27), pour préparer le cercle 2
 
 Si tu me donnes juste **ce que “642” désigne précisément** (lieu/adresse/nom exact), je peux faire la carto “cercle 1 → cercle 2” de façon beaucoup plus chirurgicale sans te ralentir.
@@ -1240,8 +1240,8 @@ Si tu me donnes juste **ce que “642” désigne précisément** (lieu/adresse/
 
 Si tu veux du concret immédiat, ma reco est simple :
 
-* **tu lances Babel’Zin en premier** (car activités + co-construction + Article 27 = terrain idéal) ([Babel'zin][4])
-* **tu cales WOPS en parallèle** mais en mode ultra léger “extension d’activités” ([Wops][1])
+* **tu lances Tarot en premier** (car activités + co-construction + Article 27 = terrain idéal) ([Babel'zin][4])
+* **tu cales Astro en parallèle** mais en mode ultra léger “extension d’activités” ([Astro][1])
 * **tu accroches IP comme partenaire “filet de sécurité”** dès le départ (même discret) ([ARC Culture][9])
 
 Si tu veux, je te ponds ensuite (dans le chat) :
@@ -1250,8 +1250,8 @@ Si tu veux, je te ponds ensuite (dans le chat) :
 * * un **kit de gouvernance** minimal (qui décide quoi, comment on sort sans drame),
 * * une **charte éthique** “réalisme magique bienveillant” (courte, opérationnelle).
 
-[1]: https://wops-asbl.be/?utm_source=chatgpt.com "Wops asbl"
-[2]: https://wops-asbl.be/services/centre-psychotherapeutique-de-nuit/?utm_source=chatgpt.com "Centre psychothérapeutique de nuit - Wops asbl"
+[1]: https://Astro-asbl.be/?utm_source=chatgpt.com "Astro asbl"
+[2]: https://Astro-asbl.be/services/centre-psychotherapeutique-de-nuit/?utm_source=chatgpt.com "Centre psychothérapeutique de nuit - Astro asbl"
 [3]: https://babelzin.be/?utm_source=chatgpt.com "- Lieu de liens"
 [4]: https://babelzin.be/activites/?utm_source=chatgpt.com "Activités -"
 [5]: https://bruxelles.article27.be/Comite-culturel-de-Babel-zin?utm_source=chatgpt.com "Comité culturel - de Babel'zin - Article 27 - Bruxelles"
@@ -1296,7 +1296,7 @@ C’est fondamentalement :
 
 ## 🎯 Cibles TOP PRIORITÉ (validées)
 
-### 1. **WOPS (+ réseau)**
+### 1. **Astro (+ réseau)**
 
 * structure multi-entités
 * publics multiples (bénéficiaires, salariés, administrateurs)
@@ -1311,7 +1311,7 @@ C’est fondamentalement :
 
 ---
 
-### 2. **Babel’Zin (+ réseau, Informaticien Public, Article 27)**
+### 2. **Tarot (+ réseau, Informaticien Public, Article 27)**
 
 * lieu de liens bas seuil
 * culture, créativité, numérique
@@ -1338,13 +1338,13 @@ Tu as bien compris un point clé :
 
 Tu as posé une **vraie méthode expérimentale**, pas un coup de poker.
 
-### Axe A — contact personnel (WOPS)
+### Axe A — contact personnel (Astro)
 
 * tu testes la **réception terrain**
 * tu observes les résistances réelles
 * tu ajustes le rythme et le langage
 
-### Axe B — collectif virtuel (Babel’Zin + IP)
+### Axe B — collectif virtuel (Tarot + IP)
 
 * tu testes la **capacité de partenariat**
 * la gouvernance
@@ -1518,7 +1518,7 @@ Quand tu veux, on fait **l’étape suivante ensemble**.
 
 ## TL;DR
 
-Tu construis **un espace expérimental de tissage social par le jeu**, ancré à Bruxelles, qui part des **lieux de liens** (WOPS, Babel’Zin) pour faire émerger **du pouvoir d’agir**, des coopérations intersectorielles et une **base de connaissance humaine**, via un **ARG en réalisme magique bienveillant**.
+Tu construis **un espace expérimental de tissage social par le jeu**, ancré à Bruxelles, qui part des **lieux de liens** (Astro, Tarot) pour faire émerger **du pouvoir d’agir**, des coopérations intersectorielles et une **base de connaissance humaine**, via un **ARG en réalisme magique bienveillant**.
 
 La stratégie A/B (contact perso vs collectif) est saine, les cibles sont justes, la forme (!NYXO / !NiXÖ) est alignée avec le fond.
 
@@ -2779,8 +2779,8 @@ Ils progressent en :
 
 ### 🏛️ Personnes morales
 
-* WOPS
-* Babel’Zin
+* Astro
+* Tarot
 * partenaires
 * collectifs
 
@@ -2931,7 +2931,7 @@ Tu peux maintenant choisir **UNE** de ces suites :
 2. 
 3. 🧩 **Formaliser l’arbre de compétences transversal**
 4. 
-5. 🗺️ **Cartographier les premières zones (WOPS, Babel’Zin…)**
+5. 🗺️ **Cartographier les premières zones (Astro, Tarot…)**
 6. 
 7. 🎮 **Écrire la Mission 1 complète (page HTML comme la Mission 0)**
 
@@ -3092,7 +3092,7 @@ Bruxelles (lieux de liens, socioculturel, santé mentale, numérique inclusif)
 
 ## 🗺️ Zones de départ (maps initiales)
 
-* Lieux de liens (ex : WOPS, Babel’Zin)
+* Lieux de liens (ex : Astro, Tarot)
 * Ateliers, activités, temps collectifs existants
 * Espaces numériques sobres (pages HTML, docs ouverts)
 
@@ -3196,10 +3196,808 @@ Le projet peut :
 ### Prochaine suite logique (au choix)
 
 2. 🧠 **Arbre de compétences transversal (skills communs)**
-3. 🗺️ **Fiches de zones : WOPS / Babel’Zin**
+3. 🗺️ **Fiches de zones : Astro / Tarot**
 4. 🎮 **Mission 1 complète (HTML)**
 
 Dis-moi la suivante.
 
 
 ...
+
+Mission 3, je la verrais comme **le premier acte de coopération inter-lieux**, mais en version **ultra douce, non intimidante, et reproductible**.
+Après :
+
+* Mission 1 = **créer une trace + une passerelle**
+* Mission 2 = **rendre visible sans exposer**
+* Mission 3 doit faire **circuler** (un artefact, une idée, une question) **et recevoir un écho**, sans que ça ressemble à “un projet de réseau” lourd.
+
+---
+
+## Mission 3 — concept central
+
+### **“Envoyer un écho, recevoir un retour”**
+
+> Faire voyager un artefact (ou sa fiche texte) vers un autre lieu / groupe / partenaire **de manière consentie**, puis récupérer un écho simple en retour.
+
+**Objectif réel :**
+créer un *lien vivant* entre deux “zones” du RPG sans forcer la rencontre.
+
+---
+
+## Pourquoi c’est la bonne suite
+
+* tu actives le levier “intersectoriel” sans le nommer
+* tu testes la capacité à coopérer **à bas coût**
+* tu déclenches le moment “ailleurs aussi, ça se passe” (la révélation progressive)
+* tu crées une preuve de valeur : **le réseau produit de la continuité**
+
+---
+
+## Mission 3 — 3 modes (comme les autres)
+
+### Mode A — “Carte postale” (le plus simple)
+
+📩 Tu envoies à un autre lieu :
+
+* 1 fiche artefact Mission 2
+* * 1 question d’écho (une seule)
+
+✅ Réponse attendue :
+
+* 3 lignes max : “Chez nous… / On fait… / On aimerait…”
+
+> Aucun rendez-vous, aucune réunion, juste un échange bref.
+
+---
+
+### Mode B — “Relais de pratique”
+
+🔁 Tu proposes :
+
+* “On vous envoie notre mini-tuto / astuce”
+* “Pouvez-vous répondre par une variante ?”
+
+✅ Réponse attendue :
+
+* une variante “chez nous, on ferait plutôt…”
+
+> Ça crée un embryon de commun.
+
+---
+
+### Mode C — “Double écho” (le plus puissant)
+
+🌐 Tu envoies à deux lieux différents :
+
+* le même artefact
+* et tu compares les deux retours
+
+✅ Résultat :
+
+* tu observes les différences culturelles / sectorielles
+* tu obtiens une cartographie qualitative
+
+> C’est ton premier “graph view” humain.
+
+---
+
+## Règles éthiques de Mission 3 (simples)
+
+* pas de noms / pas de visages
+* consentement si identifiable
+* pas de pression de réponse
+* pas de hiérarchie (“on apprend, on ne juge pas”)
+* si pas de réponse : **mission quand même réussie** (l’acte de connexion suffit)
+
+---
+
+## Livrable de Mission 3 (preuve légère)
+
+Un mini log :
+
+* à qui on a envoyé (structure, pas personne)
+* ce qu’on a envoyé (titre artefact)
+* ce qu’on a reçu (3 lignes)
+* ce que ça change (1 phrase)
+
+Ça devient la **première brique du réseau visible**.
+
+---
+
+## Le twist “réalisme magique” (doucement)
+
+Tu peux l’habiller ainsi (sans cryptique) :
+
+> “Une chose a traversé un mur invisible.
+> Et un autre lieu a répondu.
+> Le réseau existe.”
+
+---
+
+## Et maintenant : ma reco “vraiment optimale”
+
+Pour tes cibles :
+
+* **Tarot** (créatif + culturel) → excellent pour **Carte postale** et **Relais de pratique**
+* **Astro** (multi-entités) → parfait pour **Double écho** (siège + satellite)
+
+Tu peux faire :
+
+* Tarot → envoie un artefact à un partenaire culturel
+* Astro → envoie un artefact d’une entité vers une autre entité + vers un lieu externe
+
+---
+
+Si tu veux, je te code Mission 3 comme les pages précédentes, avec :
+
+* un générateur “message d’écho” (email / texte copiable)
+* un tracker local des échanges (stocké dans le navigateur)
+* un mini “graph view” textuel (liste des liens créés)
+
+Dis juste : **“code Mission 3”** et je te sors la page complète.
+
+...
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>!NYXO / !NiXÖ — Saison 0 · Mission 3 (S’outiller)</title>
+
+<style>
+:root{
+  --bg:#0b0e11;
+  --panel:#11161c;
+  --grid:#1b2330;
+  --txt:#d6efe3;
+  --mut:#9bb7b0;
+  --green:#8fffd2;
+  --lilac:#c7a8ff;
+  --warn:#ffd27a;
+  --bad:#ff7aa5;
+  --ok:#7affb0;
+  --accent:linear-gradient(90deg,var(--green),var(--lilac));
+  --mono:'Courier New', monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);}
+
+body{
+  background:
+    linear-gradient(180deg,#0b0e11,#06080b),
+    repeating-linear-gradient(to right,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px),
+    repeating-linear-gradient(to bottom,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px);
+}
+
+.container{max-width:1200px;margin:auto;padding:3rem 1.5rem 5rem;}
+.logo{
+  font-size:2.6rem;letter-spacing:.15em;margin:0;
+  background:var(--accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{color:var(--mut);margin:.7rem 0 2.1rem;line-height:1.55;}
+.panel{
+  background:rgba(17,22,28,.88);
+  border:1px solid #222a36;
+  border-radius:16px;
+  padding:2.4rem;
+  box-shadow:0 0 55px rgba(0,0,0,.65);
+}
+h2{
+  color:var(--lilac);
+  letter-spacing:.2em;
+  font-size:1rem;
+  margin:2.2rem 0 .9rem;
+}
+p{line-height:1.8;font-size:1rem;margin:.8rem 0;}
+.small{font-size:.92rem;color:var(--mut);}
+.hr{height:1px;background:#222a36;margin:2rem 0;}
+.kbd{
+  display:inline-block;
+  padding:.1rem .45rem;
+  border:1px solid #2b3442;
+  border-bottom-color:#1f2631;
+  border-radius:6px;
+  background:#0c1016;
+  color:var(--green);
+}
+.callout{
+  margin:1.4rem 0;
+  padding:1.25rem 1.25rem;
+  border-left:4px solid;
+  border-image:var(--accent) 1;
+  background:#0d1218;
+  border-radius:10px;
+}
+.callout strong{color:var(--green);}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:980px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+.card{
+  background:#0c1016;
+  border:1px solid #222a36;
+  border-radius:14px;
+  padding:1.2rem;
+}
+.card h3{
+  margin:.1rem 0 .7rem;
+  color:var(--green);
+  letter-spacing:.12em;
+  font-size:1rem;
+}
+.card h4{
+  margin:1.1rem 0 .55rem;
+  color:var(--lilac);
+  letter-spacing:.12em;
+  font-size:.95rem;
+}
+.badges{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .8rem;}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.25rem .6rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  color:var(--mut);
+  font-size:.85rem;
+}
+.badge i{
+  width:.55rem;height:.55rem;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(143,255,210,.35);
+  display:inline-block;
+}
+.badge.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.35);}
+.badge.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.30);}
+.badge.ok i{background:var(--ok);box-shadow:0 0 14px rgba(122,255,176,.30);}
+.badge.bad i{background:var(--bad);box-shadow:0 0 14px rgba(255,122,165,.30);}
+
+ul{padding-left:1.35rem;margin:.6rem 0;}
+li{margin:.55rem 0;line-height:1.65;}
+
+label{display:block;margin:.8rem 0 .4rem;color:var(--mut);font-size:.9rem;}
+textarea,input,select{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:.85rem .9rem;
+}
+textarea{min-height:130px;resize:vertical;}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+button{
+  cursor:pointer;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+}
+button:hover{border-color:#3a475a;}
+button.primary{
+  border:0;
+  background:var(--accent);
+  color:#091015;
+  font-weight:700;
+}
+button.ghost{background:transparent;}
+button.danger{
+  border:1px solid #4a2432;
+  background:#180b11;
+  color:#ffd6e3;
+}
+.tabs{display:flex;flex-wrap:wrap;gap:.6rem;margin:.2rem 0 1rem;}
+.tab{
+  padding:.55rem .8rem;border-radius:999px;border:1px solid #2a3342;
+  color:var(--mut);background:#0c1016;cursor:pointer;user-select:none;
+  font-size:.92rem;
+}
+.tab.active{
+  color:#091015;border:0;background:var(--accent);font-weight:700;
+}
+.hidden{display:none!important;}
+
+.preview{
+  border-radius:14px;
+  border:1px solid #222a36;
+  background:#0b0f15;
+  padding:1.1rem;
+}
+.preview .title{font-weight:700;letter-spacing:.08em;color:var(--lilac);margin:0 0 .4rem;}
+.preview .meta{color:var(--mut);font-size:.88rem;margin-bottom:.7rem;}
+.preview .content{white-space:pre-wrap;line-height:1.7;font-size:.98rem;}
+
+.footer{
+  margin-top:2.4rem;
+  padding-top:1.5rem;
+  border-top:1px dashed #2a3342;
+  color:var(--mut);
+  font-size:.9rem;
+  line-height:1.6;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#0c1016;border:1px solid #2a3342;color:var(--txt);
+  padding:.75rem .9rem;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  max-width:min(980px,92vw);
+}
+.toast.show{opacity:1;}
+
+.smallcode{
+  margin:.6rem 0;
+  border:1px solid #222a36;
+  border-radius:14px;
+  background:#0b0f15;
+  padding:1rem;
+  color:var(--txt);
+  overflow:auto;
+}
+.smallcode code{white-space:pre;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1 class="logo">!NYXO / !NiXÖ</h1>
+  <div class="subtitle">
+    Saison 0 · <span class="kbd">Mission 3</span> — <strong>S’outiller</strong><br>
+    <span class="small">
+      Construire une “trousse” minimale commune (pour vous, les partenaires, les équipes et les publics) :
+      des outils simples, low-tech, réutilisables, qui rendent l’action plus facile que l’inaction.
+    </span>
+  </div>
+
+  <div class="panel">
+    <p>
+      Mission 1 a produit une trace. Mission 2 a produit un artefact visible sans exposer.
+      Mission 3 fabrique l’infrastructure humaine du projet : <strong>des outils de base</strong>
+      pour que tout le monde puisse participer sans dépendre d’un expert, ni d’une plateforme.
+    </p>
+
+    <div class="callout">
+      <strong>Idée simple :</strong> un dispositif n’est éthique que s’il est <em>reproductible</em>.
+      Ici, s’outiller signifie : rendre la participation accessible, douce, et soutenable
+      — avec des outils qui fonctionnent même sans budget.
+    </div>
+
+    <h2>CHOISISSEZ VOTRE PERSPECTIVE</h2>
+    <div class="tabs" role="tablist" aria-label="Perspectives Mission 3">
+      <div class="tab active" data-tab="publics">Publics</div>
+      <div class="tab" data-tab="equipes">Équipes / lieux</div>
+      <div class="tab" data-tab="coord">Coordination projet</div>
+    </div>
+
+    <!-- PUBLICS -->
+    <div id="publics" class="tabpane">
+      <div class="grid">
+        <div class="card">
+          <h3>La trousse “Publics” (simple, adulte, non infantilisante)</h3>
+          <div class="badges">
+            <span class="badge"><i></i> 20 min</span>
+            <span class="badge purple"><i></i> Sans compte</span>
+            <span class="badge ok"><i></i> Low-tech</span>
+          </div>
+          <ul>
+            <li><strong>Un carnet de traces</strong> (papier ou téléphone) : 5 lignes quand on veut</li>
+            <li><strong>Un code simple</strong> : pas de noms, pas de visages, pas de détails intimes</li>
+            <li><strong>Une question-guide</strong> : “Qu’est-ce qui m’a rendu un peu plus capable aujourd’hui ?”</li>
+            <li><strong>Une passerelle</strong> : “Quelle suite douce serait possible ?”</li>
+            <li><strong>Un droit</strong> : observer / se retirer / revenir plus tard</li>
+          </ul>
+
+          <h4>Micro-outil (à emporter)</h4>
+          <p class="small">
+            Copiez ce mini-format et gardez-le quelque part (notes, carnet, bloc-notes). Il suffit pour jouer.
+          </p>
+          <div class="smallcode"><code>TRACE (5 lignes max)
+- Activité / moment :
+- Ce qui a compté :
+- Ce que j’ai appris sans que ce soit “une formation” :
+- Une suite douce possible :
+- Une question à poser ailleurs (optionnel) :</code></div>
+        </div>
+
+        <div class="card">
+          <h3>Générateur “TRACE PUBLIC” (optionnel)</h3>
+          <p class="small">
+            Cet outil ne collecte rien. Tout reste sur votre appareil.
+            Il génère une trace courte, copiable, sans infos personnelles.
+          </p>
+
+          <label for="p_act">Activité / moment</label>
+          <input id="p_act" placeholder="Ex : atelier / accueil / sortie / permanence / discussion..." />
+
+          <label for="p_what">Ce qui a compté (5–8 lignes)</label>
+          <textarea id="p_what" placeholder="Décrivez l’essentiel, sobrement. Pas de noms, pas de détails intimes."></textarea>
+
+          <label for="p_next">Suite douce possible (optionnel)</label>
+          <input id="p_next" placeholder="Ex : revenir / essayer X / rencontrer Y (sans nom) / partager une astuce..." />
+
+          <label for="p_q">Question à poser ailleurs (optionnel)</label>
+          <input id="p_q" placeholder="Ex : Chez vous, comment vous... ?" />
+
+          <div class="btnrow">
+            <button class="primary" id="p_gen">Générer</button>
+            <button class="ghost" id="p_copy">Copier</button>
+            <button class="danger" id="p_clear">Effacer</button>
+          </div>
+
+          <label for="p_out">Sortie</label>
+          <textarea id="p_out" readonly placeholder="Votre trace apparaîtra ici."></textarea>
+
+          <div class="callout">
+            <strong>Réussite :</strong> si vous avez une trace qui vous ressemble, sans vous exposer,
+            vous êtes outillé·e.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EQUIPES -->
+    <div id="equipes" class="tabpane hidden">
+      <div class="grid">
+        <div class="card">
+          <h3>La trousse “Équipes / lieux” (rituel de 5 minutes)</h3>
+          <div class="badges">
+            <span class="badge"><i></i> 5 min</span>
+            <span class="badge purple"><i></i> Fin d’activité</span>
+            <span class="badge ok"><i></i> Sans charge</span>
+          </div>
+          <p>
+            Le but n’est pas d’ajouter du travail. Le but est de rendre <strong>transmissible</strong>
+            ce qui se passe déjà.
+          </p>
+          <ul>
+            <li><strong>Rituel “fin d’activité”</strong> : 1 trace + 1 passerelle</li>
+            <li><strong>Règle</strong> : anonymisation par défaut</li>
+            <li><strong>Sortie</strong> : un petit “log” interne (copiable)</li>
+            <li><strong>Option</strong> : un artefact sans exposition (Mission 2)</li>
+          </ul>
+
+          <h4>Mini-format d’équipe</h4>
+          <div class="smallcode"><code>LOG D’ÉQUIPE (5 min)
+- Activité :
+- Ce qui a renforcé le lien :
+- Un apprentissage observé :
+- Un “après” possible (suite douce) :
+- Une précaution éthique (si besoin) :</code></div>
+        </div>
+
+        <div class="card">
+          <h3>Générateur “LOG ÉQUIPE” + checklist éthique</h3>
+
+          <label for="e_act">Activité</label>
+          <input id="e_act" placeholder="Ex : atelier / accueil / sortie / permanence numérique..." />
+
+          <label for="e_link">Ce qui a renforcé le lien</label>
+          <textarea id="e_link" placeholder="Un geste, une ambiance, une coopération, une parole qui compte..."></textarea>
+
+          <label for="e_learn">Apprentissage observé</label>
+          <textarea id="e_learn" placeholder="Ex : quelqu’un a pris sa place / a osé / a transmis / a demandé..."></textarea>
+
+          <label for="e_after">“Après” possible (suite douce)</label>
+          <input id="e_after" placeholder="Ex : répliquer / relier à une autre activité / inviter à une sortie..." />
+
+          <label for="e_eth">Précaution éthique (si besoin)</label>
+          <input id="e_eth" placeholder="Ex : éviter photo / garder interne / demander accord..." />
+
+          <div class="btnrow">
+            <button class="primary" id="e_gen">Générer</button>
+            <button class="ghost" id="e_copy">Copier</button>
+            <button class="danger" id="e_clear">Effacer</button>
+          </div>
+
+          <label for="e_out">Sortie</label>
+          <textarea id="e_out" readonly placeholder="Votre log apparaîtra ici."></textarea>
+
+          <div class="preview" style="margin-top:1rem;">
+            <div class="title">Checklist express</div>
+            <div class="content">✅ Anonyme par défaut
+✅ Pas de visages / noms sans accord
+✅ Publication optionnelle
+✅ Si doute → interne</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COORD -->
+    <div id="coord" class="tabpane hidden">
+      <div class="grid">
+        <div class="card">
+          <h3>La trousse “Coordination projet” (sans contrôle)</h3>
+          <div class="badges">
+            <span class="badge"><i></i> 30–60 min</span>
+            <span class="badge purple"><i></i> Réutilisable</span>
+            <span class="badge warn"><i></i> Minimal</span>
+          </div>
+          <p>
+            Ici, s’outiller signifie : <strong>ne pas devenir un centre de pouvoir</strong>.
+            On fabrique des outils pour distribuer l’autonomie.
+          </p>
+          <ul>
+            <li><strong>Un dictionnaire commun</strong> (réel ↔ symbolique) : pour éviter les malentendus</li>
+            <li><strong>Une charte 1 page</strong> (déjà prête) : pour rassurer et cadrer</li>
+            <li><strong>Un format standard</strong> de mission (comme M1/M2) : reproductible</li>
+            <li><strong>Un protocole de sortie</strong> : “on peut arrêter sans drame”</li>
+            <li><strong>Une méthode de mémoire</strong> : documenter sans profiler</li>
+          </ul>
+
+          <h4>Protocole de sortie (copiable)</h4>
+          <div class="smallcode"><code>PROTOCOLE DE SORTIE
+- Un lieu peut mettre en pause à tout moment
+- Sans justification, sans dette symbolique
+- On garde ce qui est déjà produit (si accord)
+- On clôture par une trace simple : “ce qu’on retient”</code></div>
+        </div>
+
+        <div class="card">
+          <h3>Générateur “KIT LIEU” (1 page)</h3>
+          <p class="small">
+            Crée une fiche de démarrage pour un lieu partenaire : cadre + contact + rythme + limites + besoins.
+            Rien n’est envoyé automatiquement.
+          </p>
+
+          <label for="c_place">Nom du lieu / entité</label>
+          <input id="c_place" placeholder="Ex : Tarot / Astro - Entr’Act / atelier du jeudi..." />
+
+          <label for="c_frame">Cadre & intentions (3–6 lignes)</label>
+          <textarea id="c_frame" placeholder="Pourquoi le lieu accepte d’essayer (ou de regarder), ce qu’il veut protéger, ce qu’il espère..."></textarea>
+
+          <label for="c_rhythm">Rythme réaliste</label>
+          <select id="c_rhythm">
+            <option value="OBSERVATION">Observation (pas de missions imposées)</option>
+            <option value="MICRO">Micro (1 mission / 2 semaines)</option>
+            <option value="LEGER">Léger (1 mission / semaine)</option>
+            <option value="INTENSE">Intense (à éviter au pilote)</option>
+          </select>
+
+          <label for="c_limits">Limites & précautions (obligatoires)</label>
+          <textarea id="c_limits" placeholder="Ex : pas de photos / pas de données / pas de pression / pas de publics X..."></textarea>
+
+          <label for="c_needs">Besoins (si besoin)</label>
+          <textarea id="c_needs" placeholder="Ex : médiation numérique / impression / accompagnement / un relais interne..."></textarea>
+
+          <div class="btnrow">
+            <button class="primary" id="c_gen">Générer le KIT</button>
+            <button class="ghost" id="c_copy">Copier</button>
+            <button class="danger" id="c_clear">Effacer</button>
+          </div>
+
+          <label for="c_out">Sortie</label>
+          <textarea id="c_out" readonly placeholder="Votre KIT apparaîtra ici."></textarea>
+
+          <div class="callout">
+            <strong>Réussite :</strong> si le lieu peut expliquer le pilote en 30 secondes
+            et dire “stop” sans gêne, le dispositif est sain.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>MISSION 3 — CONDITION DE RÉUSSITE</h2>
+    <p>
+      Mission 3 est réussie quand <strong>au moins une personne</strong> (public ou équipe)
+      repart avec un outil simple qui lui donne plus de prise sur le réel,
+      et quand <strong>au moins un lieu</strong> peut participer sans dépendre d’une expertise externe.
+    </p>
+
+    <h2>FERMETURE DE BOUCLE</h2>
+    <p>
+      Au début, il y avait une intention : augmenter les compétences et le pouvoir d’agir par le jeu,
+      sans manipulation, en partant des lieux de liens. Mission 3 transforme cette intention en infrastructure :
+      <strong>des outils communs, sobres, transmissibles</strong>. C’est le moment où le projet devient vraiment reproductible.
+    </p>
+
+    <div class="footer">
+      Saison 0 · Mission 3 — S’outiller · Document reproductible · Low-tech par défaut<br>
+      Astuce : un bon outil réduit la honte, l’effort et l’isolement. Il rend l’action possible même les jours “sans”.
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const panes = {
+    publics: $("publics"),
+    equipes: $("equipes"),
+    coord: $("coord")
+  };
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1800);
+  }
+  function clean(s){
+    return (s||"").trim().replace(/\s+\n/g,"\n").replace(/\n{3,}/g,"\n\n");
+  }
+  function stamp(){
+    const d = new Date();
+    return d.toISOString().replace("T"," ").slice(0,19) + "Z";
+  }
+  function copyText(el){
+    const text = (el.value||"").trim();
+    if(!text){ showToast("Rien à copier."); return; }
+    navigator.clipboard?.writeText(text).then(()=>showToast("Copié."))
+      .catch(()=>{ el.focus(); el.select(); document.execCommand("copy"); showToast("Copie tentée (compat)."); });
+  }
+
+  tabs.forEach(t=>{
+    t.addEventListener("click", ()=>{
+      tabs.forEach(x=>x.classList.remove("active"));
+      t.classList.add("active");
+      Object.values(panes).forEach(p=>p.classList.add("hidden"));
+      panes[t.dataset.tab].classList.remove("hidden");
+      showToast("Perspective : " + t.textContent.trim());
+    });
+  });
+
+  // PUBLICS generator
+  const p_act=$("p_act"), p_what=$("p_what"), p_next=$("p_next"), p_q=$("p_q"), p_out=$("p_out");
+  $("p_gen").addEventListener("click", ()=>{
+    const a=clean(p_act.value), w=clean(p_what.value), n=clean(p_next.value), q=clean(p_q.value);
+    if(!a && !w && !n && !q){ showToast("Ajoutez au moins une info."); return; }
+    const lines=[];
+    lines.push("!NYXO // OUTIL_PUBLIC :: TRACE_COURTE");
+    lines.push("HORODATAGE : " + stamp());
+    if(a) lines.push("ACTIVITÉ   : " + a);
+    lines.push("");
+    if(w){ lines.push("CE QUI A COMPTÉ :"); lines.push(w); lines.push(""); }
+    if(n) lines.push("SUITE DOUCE : " + n);
+    if(q) lines.push("QUESTION   : " + q);
+    lines.push("");
+    lines.push("RÈGLE : pas de noms · pas de visages · pas de détails intimes · si doute → garder pour soi");
+    p_out.value = lines.join("\n");
+    showToast("Trace générée.");
+  });
+  $("p_copy").addEventListener("click", ()=>copyText(p_out));
+  $("p_clear").addEventListener("click", ()=>{
+    p_act.value=p_what.value=p_next.value=p_q.value=p_out.value="";
+    showToast("Effacé.");
+  });
+
+  // EQUIPES generator
+  const e_act=$("e_act"), e_link=$("e_link"), e_learn=$("e_learn"), e_after=$("e_after"), e_eth=$("e_eth"), e_out=$("e_out");
+  $("e_gen").addEventListener("click", ()=>{
+    const a=clean(e_act.value), l=clean(e_link.value), lr=clean(e_learn.value), af=clean(e_after.value), eth=clean(e_eth.value);
+    if(!a && !l && !lr && !af && !eth){ showToast("Ajoutez au moins une info."); return; }
+    const lines=[];
+    lines.push("!NYXO // OUTIL_EQUIPE :: LOG_FIN_D_ACTIVITÉ");
+    lines.push("HORODATAGE : " + stamp());
+    if(a) lines.push("ACTIVITÉ   : " + a);
+    lines.push("");
+    if(l){ lines.push("LIEN RENFORCÉ :"); lines.push(l); lines.push(""); }
+    if(lr){ lines.push("APPRENTISSAGE OBSERVÉ :"); lines.push(lr); lines.push(""); }
+    if(af) lines.push("APRÈS (suite douce) : " + af);
+    if(eth) lines.push("PRÉCAUTION ÉTHIQUE : " + eth);
+    lines.push("");
+    lines.push("RÈGLE : anonymisation par défaut · publication optionnelle · si doute → interne");
+    e_out.value = lines.join("\n");
+    showToast("Log équipe généré.");
+  });
+  $("e_copy").addEventListener("click", ()=>copyText(e_out));
+  $("e_clear").addEventListener("click", ()=>{
+    e_act.value=e_link.value=e_learn.value=e_after.value=e_eth.value=e_out.value="";
+    showToast("Effacé.");
+  });
+
+  // COORD generator
+  const c_place=$("c_place"), c_frame=$("c_frame"), c_rhythm=$("c_rhythm"), c_limits=$("c_limits"), c_needs=$("c_needs"), c_out=$("c_out");
+  $("c_gen").addEventListener("click", ()=>{
+    const pl=clean(c_place.value), fr=clean(c_frame.value), rh=c_rhythm.value, lm=clean(c_limits.value), nd=clean(c_needs.value);
+    if(!pl || !lm){ showToast("Nom du lieu + limites sont nécessaires."); return; }
+    const lines=[];
+    lines.push("!NYXO // KIT_LIEU :: DEMARRAGE");
+    lines.push("HORODATAGE : " + stamp());
+    lines.push("LIEU       : " + pl);
+    lines.push("RYTHME     : " + rh);
+    lines.push("");
+    if(fr){ lines.push("CADRE & INTENTIONS :"); lines.push(fr); lines.push(""); }
+    lines.push("LIMITES & PRÉCAUTIONS (obligatoires) :");
+    lines.push(lm);
+    lines.push("");
+    if(nd){ lines.push("BESOINS (optionnel) :"); lines.push(nd); lines.push(""); }
+    lines.push("RÈGLE : le lieu reste souverain · participation libre · sortie possible sans justification");
+    c_out.value = lines.join("\n");
+    showToast("KIT généré.");
+  });
+  $("c_copy").addEventListener("click", ()=>copyText(c_out));
+  $("c_clear").addEventListener("click", ()=>{
+    c_place.value=c_frame.value=c_limits.value=c_needs.value=c_out.value="";
+    c_rhythm.value="OBSERVATION";
+    showToast("Effacé.");
+  });
+
+})();
+</script>
+</body>
+</html>
+```
+
+...
+
+Maintenant, tu as un **triptyque solide** (M1 = trace, M2 = artefact, M3 = outillage). La suite logique n’est pas de “rajouter des missions au hasard”, c’est de **verrouiller le pilote** pour qu’il marche **dans Astro + Tarot** avec leurs réalités, et qu’il soit **forkable** par d’autres.
+
+Je te propose une trajectoire “sans perte” en 3 pas, et je te code direct le prochain si tu dis oui.
+
+---
+
+## 1) Mission 4 — “S’accorder” (gouvernance minimale + limites + sortie)
+
+**But :** rendre l’expérience acceptable pour un lieu/équipe **sans charge** et sans flou.
+
+**Livrables intégrés dans la page :**
+
+* Mini “contrat de participation” (10 lignes) : *rythme, limites, consentement, publication, droit de pause*
+* Protocole “stop sans drame”
+* Rôles légers (sans hiérarchie) : *gardien éthique / relieur / scribe / médiateur numérique (optionnel)*
+
+👉 C’est la mission qui fait que Astro ou Tarot peuvent dire :
+“OK, on tente — et on sait comment arrêter.”
+
+---
+
+## 2) Mission 5 — “Relier” (premier échange inter-lieux, ultra doux)
+
+**But :** activer l’intersectoriel sans réunion ni lourdeur.
+
+**Livrables :**
+
+* Générateur “Carte postale” (message copiable)
+* Tracker local des échos (stocké navigateur)
+* Mini graph-view textuel (liens créés)
+
+---
+
+## 3) Mission 6 — “Révélation tranquille” (boucle narrative)
+
+**But :** faire apparaître que “d’autres lieux jouent aussi”, sans effet spectacle.
+
+**Livrables :**
+
+* Script de révélation en 3 niveaux (soft / medium / public)
+* Format “assemblée légère” (30 min max)
+* Invitation à forker le kit
+
+---
+
+# La vraie question : tu veux avancer sur quoi **maintenant** ?
+
+Je te donne 3 boutons logiques :
+
+1. **Coder Mission 4 (S’accorder)** — pour verrouiller Astro/Tarot et sécuriser le pilote
+2. **Coder une page “Saison 0 — Hub”** — qui liste Missions 0→3 + progression + liens (page d’accueil publique)
+3. **Coder un “Kit Partenaire”** — page unique printable + arguments + charte + comment ça coûte 0€ + comment on dit stop
+
+👉 Ma reco : **Mission 4 d’abord**, sinon tu risques d’être bon sur le jeu, mais fragile sur l’acceptabilité terrain.
+
+Dis juste **1, 2 ou 3**, et je code direct.
+
+...
+> merci
+> bisous
+
+
+ 
