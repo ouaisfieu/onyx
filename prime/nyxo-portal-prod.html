@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYXO • Portail Collaboratif Santé Mentale Bruxelles</title>
+<style>
+:root{
+--bg0:#05070b;--bg1:#070c12;--bg2:#0d1422;
+--txt:#eaf1ff;--txtDim:rgba(234,241,255,.7);--txtDimmer:rgba(234,241,255,.45);
+--primary:#86fbd6;--secondary:#d7a8ff;--accent:#ffd36a;--danger:#ff6a8b;
+--border:rgba(255,255,255,.08);--borderHover:rgba(255,255,255,.14);
+--shadow:0 8px 32px rgba(0,0,0,.4);
+--colAstro:#86fbd6;--colTarot:#d7a8ff;--colNeutre:#8fa8d0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{
+font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;
+background:radial-gradient(900px 600px at 15% 10%,rgba(134,251,214,.14),transparent 60%),
+radial-gradient(900px 600px at 85% 15%,rgba(215,168,255,.12),transparent 55%),
+radial-gradient(900px 650px at 55% 95%,rgba(134,251,214,.09),transparent 55%),
+linear-gradient(180deg,var(--bg0),var(--bg1));
+color:var(--txt);
+}
+
+canvas{position:fixed;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+canvas:active{cursor:grabbing}
+
+.scanline{position:fixed;inset:0;pointer-events:none;opacity:.12;
+background:linear-gradient(to bottom,rgba(255,255,255,.05) 1px,transparent 1px);
+background-size:100% 3px;mix-blend-mode:overlay}
+
+.hud{position:fixed;top:12px;left:12px;right:12px;z-index:20;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.logo{
+width:44px;height:44px;border-radius:12px;display:grid;place-items:center;cursor:pointer;
+background:radial-gradient(18px 18px at 30% 30%,rgba(134,251,214,.3),rgba(0,0,0,.05)),
+radial-gradient(18px 18px at 70% 70%,rgba(215,168,255,.25),rgba(0,0,0,.05)),
+linear-gradient(180deg,rgba(13,20,34,.85),rgba(8,12,20,.85));
+border:1px solid rgba(255,255,255,.14);
+box-shadow:0 8px 24px rgba(0,0,0,.35);
+flex-shrink:0;
+}
+.logo span{font-weight:900;font-size:12px;letter-spacing:.06em;font-family:ui-monospace,monospace}
+.toolbar{
+flex:1;display:flex;gap:8px;flex-wrap:wrap;padding:8px;border-radius:14px;
+background:rgba(0,0,0,.18);border:1px solid var(--border);
+backdrop-filter:blur(12px) saturate(130%);box-shadow:var(--shadow);min-width:0;
+}
+.btn{
+height:34px;padding:0 12px;border-radius:10px;border:1px solid var(--border);
+background:rgba(0,0,0,.18);color:var(--txt);cursor:pointer;font-weight:700;
+font-size:12px;white-space:nowrap;transition:all .15s;flex-shrink:0;
+}
+.btn:hover{background:rgba(0,0,0,.3);border-color:var(--borderHover)}
+.btn:active{transform:scale(.96)}
+.btn.primary{background:rgba(134,251,214,.15);border-color:rgba(134,251,214,.3)}
+.btn.danger{background:rgba(255,106,139,.15);border-color:rgba(255,106,139,.3)}
+.pill{
+display:flex;gap:6px;align-items:center;height:34px;padding:0 10px;
+border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.12);
+font-size:12px;white-space:nowrap;flex-shrink:0;
+}
+.pill input[type="checkbox"]{accent-color:var(--primary);cursor:pointer}
+.pill label{cursor:pointer;user-select:none}
+
+.fab{position:fixed;right:12px;bottom:12px;z-index:22}
+.fab .btn{box-shadow:0 4px 16px rgba(134,251,214,.2);animation:pulse 3s infinite}
+@keyframes pulse{
+0%,100%{box-shadow:0 4px 16px rgba(134,251,214,.2)}
+50%{box-shadow:0 4px 24px rgba(134,251,214,.4),0 0 40px rgba(134,251,214,.2)}
+}
+
+.drawer{
+position:fixed;inset:0;z-index:40;display:none;backdrop-filter:blur(20px);
+background:rgba(0,0,0,.75);padding:20px;overflow-y:auto;
+}
+.drawer.open{display:block}
+.panel{
+max-width:700px;margin:0 auto 16px;background:rgba(7,10,16,.9);
+border:1px solid var(--border);border-radius:16px;padding:16px;
+box-shadow:var(--shadow);
+}
+.panel h3{
+font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;
+color:var(--primary);margin-bottom:12px;font-family:ui-monospace,monospace;
+}
+.stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.stat:last-child{border:0}
+.statLbl{font-size:13px;color:var(--txtDim)}
+.statVal{font-size:16px;font-weight:700;font-family:ui-monospace,monospace;color:var(--primary)}
+
+.chip{
+padding:8px 10px;background:rgba(0,0,0,.3);border:1px solid var(--border);
+border-radius:8px;margin-bottom:6px;cursor:pointer;display:flex;gap:8px;align-items:center;
+transition:all .12s;
+}
+.chip:hover{background:rgba(0,0,0,.4);border-color:var(--primary)}
+.chip:active{transform:scale(.98)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.chipName{flex:1;font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chipMeta{font-size:11px;color:var(--txtDimmer)}
+
+textarea{
+width:100%;height:200px;background:rgba(0,0,0,.3);border:1px solid var(--border);
+border-radius:10px;padding:10px;color:var(--txt);font-family:ui-monospace,monospace;
+font-size:11px;resize:vertical;outline:none;
+}
+textarea:focus{border-color:var(--primary)}
+
+input[type="file"]{display:none}
+
+.empty{text-align:center;padding:32px 16px;color:var(--txtDimmer);font-size:13px}
+.emptyIcon{font-size:40px;margin-bottom:8px;opacity:.3}
+
+#toast{
+position:fixed;top:70px;left:50%;transform:translateX(-50%);
+background:rgba(13,20,34,.95);border:2px solid var(--primary);
+padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);
+backdrop-filter:blur(20px);z-index:100;display:none;font-weight:600;
+max-width:90vw;
+}
+#toast.show{display:block;animation:slideDown .3s}
+@keyframes slideDown{
+from{transform:translateX(-50%) translateY(-100%);opacity:0}
+to{transform:translateX(-50%) translateY(0);opacity:1}
+}
+
+@media(max-width:640px){
+.toolbar{gap:6px;padding:6px}
+.btn{padding:0 10px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="scanline"></div>
+
+<div class="hud">
+<div class="logo" id="logoBtn"><span>NYXO</span></div>
+<div class="toolbar">
+<button class="btn" id="homeBtn">🏠 Home</button>
+<button class="btn" id="modeBtn">ZONES</button>
+<button class="btn" id="regenBtn">🔄</button>
+<div class="pill">
+<input type="checkbox" id="labelsCheck" checked>
+<label for="labelsCheck">Labels</label>
+</div>
+</div>
+</div>
+
+<div class="fab">
+<button class="btn primary" id="monitorBtn">Monitor</button>
+</div>
+
+<div class="drawer" id="drawer">
+<div class="panel">
+<h3>Session Stats</h3>
+<div class="stat"><span class="statLbl">Entités</span><span class="statVal" id="statE">0</span></div>
+<div class="stat"><span class="statLbl">Liens</span><span class="statVal" id="statL">0</span></div>
+<div class="stat"><span class="statLbl">Zones</span><span class="statVal" id="statZ">0</span></div>
+</div>
+
+<div class="panel">
+<h3>Actions</h3>
+<button class="btn primary" id="sampleBtn" style="width:100%;margin-bottom:8px">📦 Charger Sample</button>
+<button class="btn" id="importBtn" style="width:100%;margin-bottom:8px">📥 Importer JSON</button>
+<input type="file" id="fileInput" accept=".json">
+<button class="btn" id="exportBtn" style="width:100%;margin-bottom:8px">📤 Exporter JSON</button>
+<button class="btn danger" id="wipeBtn" style="width:100%">🗑️ Reset Tout</button>
+</div>
+
+<div class="panel">
+<h3>JSON Raw Editor</h3>
+<textarea id="jsonArea" placeholder='{"zones":[],"entities":[],"links":[]}'></textarea>
+<button class="btn primary" id="applyBtn" style="width:100%;margin-top:8px">✓ Appliquer JSON</button>
+</div>
+
+<div class="panel">
+<h3>Détails Entité</h3>
+<div id="details">
+<div class="empty">
+<div class="emptyIcon">🔍</div>
+<div>Cliquez sur une entité pour voir les détails</div>
+</div>
+</div>
+</div>
+
+<button class="btn" id="closeBtn" style="width:100%;max-width:700px;margin:0 auto;display:block">✕ Fermer</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const canvas=document.getElementById("canvas");
+const ctx=canvas.getContext("2d");
+
+const ui={
+logoBtn:document.getElementById("logoBtn"),
+homeBtn:document.getElementById("homeBtn"),
+modeBtn:document.getElementById("modeBtn"),
+regenBtn:document.getElementById("regenBtn"),
+labelsCheck:document.getElementById("labelsCheck"),
+monitorBtn:document.getElementById("monitorBtn"),
+drawer:document.getElementById("drawer"),
+closeBtn:document.getElementById("closeBtn"),
+statE:document.getElementById("statE"),
+statL:document.getElementById("statL"),
+statZ:document.getElementById("statZ"),
+sampleBtn:document.getElementById("sampleBtn"),
+importBtn:document.getElementById("importBtn"),
+fileInput:document.getElementById("fileInput"),
+exportBtn:document.getElementById("exportBtn"),
+wipeBtn:document.getElementById("wipeBtn"),
+jsonArea:document.getElementById("jsonArea"),
+applyBtn:document.getElementById("applyBtn"),
+details:document.getElementById("details"),
+toast:document.getElementById("toast")
+};
+
+const LS_KEY="nyxo_portal_v2";
+const MODE={ZONES:"ZONES",GRAPH:"GRAPH"};
+
+let state={
+mode:MODE.ZONES,
+view:{x:0,y:0,z:1},
+selectedId:null,
+hoverId:null,
+drawerOpen:false
+};
+
+let db={zones:[],entities:[],links:[],meta:{}};
+
+const COL={ASTRO:"#86fbd6",TAROT:"#d7a8ff",NEUTRE:"#8fa8d0"};
+function getColor(layer){return COL[layer]||COL.NEUTRE}
+
+function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+function hash(str){let h=0;for(let i=0;i<str.length;i++)h=((h<<5)-h)+str.charCodeAt(i)|0;return Math.abs(h)}
+function short(text,max=18){if(!text||text.length<=max)return text;return text.substring(0,max-1)+"…"}
+function esc(text){const div=document.createElement("div");div.textContent=text;return div.innerHTML}
+
+function toast(msg){
+ui.toast.textContent=msg;
+ui.toast.classList.add("show");
+setTimeout(()=>ui.toast.classList.remove("show"),2500);
+}
+
+function fitCanvas(){
+const dpr=window.devicePixelRatio||1;
+canvas.width=canvas.clientWidth*dpr;
+canvas.height=canvas.clientHeight*dpr;
+ctx.scale(dpr,dpr);
+}
+fitCanvas();
+window.addEventListener("resize",()=>{fitCanvas();render()});
+
+function s2w(sx,sy){
+const w=canvas.clientWidth,h=canvas.clientHeight;
+const v=state.view;
+return {x:(sx-w/2)/v.z-v.x,y:(sy-h/2)/v.z-v.y};
+}
+
+function render(){
+const w=canvas.clientWidth,h=canvas.clientHeight;
+const v=state.view;
+
+ctx.clearRect(0,0,w,h);
+
+ctx.save();
+ctx.translate(w/2,h/2);
+ctx.scale(v.z,v.z);
+ctx.translate(v.x,v.y);
+
+db.zones.forEach(z=>{
+const col=getColor(z.layer);
+ctx.fillStyle=col+"22";
+ctx.beginPath();
+ctx.arc(z.x||0,z.y||0,140,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle=col+"66";
+ctx.font="11px monospace";
+ctx.textAlign="center";
+ctx.textBaseline="middle";
+ctx.fillText(z.label||z.id,z.x||0,z.y||0);
+});
+
+ctx.strokeStyle="rgba(134,251,214,.15)";
+ctx.lineWidth=1.2;
+db.links.forEach(l=>{
+const e1=db.entities.find(e=>e.id===l.from);
+const e2=db.entities.find(e=>e.id===l.to);
+if(!e1||!e2)return;
+
+const hl=state.selectedId&&(l.from===state.selectedId||l.to===state.selectedId);
+if(hl){ctx.strokeStyle="rgba(134,251,214,.45)";ctx.lineWidth=2.5}
+else{ctx.strokeStyle="rgba(134,251,214,.15)";ctx.lineWidth=1.2}
+
+ctx.beginPath();
+ctx.moveTo(e1.x||0,e1.y||0);
+ctx.lineTo(e2.x||0,e2.y||0);
+ctx.stroke();
+});
+
+db.entities.forEach(e=>{
+const sel=state.selectedId===e.id;
+const hov=state.hoverId===e.id;
+const r=sel?8:hov?6.5:5.5;
+const col=getColor(e.layer);
+
+if(sel){ctx.shadowColor=col;ctx.shadowBlur=20}else{ctx.shadowBlur=0}
+ctx.fillStyle=col;
+ctx.beginPath();
+ctx.arc(e.x||0,e.y||0,r,0,Math.PI*2);
+ctx.fill();
+ctx.shadowBlur=0;
+
+ctx.strokeStyle=col+"aa";
+ctx.lineWidth=1.3;
+ctx.beginPath();
+ctx.arc(e.x||0,e.y||0,r+2.5,0,Math.PI*2);
+ctx.stroke();
+});
+
+if(ui.labelsCheck.checked&&v.z>1.2&&db.entities.length>0){
+const maxLabels=v.z>2?30:v.z>1.5?20:10;
+const show=db.entities.slice(0,maxLabels);
+
+ctx.font="600 10px sans-serif";
+ctx.textAlign="center";
+ctx.textBaseline="top";
+
+show.forEach(e=>{
+const name=e.display?.masked_name||e.id;
+const lbl=short(name,16);
+const textWidth=ctx.measureText(lbl).width;
+
+ctx.fillStyle="rgba(0,0,0,.75)";
+ctx.fillRect((e.x||0)-textWidth/2-4,(e.y||0)+10,textWidth+8,14);
+
+ctx.fillStyle="#fff";
+ctx.fillText(lbl,e.x||0,(e.y||0)+13);
+});
+}
+
+ctx.restore();
+
+ui.statE.textContent=db.entities.length;
+ui.statL.textContent=db.links.length;
+ui.statZ.textContent=db.zones.length;
+}
+
+function physics(){
+const zg=state.mode===MODE.ZONES?.18:.04;
+const rep=state.mode===MODE.GRAPH?900:400;
+
+db.entities.forEach(e=>{
+const z=db.zones.find(zz=>zz.id===e.zone);
+if(z){
+const dx=(z.x||0)-(e.x||0),dy=(z.y||0)-(e.y||0);
+const d=Math.sqrt(dx*dx+dy*dy);
+if(d>1){
+e.vx=(e.vx||0)+(dx/d)*zg;
+e.vy=(e.vy||0)+(dy/d)*zg;
+}
+}
+});
+
+for(let i=0;i<db.entities.length;i++){
+for(let j=i+1;j<db.entities.length;j++){
+const e1=db.entities[i],e2=db.entities[j];
+const dx=(e2.x||0)-(e1.x||0),dy=(e2.y||0)-(e1.y||0);
+const d=Math.sqrt(dx*dx+dy*dy);
+if(d>0&&d<180){
+const f=rep/(d*d+1);
+const fx=(dx/d)*f,fy=(dy/d)*f;
+e1.vx=(e1.vx||0)-fx;e1.vy=(e1.vy||0)-fy;
+e2.vx=(e2.vx||0)+fx;e2.vy=(e2.vy||0)+fy;
+}
+}
+}
+
+const ss=state.mode===MODE.GRAPH?.12:.05;
+db.links.forEach(l=>{
+const e1=db.entities.find(e=>e.id===l.from);
+const e2=db.entities.find(e=>e.id===l.to);
+if(!e1||!e2)return;
+const dx=(e2.x||0)-(e1.x||0),dy=(e2.y||0)-(e1.y||0);
+const d=Math.sqrt(dx*dx+dy*dy);
+if(d>1){
+const diff=d-100,f=diff*ss;
+const fx=(dx/d)*f,fy=(dy/d)*f;
+e1.vx=(e1.vx||0)+fx;e1.vy=(e1.vy||0)+fy;
+e2.vx=(e2.vx||0)-fx;e2.vy=(e2.vy||0)-fy;
+}
+});
+
+db.entities.forEach(e=>{
+e.vx=(e.vx||0)*.85;e.vy=(e.vy||0)*.85;
+e.vx=clamp(e.vx||0,-7,7);e.vy=clamp(e.vy||0,-7,7);
+e.x=(e.x||0)+(e.vx||0);e.y=(e.y||0)+(e.vy||0);
+});
+}
+
+let animLoop=null;
+function startAnim(){
+if(animLoop)return;
+function loop(){physics();render();animLoop=requestAnimationFrame(loop)}
+loop();
+}
+
+let drag=false,dragStart={x:0,y:0},viewStart={x:0,y:0};
+
+canvas.addEventListener("pointerdown",e=>{
+const rect=canvas.getBoundingClientRect();
+const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+const world=s2w(mx,my);
+const v=state.view;
+
+let hit=null;
+for(let i=db.entities.length-1;i>=0;i--){
+const ent=db.entities[i];
+const dx=world.x-(ent.x||0),dy=world.y-(ent.y||0);
+const d=Math.sqrt(dx*dx+dy*dy);
+if(d<11/v.z){hit=ent;break}
+}
+
+if(hit){
+selectEntity(hit.id);
+if(!state.drawerOpen)openDrawer();
+}else{
+drag=true;
+dragStart={x:mx,y:my};
+viewStart={x:v.x,y:v.y};
+}
+});
+
+canvas.addEventListener("pointermove",e=>{
+const rect=canvas.getBoundingClientRect();
+const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+
+if(drag){
+const dx=mx-dragStart.x,dy=my-dragStart.y;
+const v=state.view;
+state.view={...v,x:viewStart.x+dx/v.z,y:viewStart.y+dy/v.z};
+render();
+}else{
+const world=s2w(mx,my);
+const v=state.view;
+let hov=null;
+for(let i=db.entities.length-1;i>=0;i--){
+const ent=db.entities[i];
+const dx=world.x-(ent.x||0),dy=world.y-(ent.y||0);
+const d=Math.sqrt(dx*dx+dy*dy);
+if(d<11/v.z){hov=ent;break}
+}
+state.hoverId=hov?hov.id:null;
+render();
+}
+});
+
+canvas.addEventListener("pointerup",()=>{drag=false});
+
+canvas.addEventListener("wheel",e=>{
+e.preventDefault();
+const v=state.view;
+const delta=-e.deltaY*.0009;
+const newZ=clamp(v.z+delta,.5,3.5);
+state.view={...v,z:newZ};
+render();
+});
+
+function selectEntity(id){
+state.selectedId=id;
+const e=db.entities.find(ent=>ent.id===id);
+if(!e){
+ui.details.innerHTML='<div class="empty"><div class="emptyIcon">❌</div><div>Entité introuvable</div></div>';
+return;
+}
+
+const name=e.display?.masked_name||e.id;
+const linksFrom=db.links.filter(l=>l.from===id);
+const linksTo=db.links.filter(l=>l.to===id);
+const color=getColor(e.layer);
+
+let html=`<div style="margin-bottom:14px">
+<strong style="font-size:16px;display:block;margin-bottom:8px">${esc(name)}</strong>
+<div style="font-size:12px;color:var(--txtDim)">Type: ${esc(e.type)} • Layer: ${esc(e.layer)}</div>
+</div>`;
+
+if(linksFrom.length){
+html+=`<div style="font-size:11px;font-weight:700;margin:12px 0 8px;color:var(--txtDim);text-transform:uppercase;letter-spacing:.08em">→ Liens sortants (${linksFrom.length})</div>`;
+linksFrom.slice(0,5).forEach(l=>{
+const t=db.entities.find(ent=>ent.id===l.to);
+if(t){
+const tn=t.display?.masked_name||t.id;
+const tc=getColor(t.layer);
+html+=`<div class="chip" data-target="${esc(l.to)}">
+<span class="dot" style="background:${tc}"></span>
+<span class="chipName">${esc(short(tn,20))}</span>
+<span class="chipMeta">${esc(l.type)}</span>
+</div>`;
+}
+});
+if(linksFrom.length>5)html+=`<div style="font-size:11px;color:var(--txtDimmer);margin-top:6px">+${linksFrom.length-5} autres</div>`;
+}
+
+if(linksTo.length){
+html+=`<div style="font-size:11px;font-weight:700;margin:12px 0 8px;color:var(--txtDim);text-transform:uppercase;letter-spacing:.08em">← Liens entrants (${linksTo.length})</div>`;
+linksTo.slice(0,5).forEach(l=>{
+const s=db.entities.find(ent=>ent.id===l.from);
+if(s){
+const sn=s.display?.masked_name||s.id;
+const sc=getColor(s.layer);
+html+=`<div class="chip" data-target="${esc(l.from)}">
+<span class="dot" style="background:${sc}"></span>
+<span class="chipName">${esc(short(sn,20))}</span>
+<span class="chipMeta">${esc(l.type)}</span>
+</div>`;
+}
+});
+if(linksTo.length>5)html+=`<div style="font-size:11px;color:var(--txtDimmer);margin-top:6px">+${linksTo.length-5} autres</div>`;
+}
+
+ui.details.innerHTML=html;
+
+ui.details.querySelectorAll(".chip").forEach(chip=>{
+chip.addEventListener("click",()=>{
+const targetId=chip.getAttribute("data-target");
+if(targetId)selectEntity(targetId);
+});
+});
+
+render();
+}
+
+function openDrawer(){
+state.drawerOpen=true;
+ui.drawer.classList.add("open");
+}
+
+function closeDrawer(){
+state.drawerOpen=false;
+ui.drawer.classList.remove("open");
+}
+
+ui.logoBtn.addEventListener("click",openDrawer);
+ui.monitorBtn.addEventListener("click",openDrawer);
+ui.closeBtn.addEventListener("click",closeDrawer);
+
+ui.homeBtn.addEventListener("click",()=>{
+state.view={x:0,y:0,z:1};
+render();
+toast("Vue recentrée");
+});
+
+ui.modeBtn.addEventListener("click",()=>{
+state.mode=state.mode===MODE.ZONES?MODE.GRAPH:MODE.ZONES;
+ui.modeBtn.textContent=state.mode;
+toast("Mode "+state.mode);
+});
+
+ui.regenBtn.addEventListener("click",()=>{
+db.entities.forEach(e=>{
+const z=db.zones.find(zz=>zz.id===e.zone);
+if(z){
+const h=hash(e.id);
+const angle=(h%360)*(Math.PI/180);
+const radius=50+(h%90);
+e.x=(z.x||0)+Math.cos(angle)*radius;
+e.y=(z.y||0)+Math.sin(angle)*radius;
+e.vx=0;e.vy=0;
+}
+});
+render();
+toast("Positions régénérées");
+});
+
+ui.labelsCheck.addEventListener("change",()=>render());
+
+function loadSample(){
+const zones=[
+{id:"Z-BXL-1000",commune:"Centre",x:0,y:0,layer:"ASTRO",label:"Bruxelles-Ville"},
+{id:"Z-BXL-1030",commune:"Schaerbeek",x:300,y:-150,layer:"TAROT",label:"Schaerbeek"},
+{id:"Z-BXL-1070",commune:"Anderlecht",x:-300,y:150,layer:"NEUTRE",label:"Anderlecht"},
+{id:"Z-BXL-1050",commune:"Ixelles",x:200,y:200,layer:"ASTRO",label:"Ixelles"},
+{id:"Z-BXL-1090",commune:"Jette",x:-350,y:-250,layer:"TAROT",label:"Jette"}
+];
+
+const types=["lieu_de_liens","ssm","centre_jour","federation","reseau"];
+const layers=["ASTRO","TAROT","NEUTRE"];
+
+const entities=[...Array(40)].map((_,i)=>{
+const zIdx=hash(`e${i}`)%zones.length;
+const z=zones[zIdx];
+const type=types[hash(`t${i}`)%types.length];
+const layer=layers[hash(`l${i}`)%layers.length];
+const h=hash(i.toString());
+const angle=(h%360)*(Math.PI/180);
+const radius=50+(h%80);
+
+return {
+id:`E-${String(i+1).padStart(3,"0")}`,
+type,zone:z.id,layer,
+confidence:.65+(hash(`c${i}`)%35)/100,
+display:{masked_name:`Entité_${i+1}`,real_name:`Structure ${i+1}`},
+tags:["sample",type],
+x:z.x+Math.cos(angle)*radius,
+y:z.y+Math.sin(angle)*radius,
+vx:0,vy:0
+};
+});
+
+const links=[];
+let lid=1;
+const ltypes=["finances","supports","partners_with","coordinates"];
+
+entities.forEach((e,idx)=>{
+const n=1+(hash(`n${e.id}`)%2);
+for(let j=0;j<n;j++){
+const tIdx=(idx+j+1)%entities.length;
+const t=entities[tIdx];
+if(e.id!==t.id){
+links.push({
+id:`L-${String(lid++).padStart(3,"0")}`,
+type:ltypes[hash(`lt${lid}`)%ltypes.length],
+from:e.id,to:t.id,
+confidence:.75+(hash(`lc${lid}`)%25)/100
+});
+}
+}
+});
+
+const data={
+meta:{dataset:"nyxo-sample",generatedAt:new Date().toISOString()},
+zones,entities,links
+};
+
+ui.jsonArea.value=JSON.stringify(data,null,2);
+applyData(data);
+toast(`Sample chargé: ${entities.length} entités`);
+}
+
+function applyData(data){
+db.zones=data.zones||[];
+db.entities=data.entities||[];
+db.links=data.links||[];
+db.meta=data.meta||{};
+
+db.entities.forEach(e=>{
+if(e.x===undefined||e.y===undefined){
+const z=db.zones.find(zz=>zz.id===e.zone);
+if(z){
+const h=hash(e.id);
+const angle=(h%360)*(Math.PI/180);
+const radius=50+(h%100);
+e.x=(z.x||0)+Math.cos(angle)*radius;
+e.y=(z.y||0)+Math.sin(angle)*radius;
+}else{
+e.x=0;e.y=0;
+}
+}
+if(e.vx===undefined)e.vx=0;
+if(e.vy===undefined)e.vy=0;
+});
+
+render();
+saveToStorage();
+}
+
+function saveToStorage(){
+try{
+localStorage.setItem(LS_KEY,JSON.stringify({
+zones:db.zones,
+entities:db.entities,
+links:db.links,
+meta:db.meta,
+view:state.view
+}));
+}catch(e){console.error("Save error:",e)}
+}
+
+function loadFromStorage(){
+try{
+const saved=localStorage.getItem(LS_KEY);
+if(saved){
+const data=JSON.parse(saved);
+db.zones=data.zones||[];
+db.entities=data.entities||[];
+db.links=data.links||[];
+db.meta=data.meta||{};
+if(data.view)state.view=data.view;
+}
+}catch(e){console.error("Load error:",e)}
+}
+
+ui.sampleBtn.addEventListener("click",()=>{
+if(confirm("Charger les données sample ? (écrase les données actuelles)")){
+loadSample();
+}
+});
+
+ui.importBtn.addEventListener("click",()=>ui.fileInput.click());
+
+ui.fileInput.addEventListener("change",()=>{
+const file=ui.fileInput.files&&ui.fileInput.files[0];
+if(!file)return;
+
+const reader=new FileReader();
+reader.onload=(e)=>{
+try{
+const text=e.target.result;
+const data=JSON.parse(text);
+ui.jsonArea.value=JSON.stringify(data,null,2);
+applyData(data);
+openDrawer();
+toast("Import réussi: "+db.entities.length+" entités");
+}catch(err){
+toast("Erreur import: "+err.message);
+console.error("Import error:",err);
+}
+};
+reader.onerror=()=>{
+toast("Erreur lecture fichier");
+};
+reader.readAsText(file);
+
+ui.fileInput.value="";
+});
+
+ui.applyBtn.addEventListener("click",()=>{
+try{
+const data=JSON.parse(ui.jsonArea.value||"{}");
+applyData(data);
+toast("JSON appliqué");
+}catch(err){
+toast("Erreur JSON: "+err.message);
+}
+});
+
+ui.exportBtn.addEventListener("click",()=>{
+const data={
+meta:{...db.meta,dataset:"nyxo-export",exportedAt:new Date().toISOString()},
+zones:db.zones,
+entities:db.entities,
+links:db.links
+};
+
+const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url;
+a.download=`nyxo-export-${Date.now()}.json`;
+a.click();
+URL.revokeObjectURL(url);
+toast("Export réussi");
+});
+
+ui.wipeBtn.addEventListener("click",()=>{
+if(confirm("⚠️ ATTENTION: Supprimer TOUTES les données ?\n\nCette action est irréversible.")){
+try{localStorage.removeItem(LS_KEY)}catch(e){}
+db={zones:[],entities:[],links:[],meta:{}};
+state.selectedId=null;
+ui.jsonArea.value="";
+ui.details.innerHTML='<div class="empty"><div class="emptyIcon">🔍</div><div>Cliquez sur une entité pour voir les détails</div></div>';
+render();
+toast("Données supprimées");
+}
+});
+
+document.addEventListener("keydown",e=>{
+if(e.key==="Escape"&&state.drawerOpen){closeDrawer();return}
+if(e.key==="Home"){e.preventDefault();ui.homeBtn.click();return}
+if((e.key==="r"||e.key==="R")&&!e.ctrlKey&&!e.metaKey){ui.regenBtn.click();return}
+if(e.key==="m"||e.key==="M"){ui.modeBtn.click();return}
+if((e.ctrlKey||e.metaKey)&&e.key==="e"){e.preventDefault();ui.exportBtn.click();return}
+});
+
+loadFromStorage();
+render();
+startAnim();
+toast("🧠 NYXO Portal chargé");
+console.log("🧠 NYXO Portal • Portail Collaboratif Santé Mentale Bruxelles");
+</script>
+
+</body>
+</html>
