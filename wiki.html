@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Encyclopædia Ludica — Intelligence économique · Stratégie · Guerre hybride</title>
+<style>
+  :root{
+    --bg:#f6f6f6; --paper:#fff; --ink:#202122; --mut:#54595d; --line:#a2a9b1;
+    --link:#0645ad; --visited:#0b0080; --accent:#36c; --tag:#eaf3ff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,Arial,sans-serif;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;}
+  a{color:var(--link);text-decoration:none}
+  a:visited{color:var(--visited)}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1120px;margin:0 auto;padding:18px}
+  .topbar{
+    display:flex;gap:14px;align-items:center;justify-content:space-between;
+    padding:10px 12px;background:var(--paper);border:1px solid var(--line);border-radius:8px;
+  }
+  .brand{display:flex;gap:10px;align-items:center}
+  .globe{
+    width:34px;height:34px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #cfe3ff, #7aa7ff 38%, #2b5fd6 70%, #1a3f9c 100%);
+    border:1px solid var(--line);
+  }
+  .brand h1{font-size:16px;margin:0}
+  .brand .sub{font-size:12px;color:var(--mut)}
+  .search{
+    display:flex;gap:8px;align-items:center;flex:1;max-width:520px;
+  }
+  .search input{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#fff;
+  }
+  .pill{
+    font-size:12px;padding:4px 8px;border-radius:999px;background:var(--tag);border:1px solid #c8ddff;color:#1a3f9c;
+  }
+  .layout{display:grid;grid-template-columns:260px 1fr 300px;gap:14px;margin-top:14px}
+  @media(max-width:1100px){.layout{grid-template-columns:1fr}}
+  .side,.main,.info{
+    background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:14px;
+  }
+  .side h2,.info h2{font-size:13px;margin:0 0 10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  .toc{font-size:14px}
+  .toc a{display:block;padding:4px 0}
+  .toc small{color:var(--mut)}
+  .main .title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+  .main h1{font-family:Georgia,serif;font-size:30px;line-height:1.15;margin:0}
+  .meta{color:var(--mut);font-size:13px}
+  .hr{height:1px;background:var(--line);margin:12px 0}
+  .hatnote{font-size:13px;color:var(--mut);background:#f8f9fa;border:1px solid #eaecf0;padding:8px;border-radius:6px}
+  .box{
+    border:1px solid #eaecf0;background:#f8f9fa;border-radius:8px;padding:10px;margin:10px 0
+  }
+  .box h3{margin:0 0 6px;font-size:14px}
+  .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 0}
+  .tag{font-size:12px;border:1px solid #eaecf0;background:#fff;border-radius:999px;padding:3px 8px;color:var(--mut)}
+  .infobox{
+    border:1px solid var(--line);background:#f8f9fa;border-radius:8px;overflow:hidden
+  }
+  .infobox .hd{background:#eaecf0;padding:10px;font-weight:700}
+  .infobox .bd{padding:10px;font-size:13px}
+  .infobox dt{color:var(--mut);margin-top:8px}
+  .infobox dd{margin:2px 0 0 0}
+  .kbd{font-family:var(--mono);font-size:12px;background:#fff;border:1px solid #c8ccd1;border-bottom-color:#a2a9b1;border-radius:4px;padding:1px 6px}
+  .langmix{
+    font-family:var(--mono);font-size:12px;background:#0b1020;color:#eaf3ff;border:1px solid #2b334a;
+    padding:10px;border-radius:8px;white-space:pre-wrap
+  }
+  .choice{
+    border:1px solid #c8ccd1;border-radius:10px;overflow:hidden;margin:10px 0;background:#fff
+  }
+  .choice .chd{background:#f8f9fa;padding:10px;font-weight:700}
+  .choice .cbd{padding:10px}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  button{
+    border:1px solid #c8ccd1;background:#fff;border-radius:8px;padding:9px 10px;cursor:pointer
+  }
+  button:hover{border-color:#7a869a}
+  .note{font-size:12px;color:var(--mut)}
+  .jp{
+    border-left:4px solid #d33;padding-left:10px;margin:14px 0
+  }
+  .jp h3{margin:0 0 6px}
+  .linkhint{
+    display:inline-flex;align-items:center;gap:6px
+  }
+  .linkhint .ico{
+    width:14px;height:14px;border-radius:3px;border:1px solid #c8ccd1;background:#f8f9fa;
+    display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#6b7280
+  }
+  /* Tooltip (domain visible = anti-tromperie) */
+  [data-domain]{position:relative}
+  [data-domain]:hover::after{
+    content:attr(data-domain);
+    position:absolute;left:0;top:120%;
+    background:#202122;color:#fff;font-size:12px;
+    padding:6px 8px;border-radius:6px;white-space:nowrap;z-index:10
+  }
+  .refs ol{padding-left:18px}
+  .refs li{margin:6px 0}
+  .footer{margin-top:14px;color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="globe" aria-hidden="true"></div>
+        <div>
+          <h1>Encyclopædia Ludica</h1>
+          <div class="sub">Wiki-like · CYOA · Multi-langues · “Reprendre la main” (version adulte)</div>
+        </div>
+      </div>
+      <div class="search" role="search">
+        <input id="q" placeholder="Rechercher (ex: ‘intelligence économique’, ‘hybrid warfare’, ‘strategie’)…" />
+        <span class="pill">Saison 0</span>
+      </div>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT -->
+      <aside class="side">
+        <h2>Sommaire</h2>
+        <nav class="toc">
+          <a href="#cyoa">📖 Livre dont vous êtes le héros</a>
+          <a href="#intro">1. Introduction</a>
+          <a href="#ie">2. Intelligence économique</a>
+          <a href="#strat">3. Stratégie militaire (niveau général)</a>
+          <a href="#hybrid">4. Guerre hybride (niveau général)</a>
+          <a href="#ethique">5. Garde-fous & éthique</a>
+          <a href="#jp">6. セクション（日本語）</a>
+          <a href="#refs">7. Références (liens)</a>
+          <div class="hr"></div>
+          <small>Astuce : <span class="kbd">Ctrl</span>+<span class="kbd">F</span> marche aussi.</small>
+        </nav>
+
+        <div class="hr"></div>
+
+        <h2>Langue / texture</h2>
+        <div class="langmix" id="glyphs">
+FR: « On reprend la main par la clarté. »
+EN: “Control follows comprehension.”
+LA: *Scientia potentia est* (sed cura necessaria).
+TLH (Klingon): Heghlu’meH QaQ jajvam? (non. not today.)
+Quenya: *Elen síla lúmenn’ omentielvo.*
+Sindarin: *Mae govannen, mellon.*
+High Valyrian: *Valar morghulis* / *valar dohaeris.*
+Lorem: Lorem ipsum dolor sit amet, consectetur adipiscing elit…
+        </div>
+        <p class="note">Oui, “elfiques” au pluriel : ici Quenya + Sindarin. Si tu veux d’autres (Telerin, etc.), je peux étendre.</p>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <div class="title">
+          <h1>Intelligence économique, stratégie, guerre hybride</h1>
+          <div class="meta">Page “wiki-like” + branche narrative · version non-infantilisante · liens vérifiables</div>
+        </div>
+        <div class="hr"></div>
+
+        <div class="hatnote">
+          <b>Note :</b> cette page présente des notions à un niveau <b>général</b>, orientées “culture & compréhension”.
+          Elle ne fournit pas de mode opératoire ni de tactiques exploitables. (On reste dans du savoir civique / analytique.)
+        </div>
+
+        <!-- CYOA -->
+        <section id="cyoa">
+          <h2>📖 LIVRE DONT VOUS ÊTES LE HÉROS</h2>
+          <p>
+            Vous arrivez dans une bibliothèque blanche. Sur la table : un dossier sans titre, une carte de Bruxelles, et un mot :
+            <i>“Reprendre la main, sans se brûler.”</i>
+          </p>
+
+          <div class="choice">
+            <div class="chd">Page 1 — Choisissez votre porte</div>
+            <div class="cbd">
+              <p>
+                FR : Vous cherchez un fil. EN : You need a thread, not a plan.
+                LA : *Initium sapientiæ timor…* (ou juste le respect du réel).
+                Quenya : *Nai elen siluva lyenna* — que la clarté te trouve.
+                Lorem : sed do eiusmod tempor incididunt ut labore…
+              </p>
+              <div class="btns">
+                <button data-go="p2">A) “Je veux comprendre le jeu.”</button>
+                <button data-go="p3">B) “Je veux produire quelque chose d’utile.”</button>
+                <button data-go="p4">C) “Je veux sécuriser mon temps et mon argent.”</button>
+              </div>
+              <p class="note">Le CYOA te renvoie ensuite aux sections “wiki”. C’est voulu : l’histoire sert de boussole.</p>
+            </div>
+          </div>
+
+          <div class="choice" id="p2" hidden>
+            <div class="chd">Page 2 — Comprendre (sans paranoïa)</div>
+            <div class="cbd">
+              <p>
+                EN: “The map is not the territory.” FR: mais une carte vaut mieux que le brouillard.
+                Sindarin: *I annon edhellen* — une porte elfique, mais sans magie : des concepts.
+              </p>
+              <p><b>Action micro :</b> écris 5 mots qui reviennent dans ta vie (droits, aides, administration, dette, réseau…)</p>
+              <div class="btns">
+                <button data-jump="#ie">Aller : Intelligence économique</button>
+                <button data-jump="#hybrid">Aller : Guerre hybride (général)</button>
+                <button data-back>Retour</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="choice" id="p3" hidden>
+            <div class="chd">Page 3 — Produire (une preuve, pas un rêve)</div>
+            <div class="cbd">
+              <p>
+                High Valyrian: <i>Skoros ñuhyz syt?</i> — Quel est ton nom ? (Réponse : ton artefact.)
+                FR: un texte, un tuto, une page simple. EN: ship something small.
+              </p>
+              <p><b>Action micro :</b> fais une “fiche 1 page” : ce que tu sais faire + à quoi ça sert + preuve.</p>
+              <div class="btns">
+                <button data-jump="#ethique">Aller : Garde-fous</button>
+                <button data-jump="#refs">Aller : Outils & sources</button>
+                <button data-back>Retour</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="choice" id="p4" hidden>
+            <div class="chd">Page 4 — Sécuriser (le réel d’abord)</div>
+            <div class="cbd">
+              <p>
+                LA: *Primum vivere*… FR: d’abord stabiliser. EN: stabilize to strategize.
+                TLH: bIvalbe’ ‘e’ yImev! (si tu ne comprends pas, ralentis.)
+              </p>
+              <p><b>Action micro :</b> note : entrées / sorties / 3 variables. Même approximatif. C’est une carte.</p>
+              <div class="btns">
+                <button data-jump="#ie">Aller : IE (protection / veille)</button>
+                <button data-jump="#refs">Aller : Outils numériques</button>
+                <button data-back>Retour</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="hr"></div>
+
+        <!-- INTRO -->
+        <section id="intro">
+          <h2>1. Introduction</h2>
+          <p>
+            Ici, “reprendre la main” signifie : transformer le flou en décisions possibles.
+            L’intelligence économique (IE) sert à <b>voir</b>, la stratégie sert à <b>choisir</b>,
+            et la notion de “guerre hybride” sert à <b>comprendre</b> certains environnements informationnels
+            (sans tomber dans le délire).
+          </p>
+          <div class="box">
+            <h3>Traduction simple</h3>
+            <div class="tagrow">
+              <span class="tag">IE = observer & protéger</span>
+              <span class="tag">Stratégie = choisir un but + un chemin</span>
+              <span class="tag">Hybride = plusieurs moyens entremêlés</span>
+              <span class="tag">Éthique = éviter l’extraction / la nuisance</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- IE -->
+        <section id="ie">
+          <h2>2. Intelligence économique</h2>
+          <p>
+            L’IE (au sens large) regroupe la <b>veille</b>, la <b>protection</b> et l’<b>influence</b>… mais dans un Starter Kit orienté autonomie,
+            on privilégie deux axes : <b>comprendre un environnement</b> et <b>se protéger</b>.
+          </p>
+          <div class="box">
+            <h3>Version “autonomie” (pragmatique)</h3>
+            <ul>
+              <li><b>Veille</b> : suivre 3 sources fiables + un indicateur simple (ex: appels à projets, droits, opportunités locales).</li>
+              <li><b>Protection</b> : organiser ses documents, limiter l’exposition, savoir ce qu’on partage et pourquoi.</li>
+              <li><b>Capitalisation</b> : transformer une info en fiche claire (1 page) réutilisable.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- STRAT -->
+        <section id="strat">
+          <h2>3. Stratégie militaire (niveau général)</h2>
+          <p>
+            Ici, “stratégie” est prise au sens large : articulation <b>objectifs</b> → <b>moyens</b> → <b>contraintes</b> → <b>temps</b>.
+            On reste au niveau conceptuel (pas de tactiques, pas de procédés).
+          </p>
+          <div class="box">
+            <h3>Traduction “vie réelle”</h3>
+            <ul>
+              <li><b>But</b> : qu’est-ce qui change ta vie si ça marche ?</li>
+              <li><b>Moyens</b> : qu’est-ce que tu as vraiment (temps, énergie, réseau, compétences) ?</li>
+              <li><b>Contraintes</b> : qu’est-ce qui est non négociable (santé, droits, sécurité) ?</li>
+              <li><b>Tempo</b> : quel rythme est tenable sans te casser ?</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- HYBRID -->
+        <section id="hybrid">
+          <h2>4. Guerre hybride (niveau général)</h2>
+          <p>
+            L’expression “guerre hybride” sert souvent à décrire des situations où plusieurs dimensions se combinent :
+            information, économie, diplomatie, cyber, pression sociale… Là encore, on reste sur une lecture <b>analytique</b>
+            pour ne pas se faire balader par des récits simplistes.
+          </p>
+          <div class="box">
+            <h3>Hybride ≠ magique</h3>
+            <ul>
+              <li>Ce n’est pas “tout est complot”.</li>
+              <li>C’est : plusieurs leviers agissent en même temps, et le public peut être brouillé.</li>
+              <li>Réponse saine : <b>sources</b>, <b>vérification</b>, <b>cadre éthique</b>, <b>prudence</b>.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ETHIQUE -->
+        <section id="ethique">
+          <h2>5. Garde-fous & éthique</h2>
+          <p>
+            Le Starter Kit vise l’autonomie : pas la manipulation. Les règles minimales :
+          </p>
+          <ul>
+            <li><b>Pas de liens trompeurs</b>, pas de dissimulation volontaire.</li>
+            <li><b>Consentement</b> si des personnes sont identifiables.</li>
+            <li><b>Protection</b> : anonymisation par défaut, pas de collecte inutile.</li>
+            <li><b>Capacitation</b> : l’outil doit rendre autonome, pas dépendant.</li>
+          </ul>
+        </section>
+
+        <!-- JP -->
+        <section id="jp">
+          <h2>6. セクション（日本語）— あなたのリンク置き場</h2>
+          <div class="jp">
+            <h3>リンク（目印付き）</h3>
+            <p>以下は <b>あなたが差し替える用</b> のプレースホルダーです（赤いラインで目立つ）。</p>
+            <ul>
+              <li><span class="linkhint"><span class="ico">↗</span>
+                <a href="https://dl.ouaisfi.eu/haha" target="_blank" rel="noopener" data-domain="dl.ouaisfi.eu">dl.ouaisfi.eu/haha</a></span>
+                — ここにあなたの資料を置く</li>
+              <li><span class="linkhint"><span class="ico">↗</span>
+                <a href="https://dl.ouaisfi.eu/haha" target="_blank" rel="noopener" data-domain="dl.ouaisfi.eu">dl.ouaisfi.eu/haha</a></span>
+                — ここに別のリンクを置く</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- REFS -->
+        <section id="refs" class="refs">
+          <h2>7. Références (liens)</h2>
+          <p class="small">
+            Liens “vrais” et identifiables (icône ↗ + domaine au survol). Tu peux les remplacer par tes propres sources.
+          </p>
+          <ol>
+            <li>
+              <span class="linkhint"><span class="ico">↗</span>
+              <a href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique" target="_blank" rel="noopener" data-domain="wikipedia.org">Intelligence économique (Wikipedia)</a></span>
+            </li>
+            <li>
+              <span class="linkhint"><span class="ico">↗</span>
+              <a href="https://en.wikipedia.org/wiki/Hybrid_warfare" target="_blank" rel="noopener" data-domain="wikipedia.org">Hybrid warfare (Wikipedia EN)</a></span>
+            </li>
+            <li>
+              <span class="linkhint"><span class="ico">↗</span>
+              <a href="https://www.nato.int/cps/en/natohq/topics_156338.htm" target="_blank" rel="noopener" data-domain="nato.int">NATO — resilience / hybrid threats (topic)</a></span>
+            </li>
+            <li>
+              <span class="linkhint"><span class="ico">↗</span>
+              <a href="https://www.oecd.org/" target="_blank" rel="noopener" data-domain="oecd.org">OCDE — contexte éco & politiques publiques (portail)</a></span>
+            </li>
+            <li>
+              <span class="linkhint"><span class="ico">↗</span>
+              <a href="https://www.coursera.org/learn/strategic-management" target="_blank" rel="noopener" data-domain="coursera.org">Strategic management (exemple de cours — à remplacer si besoin)</a></span>
+            </li>
+          </ol>
+        </section>
+
+        <div class="footer">
+          <b>Note technique :</b> cette page est un “wiki-like”, pas un clone exact, et elle refuse les patterns trompeurs.
+          Si tu veux, je peux : (1) ajouter une vraie sidebar “pages”, (2) faire un index multi-pages, (3) intégrer ton Starter Kit en navigation.
+        </div>
+      </main>
+
+      <!-- RIGHT INFOBOX -->
+      <aside class="info">
+        <h2>Infobox</h2>
+        <div class="infobox">
+          <div class="hd">Encyclopædia Ludica</div>
+          <div class="bd">
+            <dl>
+              <dt>Type</dt><dd>Page encyclopédique + CYOA</dd>
+              <dt>Thèmes</dt><dd>IE · Stratégie · Hybride (général)</dd>
+              <dt>Éthique</dt><dd>Anti-tromperie · Consentement · Minimalisme</dd>
+              <dt>Entrées rapides</dt>
+              <dd>
+                <a href="#cyoa">CYOA</a> ·
+                <a href="#ie">IE</a> ·
+                <a href="#hybrid">Hybride</a> ·
+                <a href="#jp">日本語</a>
+              </dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h2>Mini-outil</h2>
+        <p class="small">Tape un mot-clé : ça filtre les sections (local, sans réseau).</p>
+        <input id="filter" placeholder="ex: IE, hybride, japonais…" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px" />
+        <p class="note" id="filterNote"></p>
+      </aside>
+    </div>
+  </div>
+
+<script>
+  // CYOA controls
+  (function(){
+    const choices = ["p2","p3","p4"].map(id=>document.getElementById(id));
+    const show = (id)=>{
+      choices.forEach(c=>c.hidden = (c.id!==id));
+      document.getElementById("cyoa").scrollIntoView({behavior:"smooth",block:"start"});
+    };
+    document.querySelectorAll("[data-go]").forEach(btn=>{
+      btn.addEventListener("click", ()=>show(btn.getAttribute("data-go")));
+    });
+    document.querySelectorAll("[data-back]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        choices.forEach(c=>c.hidden=true);
+        document.getElementById("cyoa").scrollIntoView({behavior:"smooth",block:"start"});
+      });
+    });
+    document.querySelectorAll("[data-jump]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const sel = btn.getAttribute("data-jump");
+        const el = document.querySelector(sel);
+        if(el) el.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+    });
+  })();
+
+  // Local filter (simple)
+  (function(){
+    const filter = document.getElementById("filter");
+    const note = document.getElementById("filterNote");
+    const sections = Array.from(document.querySelectorAll("main section"));
+    const normalize = s => (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+    const apply = ()=>{
+      const q = normalize(filter.value.trim());
+      let shown = 0;
+      sections.forEach(sec=>{
+        if(!q){ sec.style.display=""; shown++; return; }
+        const hay = normalize(sec.innerText);
+        const ok = hay.includes(q);
+        sec.style.display = ok ? "" : "none";
+        if(ok) shown++;
+      });
+      note.textContent = q ? `Filtre actif : ${shown} section(s) visible(s).` : "";
+    };
+    filter.addEventListener("input", apply);
+  })();
+
+  // Top search just focuses filter (keeps the wiki-like UX)
+  (function(){
+    const q = document.getElementById("q");
+    const f = document.getElementById("filter");
+    q.addEventListener("keydown",(e)=>{
+      if(e.key==="Enter"){
+        f.value = q.value;
+        f.dispatchEvent(new Event("input"));
+        location.hash="#";
+        f.scrollIntoView({behavior:"smooth",block:"center"});
+      }
+    });
+  })();
+</script>
+</body>
+</html>
