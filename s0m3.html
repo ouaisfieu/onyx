@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>!NYXO / !NiXÖ — Saison 0 · Mission 3 (S’outiller)</title>
+
+<style>
+:root{
+  --bg:#0b0e11;
+  --panel:#11161c;
+  --grid:#1b2330;
+  --txt:#d6efe3;
+  --mut:#9bb7b0;
+  --green:#8fffd2;
+  --lilac:#c7a8ff;
+  --warn:#ffd27a;
+  --bad:#ff7aa5;
+  --ok:#7affb0;
+  --accent:linear-gradient(90deg,var(--green),var(--lilac));
+  --mono:'Courier New', monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);}
+
+body{
+  background:
+    linear-gradient(180deg,#0b0e11,#06080b),
+    repeating-linear-gradient(to right,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px),
+    repeating-linear-gradient(to bottom,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px);
+}
+
+.container{max-width:1200px;margin:auto;padding:3rem 1.5rem 5rem;}
+.logo{
+  font-size:2.6rem;letter-spacing:.15em;margin:0;
+  background:var(--accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{color:var(--mut);margin:.7rem 0 2.1rem;line-height:1.55;}
+.panel{
+  background:rgba(17,22,28,.88);
+  border:1px solid #222a36;
+  border-radius:16px;
+  padding:2.4rem;
+  box-shadow:0 0 55px rgba(0,0,0,.65);
+}
+h2{
+  color:var(--lilac);
+  letter-spacing:.2em;
+  font-size:1rem;
+  margin:2.2rem 0 .9rem;
+}
+p{line-height:1.8;font-size:1rem;margin:.8rem 0;}
+.small{font-size:.92rem;color:var(--mut);}
+.hr{height:1px;background:#222a36;margin:2rem 0;}
+.kbd{
+  display:inline-block;
+  padding:.1rem .45rem;
+  border:1px solid #2b3442;
+  border-bottom-color:#1f2631;
+  border-radius:6px;
+  background:#0c1016;
+  color:var(--green);
+}
+.callout{
+  margin:1.4rem 0;
+  padding:1.25rem 1.25rem;
+  border-left:4px solid;
+  border-image:var(--accent) 1;
+  background:#0d1218;
+  border-radius:10px;
+}
+.callout strong{color:var(--green);}
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:980px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+.card{
+  background:#0c1016;
+  border:1px solid #222a36;
+  border-radius:14px;
+  padding:1.2rem;
+}
+.card h3{
+  margin:.1rem 0 .7rem;
+  color:var(--green);
+  letter-spacing:.12em;
+  font-size:1rem;
+}
+.card h4{
+  margin:1.1rem 0 .55rem;
+  color:var(--lilac);
+  letter-spacing:.12em;
+  font-size:.95rem;
+}
+.badges{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .8rem;}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.25rem .6rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  color:var(--mut);
+  font-size:.85rem;
+}
+.badge i{
+  width:.55rem;height:.55rem;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(143,255,210,.35);
+  display:inline-block;
+}
+.badge.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.35);}
+.badge.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.30);}
+.badge.ok i{background:var(--ok);box-shadow:0 0 14px rgba(122,255,176,.30);}
+.badge.bad i{background:var(--bad);box-shadow:0 0 14px rgba(255,122,165,.30);}
+
+ul{padding-left:1.35rem;margin:.6rem 0;}
+li{margin:.55rem 0;line-height:1.65;}
+
+label{display:block;margin:.8rem 0 .4rem;color:var(--mut);font-size:.9rem;}
+textarea,input,select{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:.85rem .9rem;
+}
+textarea{min-height:130px;resize:vertical;}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+button{
+  cursor:pointer;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+}
+button:hover{border-color:#3a475a;}
+button.primary{
+  border:0;
+  background:var(--accent);
+  color:#091015;
+  font-weight:700;
+}
+button.ghost{background:transparent;}
+button.danger{
+  border:1px solid #4a2432;
+  background:#180b11;
+  color:#ffd6e3;
+}
+.tabs{display:flex;flex-wrap:wrap;gap:.6rem;margin:.2rem 0 1rem;}
+.tab{
+  padding:.55rem .8rem;border-radius:999px;border:1px solid #2a3342;
+  color:var(--mut);background:#0c1016;cursor:pointer;user-select:none;
+  font-size:.92rem;
+}
+.tab.active{
+  color:#091015;border:0;background:var(--accent);font-weight:700;
+}
+.hidden{display:none!important;}
+
+.preview{
+  border-radius:14px;
+  border:1px solid #222a36;
+  background:#0b0f15;
+  padding:1.1rem;
+}
+.preview .title{font-weight:700;letter-spacing:.08em;color:var(--lilac);margin:0 0 .4rem;}
+.preview .meta{color:var(--mut);font-size:.88rem;margin-bottom:.7rem;}
+.preview .content{white-space:pre-wrap;line-height:1.7;font-size:.98rem;}
+
+.footer{
+  margin-top:2.4rem;
+  padding-top:1.5rem;
+  border-top:1px dashed #2a3342;
+  color:var(--mut);
+  font-size:.9rem;
+  line-height:1.6;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#0c1016;border:1px solid #2a3342;color:var(--txt);
+  padding:.75rem .9rem;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  max-width:min(980px,92vw);
+}
+.toast.show{opacity:1;}
+
+.smallcode{
+  margin:.6rem 0;
+  border:1px solid #222a36;
+  border-radius:14px;
+  background:#0b0f15;
+  padding:1rem;
+  color:var(--txt);
+  overflow:auto;
+}
+.smallcode code{white-space:pre;}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1 class="logo">!NYXO / !NiXÖ</h1>
+  <div class="subtitle">
+    Saison 0 · <span class="kbd">Mission 3</span> — <strong>S’outiller</strong><br>
+    <span class="small">
+      Construire une “trousse” minimale commune (pour vous, les partenaires, les équipes et les publics) :
+      des outils simples, low-tech, réutilisables, qui rendent l’action plus facile que l’inaction.
+    </span>
+  </div>
+
+  <div class="panel">
+    <p>
+      Mission 1 a produit une trace. Mission 2 a produit un artefact visible sans exposer.
+      Mission 3 fabrique l’infrastructure humaine du projet : <strong>des outils de base</strong>
+      pour que tout le monde puisse participer sans dépendre d’un expert, ni d’une plateforme.
+    </p>
+
+    <div class="callout">
+      <strong>Idée simple :</strong> un dispositif n’est éthique que s’il est <em>reproductible</em>.
+      Ici, s’outiller signifie : rendre la participation accessible, douce, et soutenable
+      — avec des outils qui fonctionnent même sans budget.
+    </div>
+
+    <h2>CHOISISSEZ VOTRE PERSPECTIVE</h2>
+    <div class="tabs" role="tablist" aria-label="Perspectives Mission 3">
+      <div class="tab active" data-tab="publics">Publics</div>
+      <div class="tab" data-tab="equipes">Équipes / lieux</div>
+      <div class="tab" data-tab="coord">Coordination projet</div>
+    </div>
+
+    <!-- PUBLICS -->
+    <div id="publics" class="tabpane">
+      <div class="grid">
+        <div class="card">
+          <h3>La trousse “Publics” (simple, adulte, non infantilisante)</h3>
+          <div class="badges">
+            <span class="badge"><i></i> 20 min</span>
+            <span class="badge purple"><i></i> Sans compte</span>
+            <span class="badge ok"><i></i> Low-tech</span>
+          </div>
+          <ul>
+            <li><strong>Un carnet de traces</strong> (papier ou téléphone) : 5 lignes quand on veut</li>
+            <li><strong>Un code simple</strong> : pas de noms, pas de visages, pas de détails intimes</li>
+            <li><strong>Une question-guide</strong> : “Qu’est-ce qui m’a rendu un peu plus capable aujourd’hui ?”</li>
+            <li><strong>Une passerelle</strong> : “Quelle suite douce serait possible ?”</li>
+            <li><strong>Un droit</strong> : observer / se retirer / revenir plus tard</li>
+          </ul>
+
+          <h4>Micro-outil (à emporter)</h4>
+          <p class="small">
+            Copiez ce mini-format et gardez-le quelque part (notes, carnet, bloc-notes). Il suffit pour jouer.
+          </p>
+          <div class="smallcode"><code>TRACE (5 lignes max)
+- Activité / moment :
+- Ce qui a compté :
+- Ce que j’ai appris sans que ce soit “une formation” :
+- Une suite douce possible :
+- Une question à poser ailleurs (optionnel) :</code></div>
+        </div>
+
+        <div class="card">
+          <h3>Générateur “TRACE PUBLIC” (optionnel)</h3>
+          <p class="small">
+            Cet outil ne collecte rien. Tout reste sur votre appareil.
+            Il génère une trace courte, copiable, sans infos personnelles.
+          </p>
+
+          <label for="p_act">Activité / moment</label>
+          <input id="p_act" placeholder="Ex : atelier / accueil / sortie / permanence / discussion..." />
+
+          <label for="p_what">Ce qui a compté (5–8 lignes)</label>
+          <textarea id="p_what" placeholder="Décrivez l’essentiel, sobrement. Pas de noms, pas de détails intimes."></textarea>
+
+          <label for="p_next">Suite douce possible (optionnel)</label>
+          <input id="p_next" placeholder="Ex : revenir / essayer X / rencontrer Y (sans nom) / partager une astuce..." />
+
+          <label for="p_q">Question à poser ailleurs (optionnel)</label>
+          <input id="p_q" placeholder="Ex : Chez vous, comment vous... ?" />
+
+          <div class="btnrow">
+            <button class="primary" id="p_gen">Générer</button>
+            <button class="ghost" id="p_copy">Copier</button>
+            <button class="danger" id="p_clear">Effacer</button>
+          </div>
+
+          <label for="p_out">Sortie</label>
+          <textarea id="p_out" readonly placeholder="Votre trace apparaîtra ici."></textarea>
+
+          <div class="callout">
+            <strong>Réussite :</strong> si vous avez une trace qui vous ressemble, sans vous exposer,
+            vous êtes outillé·e.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EQUIPES -->
+    <div id="equipes" class="tabpane hidden">
+      <div class="grid">
+        <div class="card">
+          <h3>La trousse “Équipes / lieux” (rituel de 5 minutes)</h3>
+          <div class="badges">
+            <span class="badge"><i></i> 5 min</span>
+            <span class="badge purple"><i></i> Fin d’activité</span>
+            <span class="badge ok"><i></i> Sans charge</span>
+          </div>
+          <p>
+            Le but n’est pas d’ajouter du travail. Le but est de rendre <strong>transmissible</strong>
+            ce qui se passe déjà.
+          </p>
+          <ul>
+            <li><strong>Rituel “fin d’activité”</strong> : 1 trace + 1 passerelle</li>
+            <li><strong>Règle</strong> : anonymisation par défaut</li>
+            <li><strong>Sortie</strong> : un petit “log” interne (copiable)</li>
+            <li><strong>Option</strong> : un artefact sans exposition (Mission 2)</li>
+          </ul>
+
+          <h4>Mini-format d’équipe</h4>
+          <div class="smallcode"><code>LOG D’ÉQUIPE (5 min)
+- Activité :
+- Ce qui a renforcé le lien :
+- Un apprentissage observé :
+- Un “après” possible (suite douce) :
+- Une précaution éthique (si besoin) :</code></div>
+        </div>
+
+        <div class="card">
+          <h3>Générateur “LOG ÉQUIPE” + checklist éthique</h3>
+
+          <label for="e_act">Activité</label>
+          <input id="e_act" placeholder="Ex : atelier / accueil / sortie / permanence numérique..." />
+
+          <label for="e_link">Ce qui a renforcé le lien</label>
+          <textarea id="e_link" placeholder="Un geste, une ambiance, une coopération, une parole qui compte..."></textarea>
+
+          <label for="e_learn">Apprentissage observé</label>
+          <textarea id="e_learn" placeholder="Ex : quelqu’un a pris sa place / a osé / a transmis / a demandé..."></textarea>
+
+          <label for="e_after">“Après” possible (suite douce)</label>
+          <input id="e_after" placeholder="Ex : répliquer / relier à une autre activité / inviter à une sortie..." />
+
+          <label for="e_eth">Précaution éthique (si besoin)</label>
+          <input id="e_eth" placeholder="Ex : éviter photo / garder interne / demander accord..." />
+
+          <div class="btnrow">
+            <button class="primary" id="e_gen">Générer</button>
+            <button class="ghost" id="e_copy">Copier</button>
+            <button class="danger" id="e_clear">Effacer</button>
+          </div>
+
+          <label for="e_out">Sortie</label>
+          <textarea id="e_out" readonly placeholder="Votre log apparaîtra ici."></textarea>
+
+          <div class="preview" style="margin-top:1rem;">
+            <div class="title">Checklist express</div>
+            <div class="content">✅ Anonyme par défaut
+✅ Pas de visages / noms sans accord
+✅ Publication optionnelle
+✅ Si doute → interne</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COORD -->
+    <div id="coord" class="tabpane hidden">
+      <div class="grid">
+        <div class="card">
+          <h3>La trousse “Coordination projet” (sans contrôle)</h3>
+          <div class="badges">
+            <span class="badge"><i></i> 30–60 min</span>
+            <span class="badge purple"><i></i> Réutilisable</span>
+            <span class="badge warn"><i></i> Minimal</span>
+          </div>
+          <p>
+            Ici, s’outiller signifie : <strong>ne pas devenir un centre de pouvoir</strong>.
+            On fabrique des outils pour distribuer l’autonomie.
+          </p>
+          <ul>
+            <li><strong>Un dictionnaire commun</strong> (réel ↔ symbolique) : pour éviter les malentendus</li>
+            <li><strong>Une charte 1 page</strong> (déjà prête) : pour rassurer et cadrer</li>
+            <li><strong>Un format standard</strong> de mission (comme M1/M2) : reproductible</li>
+            <li><strong>Un protocole de sortie</strong> : “on peut arrêter sans drame”</li>
+            <li><strong>Une méthode de mémoire</strong> : documenter sans profiler</li>
+          </ul>
+
+          <h4>Protocole de sortie (copiable)</h4>
+          <div class="smallcode"><code>PROTOCOLE DE SORTIE
+- Un lieu peut mettre en pause à tout moment
+- Sans justification, sans dette symbolique
+- On garde ce qui est déjà produit (si accord)
+- On clôture par une trace simple : “ce qu’on retient”</code></div>
+        </div>
+
+        <div class="card">
+          <h3>Générateur “KIT LIEU” (1 page)</h3>
+          <p class="small">
+            Crée une fiche de démarrage pour un lieu partenaire : cadre + contact + rythme + limites + besoins.
+            Rien n’est envoyé automatiquement.
+          </p>
+
+          <label for="c_place">Nom du lieu / entité</label>
+          <input id="c_place" placeholder="Ex : Babel’Zin / WOPS - Entr’Act / atelier du jeudi..." />
+
+          <label for="c_frame">Cadre & intentions (3–6 lignes)</label>
+          <textarea id="c_frame" placeholder="Pourquoi le lieu accepte d’essayer (ou de regarder), ce qu’il veut protéger, ce qu’il espère..."></textarea>
+
+          <label for="c_rhythm">Rythme réaliste</label>
+          <select id="c_rhythm">
+            <option value="OBSERVATION">Observation (pas de missions imposées)</option>
+            <option value="MICRO">Micro (1 mission / 2 semaines)</option>
+            <option value="LEGER">Léger (1 mission / semaine)</option>
+            <option value="INTENSE">Intense (à éviter au pilote)</option>
+          </select>
+
+          <label for="c_limits">Limites & précautions (obligatoires)</label>
+          <textarea id="c_limits" placeholder="Ex : pas de photos / pas de données / pas de pression / pas de publics X..."></textarea>
+
+          <label for="c_needs">Besoins (si besoin)</label>
+          <textarea id="c_needs" placeholder="Ex : médiation numérique / impression / accompagnement / un relais interne..."></textarea>
+
+          <div class="btnrow">
+            <button class="primary" id="c_gen">Générer le KIT</button>
+            <button class="ghost" id="c_copy">Copier</button>
+            <button class="danger" id="c_clear">Effacer</button>
+          </div>
+
+          <label for="c_out">Sortie</label>
+          <textarea id="c_out" readonly placeholder="Votre KIT apparaîtra ici."></textarea>
+
+          <div class="callout">
+            <strong>Réussite :</strong> si le lieu peut expliquer le pilote en 30 secondes
+            et dire “stop” sans gêne, le dispositif est sain.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>MISSION 3 — CONDITION DE RÉUSSITE</h2>
+    <p>
+      Mission 3 est réussie quand <strong>au moins une personne</strong> (public ou équipe)
+      repart avec un outil simple qui lui donne plus de prise sur le réel,
+      et quand <strong>au moins un lieu</strong> peut participer sans dépendre d’une expertise externe.
+    </p>
+
+    <h2>FERMETURE DE BOUCLE</h2>
+    <p>
+      Au début, il y avait une intention : augmenter les compétences et le pouvoir d’agir par le jeu,
+      sans manipulation, en partant des lieux de liens. Mission 3 transforme cette intention en infrastructure :
+      <strong>des outils communs, sobres, transmissibles</strong>. C’est le moment où le projet devient vraiment reproductible.
+    </p>
+
+    <div class="footer">
+      Saison 0 · Mission 3 — S’outiller · Document reproductible · Low-tech par défaut<br>
+      Astuce : un bon outil réduit la honte, l’effort et l’isolement. Il rend l’action possible même les jours “sans”.
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const panes = {
+    publics: $("publics"),
+    equipes: $("equipes"),
+    coord: $("coord")
+  };
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1800);
+  }
+  function clean(s){
+    return (s||"").trim().replace(/\s+\n/g,"\n").replace(/\n{3,}/g,"\n\n");
+  }
+  function stamp(){
+    const d = new Date();
+    return d.toISOString().replace("T"," ").slice(0,19) + "Z";
+  }
+  function copyText(el){
+    const text = (el.value||"").trim();
+    if(!text){ showToast("Rien à copier."); return; }
+    navigator.clipboard?.writeText(text).then(()=>showToast("Copié."))
+      .catch(()=>{ el.focus(); el.select(); document.execCommand("copy"); showToast("Copie tentée (compat)."); });
+  }
+
+  tabs.forEach(t=>{
+    t.addEventListener("click", ()=>{
+      tabs.forEach(x=>x.classList.remove("active"));
+      t.classList.add("active");
+      Object.values(panes).forEach(p=>p.classList.add("hidden"));
+      panes[t.dataset.tab].classList.remove("hidden");
+      showToast("Perspective : " + t.textContent.trim());
+    });
+  });
+
+  // PUBLICS generator
+  const p_act=$("p_act"), p_what=$("p_what"), p_next=$("p_next"), p_q=$("p_q"), p_out=$("p_out");
+  $("p_gen").addEventListener("click", ()=>{
+    const a=clean(p_act.value), w=clean(p_what.value), n=clean(p_next.value), q=clean(p_q.value);
+    if(!a && !w && !n && !q){ showToast("Ajoutez au moins une info."); return; }
+    const lines=[];
+    lines.push("!NYXO // OUTIL_PUBLIC :: TRACE_COURTE");
+    lines.push("HORODATAGE : " + stamp());
+    if(a) lines.push("ACTIVITÉ   : " + a);
+    lines.push("");
+    if(w){ lines.push("CE QUI A COMPTÉ :"); lines.push(w); lines.push(""); }
+    if(n) lines.push("SUITE DOUCE : " + n);
+    if(q) lines.push("QUESTION   : " + q);
+    lines.push("");
+    lines.push("RÈGLE : pas de noms · pas de visages · pas de détails intimes · si doute → garder pour soi");
+    p_out.value = lines.join("\n");
+    showToast("Trace générée.");
+  });
+  $("p_copy").addEventListener("click", ()=>copyText(p_out));
+  $("p_clear").addEventListener("click", ()=>{
+    p_act.value=p_what.value=p_next.value=p_q.value=p_out.value="";
+    showToast("Effacé.");
+  });
+
+  // EQUIPES generator
+  const e_act=$("e_act"), e_link=$("e_link"), e_learn=$("e_learn"), e_after=$("e_after"), e_eth=$("e_eth"), e_out=$("e_out");
+  $("e_gen").addEventListener("click", ()=>{
+    const a=clean(e_act.value), l=clean(e_link.value), lr=clean(e_learn.value), af=clean(e_after.value), eth=clean(e_eth.value);
+    if(!a && !l && !lr && !af && !eth){ showToast("Ajoutez au moins une info."); return; }
+    const lines=[];
+    lines.push("!NYXO // OUTIL_EQUIPE :: LOG_FIN_D_ACTIVITÉ");
+    lines.push("HORODATAGE : " + stamp());
+    if(a) lines.push("ACTIVITÉ   : " + a);
+    lines.push("");
+    if(l){ lines.push("LIEN RENFORCÉ :"); lines.push(l); lines.push(""); }
+    if(lr){ lines.push("APPRENTISSAGE OBSERVÉ :"); lines.push(lr); lines.push(""); }
+    if(af) lines.push("APRÈS (suite douce) : " + af);
+    if(eth) lines.push("PRÉCAUTION ÉTHIQUE : " + eth);
+    lines.push("");
+    lines.push("RÈGLE : anonymisation par défaut · publication optionnelle · si doute → interne");
+    e_out.value = lines.join("\n");
+    showToast("Log équipe généré.");
+  });
+  $("e_copy").addEventListener("click", ()=>copyText(e_out));
+  $("e_clear").addEventListener("click", ()=>{
+    e_act.value=e_link.value=e_learn.value=e_after.value=e_eth.value=e_out.value="";
+    showToast("Effacé.");
+  });
+
+  // COORD generator
+  const c_place=$("c_place"), c_frame=$("c_frame"), c_rhythm=$("c_rhythm"), c_limits=$("c_limits"), c_needs=$("c_needs"), c_out=$("c_out");
+  $("c_gen").addEventListener("click", ()=>{
+    const pl=clean(c_place.value), fr=clean(c_frame.value), rh=c_rhythm.value, lm=clean(c_limits.value), nd=clean(c_needs.value);
+    if(!pl || !lm){ showToast("Nom du lieu + limites sont nécessaires."); return; }
+    const lines=[];
+    lines.push("!NYXO // KIT_LIEU :: DEMARRAGE");
+    lines.push("HORODATAGE : " + stamp());
+    lines.push("LIEU       : " + pl);
+    lines.push("RYTHME     : " + rh);
+    lines.push("");
+    if(fr){ lines.push("CADRE & INTENTIONS :"); lines.push(fr); lines.push(""); }
+    lines.push("LIMITES & PRÉCAUTIONS (obligatoires) :");
+    lines.push(lm);
+    lines.push("");
+    if(nd){ lines.push("BESOINS (optionnel) :"); lines.push(nd); lines.push(""); }
+    lines.push("RÈGLE : le lieu reste souverain · participation libre · sortie possible sans justification");
+    c_out.value = lines.join("\n");
+    showToast("KIT généré.");
+  });
+  $("c_copy").addEventListener("click", ()=>copyText(c_out));
+  $("c_clear").addEventListener("click", ()=>{
+    c_place.value=c_frame.value=c_limits.value=c_needs.value=c_out.value="";
+    c_rhythm.value="OBSERVATION";
+    showToast("Effacé.");
+  });
+
+})();
+</script>
+</body>
+</html>
