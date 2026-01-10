@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>!NYXO / !NiXÖ — Saison 0 · Mission 4 (S’accorder)</title>
+
+<style>
+:root{
+  --bg:#0b0e11;
+  --panel:#11161c;
+  --grid:#1b2330;
+  --txt:#d6efe3;
+  --mut:#9bb7b0;
+  --green:#8fffd2;
+  --lilac:#c7a8ff;
+  --warn:#ffd27a;
+  --bad:#ff7aa5;
+  --ok:#7affb0;
+  --accent:linear-gradient(90deg,var(--green),var(--lilac));
+  --mono:'Courier New', monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--mono);}
+
+body{
+  background:
+    linear-gradient(180deg,#0b0e11,#06080b),
+    repeating-linear-gradient(to right,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px),
+    repeating-linear-gradient(to bottom,var(--grid) 0,var(--grid) 1px,transparent 1px,transparent 48px);
+}
+
+.container{max-width:1200px;margin:auto;padding:3rem 1.5rem 5rem;}
+.logo{
+  font-size:2.6rem;letter-spacing:.15em;margin:0;
+  background:var(--accent);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{color:var(--mut);margin:.7rem 0 2.1rem;line-height:1.55;}
+.panel{
+  background:rgba(17,22,28,.88);
+  border:1px solid #222a36;
+  border-radius:16px;
+  padding:2.4rem;
+  box-shadow:0 0 55px rgba(0,0,0,.65);
+}
+h2{
+  color:var(--lilac);
+  letter-spacing:.2em;
+  font-size:1rem;
+  margin:2.2rem 0 .9rem;
+}
+p{line-height:1.8;font-size:1rem;margin:.8rem 0;}
+.small{font-size:.92rem;color:var(--mut);}
+.hr{height:1px;background:#222a36;margin:2rem 0;}
+.kbd{
+  display:inline-block;
+  padding:.1rem .45rem;
+  border:1px solid #2b3442;
+  border-bottom-color:#1f2631;
+  border-radius:6px;
+  background:#0c1016;
+  color:var(--green);
+}
+.callout{
+  margin:1.4rem 0;
+  padding:1.25rem 1.25rem;
+  border-left:4px solid;
+  border-image:var(--accent) 1;
+  background:#0d1218;
+  border-radius:10px;
+}
+.callout strong{color:var(--green);}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:980px){
+  .grid{grid-template-columns:1fr 1fr;}
+}
+
+.card{
+  background:#0c1016;
+  border:1px solid #222a36;
+  border-radius:14px;
+  padding:1.2rem;
+}
+.card h3{
+  margin:.1rem 0 .7rem;
+  color:var(--green);
+  letter-spacing:.12em;
+  font-size:1rem;
+}
+.card h4{
+  margin:1.1rem 0 .55rem;
+  color:var(--lilac);
+  letter-spacing:.12em;
+  font-size:.95rem;
+}
+.badges{display:flex;flex-wrap:wrap;gap:.45rem;margin:.4rem 0 .8rem;}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.25rem .6rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  color:var(--mut);
+  font-size:.85rem;
+}
+.badge i{
+  width:.55rem;height:.55rem;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(143,255,210,.35);
+  display:inline-block;
+}
+.badge.purple i{background:var(--lilac);box-shadow:0 0 14px rgba(199,168,255,.35);}
+.badge.warn i{background:var(--warn);box-shadow:0 0 14px rgba(255,210,122,.30);}
+.badge.ok i{background:var(--ok);box-shadow:0 0 14px rgba(122,255,176,.30);}
+.badge.bad i{background:var(--bad);box-shadow:0 0 14px rgba(255,122,165,.30);}
+
+ul{padding-left:1.35rem;margin:.6rem 0;}
+li{margin:.55rem 0;line-height:1.65;}
+
+label{display:block;margin:.8rem 0 .4rem;color:var(--mut);font-size:.9rem;}
+textarea,input,select{
+  width:100%;
+  border-radius:12px;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+  padding:.85rem .9rem;
+}
+textarea{min-height:120px;resize:vertical;}
+
+.btnrow{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+button{
+  cursor:pointer;
+  border-radius:12px;
+  padding:.85rem 1rem;
+  border:1px solid #2a3342;
+  background:#0c1016;
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:.95rem;
+}
+button:hover{border-color:#3a475a;}
+button.primary{
+  border:0;
+  background:var(--accent);
+  color:#091015;
+  font-weight:700;
+}
+button.ghost{background:transparent;}
+button.danger{
+  border:1px solid #4a2432;
+  background:#180b11;
+  color:#ffd6e3;
+}
+
+.smallcode{
+  margin:.6rem 0;
+  border:1px solid #222a36;
+  border-radius:14px;
+  background:#0b0f15;
+  padding:1rem;
+  color:var(--txt);
+  overflow:auto;
+}
+.smallcode code{white-space:pre;}
+
+.preview{
+  border-radius:14px;
+  border:1px solid #222a36;
+  background:#0b0f15;
+  padding:1.1rem;
+}
+.preview .title{
+  font-weight:700;letter-spacing:.08em;color:var(--lilac);margin:0 0 .4rem;
+}
+.preview .meta{color:var(--mut);font-size:.88rem;margin-bottom:.7rem;}
+.preview .content{white-space:pre-wrap;line-height:1.7;font-size:.98rem;}
+
+.footer{
+  margin-top:2.4rem;
+  padding-top:1.5rem;
+  border-top:1px dashed #2a3342;
+  color:var(--mut);
+  font-size:.9rem;
+  line-height:1.6;
+}
+
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#0c1016;border:1px solid #2a3342;color:var(--txt);
+  padding:.75rem .9rem;border-radius:12px;box-shadow:0 0 40px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;transition:opacity .2s ease;
+  max-width:min(980px,92vw);
+}
+.toast.show{opacity:1;}
+
+.columns{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:1rem;
+}
+@media (min-width:980px){
+  .columns{grid-template-columns:1.05fr .95fr;}
+}
+
+.pill{
+  display:inline-block;
+  padding:.18rem .6rem;
+  border:1px solid #2a3342;
+  border-radius:999px;
+  background:#0c1016;
+  color:var(--green);
+  font-size:.9rem;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1 class="logo">!NYXO / !NiXÖ</h1>
+  <div class="subtitle">
+    Saison 0 · <span class="kbd">Mission 4</span> — <strong>S’accorder</strong><br>
+    <span class="small">Gouvernance minimale, limites claires, droit de pause : le pilote devient “OK terrain”.</span>
+  </div>
+
+  <div class="panel">
+
+    <p>
+      Les Missions 1–3 rendent possible l’action.
+      Mission 4 rend possible la confiance : on s’accorde sur un cadre simple,
+      pour que les lieux et les personnes puissent dire “oui” sans se piéger, et “stop” sans gêne.
+    </p>
+
+    <div class="callout">
+      <strong>Idée simple :</strong> un projet sain doit être plus léger que les lieux, plus petit que les personnes,
+      et <em>facile à arrêter</em>. Ici, on fabrique un accord minimal — pas un contrat lourd.
+    </div>
+
+    <h2>CE QUE VOUS OBTENEZ</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>1) Un mini-accord (10 lignes)</h3>
+        <ul>
+          <li>rythme réaliste</li>
+          <li>limites et précautions</li>
+          <li>publication optionnelle</li>
+          <li>droit de pause / sortie</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2) Un protocole “STOP sans drame”</h3>
+        <ul>
+          <li>comment mettre en pause</li>
+          <li>comment clôturer proprement</li>
+          <li>quoi garder (avec accord)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3) Des rôles légers (sans hiérarchie)</h3>
+        <ul>
+          <li>gardien éthique</li>
+          <li>scribe (traces)</li>
+          <li>relieur (passerelles)</li>
+          <li>médiateur numérique (optionnel)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>4) Un format “réunion 30 min” (optionnel)</h3>
+        <ul>
+          <li>si le lieu veut en parler ensemble</li>
+          <li>sans jargon, sans pitch</li>
+          <li>avec une issue de sortie</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <h2>GÉNÉRATEUR — MINI-ACCORD DE PILOTE (COPIABLE)</h2>
+
+    <div class="columns" style="margin-top:1rem;">
+      <div class="card">
+        <h3>Entrées (sobres, terrain)</h3>
+
+        <label for="place">Lieu / entité</label>
+        <input id="place" placeholder="Ex : Tarot / Astro / atelier du jeudi..." />
+
+        <label for="scope">Périmètre (ce qu’on teste)</label>
+        <textarea id="scope" placeholder="Ex : 4 à 6 semaines, missions optionnelles (M1-M4), traces anonymes, 1 artefact max si ok..."></textarea>
+
+        <label for="rhythm">Rythme réaliste</label>
+        <select id="rhythm">
+          <option value="OBSERVATION">Observation (aucune mission imposée)</option>
+          <option value="MICRO">Micro (1 geste / 2 semaines)</option>
+          <option value="LEGER">Léger (1 geste / semaine)</option>
+          <option value="INTENSE">Intense (déconseillé au pilote)</option>
+        </select>
+
+        <label for="limits">Limites & précautions (obligatoires)</label>
+        <textarea id="limits" placeholder="Ex : pas de photos / pas de noms / pas de récits intimes / diffusion interne / pas de pression / pas de collecte de données..."></textarea>
+
+        <label for="roles">Rôles (choisir 1 à 3 max)</label>
+        <select id="roles" multiple>
+          <option value="Gardien éthique (veille au consentement et aux limites)">Gardien éthique</option>
+          <option value="Scribe (produit une trace courte en fin d’activité)">Scribe</option>
+          <option value="Relieur (propose une passerelle douce)">Relieur</option>
+          <option value="Médiateur numérique (optionnel, aide à copier-coller / publier)">Médiateur numérique</option>
+        </select>
+        <p class="small">
+          Astuce : sur ordinateur, maintenez <span class="kbd">Ctrl</span> (ou <span class="kbd">Cmd</span>) pour sélectionner plusieurs rôles.
+        </p>
+
+        <label for="pub">Publication</label>
+        <select id="pub">
+          <option value="INTERNE">Interne par défaut (recommandé)</option>
+          <option value="RESTR">Partage restreint (avec accord)</option>
+          <option value="PUBLIC">Public (rare, avec accord explicite)</option>
+        </select>
+
+        <label for="stoprule">Sortie / pause (phrase simple)</label>
+        <input id="stoprule" placeholder="Ex : On peut mettre en pause à tout moment, sans justification, sans dette symbolique." />
+
+        <div class="btnrow">
+          <button class="primary" id="gen">Générer l’accord</button>
+          <button class="ghost" id="copy">Copier</button>
+          <button class="danger" id="reset">Réinitialiser</button>
+        </div>
+
+        <p class="small">
+          Rien n’est envoyé automatiquement. Tout est copiable, ajustable, et peut rester interne.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Sortie : accord + protocole + réunion 30 min</h3>
+
+        <div class="preview" style="margin-bottom:1rem;">
+          <div class="title">Protocole “STOP sans drame”</div>
+          <div class="content" id="stopProto">Génère un accord pour inclure ce protocole dans la sortie.</div>
+        </div>
+
+        <label for="out">Document copiable (tout-en-un)</label>
+        <textarea id="out" readonly placeholder="Votre mini-accord apparaîtra ici."></textarea>
+
+        <div class="callout">
+          <strong>Critère de réussite :</strong> si le lieu peut dire “oui” sans se surcharger
+          et “stop” sans honte, le pilote est viable.
+        </div>
+
+        <h4>Format “réunion 30 min” (optionnel)</h4>
+        <div class="smallcode"><code>RÉUNION 30 MIN (OPTIONNEL)
+1) 5 min — Rappeler : participation libre, pas d’évaluation
+2) 10 min — Choisir : rythme + limites + 1 à 3 rôles
+3) 10 min — Définir : ce qu’on garde en mémoire (traces) + diffusion (interne/public)
+4) 5 min — Dire : comment on met en pause / comment on stoppe proprement</code></div>
+      </div>
+    </div>
+
+    <h2>FERMETURE DE BOUCLE</h2>
+    <p>
+      Au début, l’intention était claire : distordre la perception de manière bienveillante pour augmenter le pouvoir d’agir,
+      en partant des lieux de liens. Mission 4 est le passage à l’âge adulte du dispositif :
+      <strong>un cadre qui protège</strong>, et qui garantit qu’on peut essayer sans se perdre.
+    </p>
+
+    <div class="footer">
+      Saison 0 · Mission 4 — S’accorder · Gouvernance minimale · Droit de pause<br>
+      Astuce : un bon cadre n’ajoute pas de contrôle. Il retire de l’ambiguïté.
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const place=$("place"), scope=$("scope"), rhythm=$("rhythm"), limits=$("limits"), roles=$("roles"), pub=$("pub"), stoprule=$("stoprule");
+  const out=$("out"), stopProto=$("stopProto"), toast=$("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1850);
+  }
+
+  function clean(s){
+    return (s||"").trim().replace(/\s+\n/g,"\n").replace(/\n{3,}/g,"\n\n");
+  }
+
+  function stamp(){
+    const d = new Date();
+    return d.toISOString().replace("T"," ").slice(0,19) + "Z";
+  }
+
+  function selectedRoles(){
+    return Array.from(roles.selectedOptions).map(o=>o.value);
+  }
+
+  function protoText(){
+    return [
+      "STOP SANS DRAME",
+      "- Un lieu peut mettre en pause à tout moment (sans justification).",
+      "- On clôture par une trace simple : “ce qu’on retient / ce qu’on ne veut plus”.",
+      "- Ce qui est déjà produit reste au lieu (et aux personnes), avec consentement.",
+      "- Rien n’est publié par défaut. Si doute → interne.",
+      "- On peut reprendre plus tard, ou ne jamais reprendre. Les deux sont OK."
+    ].join("\n");
+  }
+
+  function build(){
+    const pl = clean(place.value);
+    const sc = clean(scope.value);
+    const lm = clean(limits.value);
+    const sr = clean(stoprule.value) || "On peut mettre en pause à tout moment, sans justification, sans dette symbolique.";
+    const rh = rhythm.value;
+    const pr = pub.value;
+    const rl = selectedRoles();
+
+    if(!pl || !lm){
+      showToast("Nom du lieu + limites sont nécessaires.");
+      return null;
+    }
+
+    const lines=[];
+    lines.push("!NYXO // SAISON_0 :: MISSION_4 :: MINI-ACCORD DE PILOTE");
+    lines.push("HORODATAGE : " + stamp());
+    lines.push("LIEU       : " + pl);
+    lines.push("RYTHME     : " + rh);
+    lines.push("DIFFUSION  : " + pr);
+    lines.push("");
+
+    lines.push("1) OBJET (ce qu’on teste)");
+    lines.push(sc ? sc : "Un pilote léger, sur une période courte, avec participation libre et missions optionnelles (M1–M4).");
+    lines.push("");
+
+    lines.push("2) RÈGLES SIMPLES");
+    lines.push("- Participation libre, aucun contrôle, aucune évaluation.");
+    lines.push("- Anonymisation par défaut : pas de noms, pas de visages, pas de détails intimes.");
+    lines.push("- Visibilité ≠ exposition : on valorise sans mettre des personnes en vitrine.");
+    lines.push("- Le dispositif reste plus léger que le lieu : si ça surcharge, on simplifie.");
+    lines.push("");
+
+    lines.push("3) LIMITES & PRÉCAUTIONS (obligatoires)");
+    lines.push(lm);
+    lines.push("");
+
+    lines.push("4) RÔLES (1 à 3 max, sans hiérarchie)");
+    if(rl.length){
+      rl.forEach(r=>lines.push("- " + r));
+    }else{
+      lines.push("- (à définir si besoin) : Gardien éthique / Scribe / Relieur / Médiateur numérique (optionnel)");
+    }
+    lines.push("");
+
+    lines.push("5) PUBLICATION / PARTAGE");
+    if(pr==="INTERNE"){
+      lines.push("- Interne par défaut. Rien n’est publié sans accord explicite.");
+    }else if(pr==="RESTR"){
+      lines.push("- Partage restreint possible, avec accord explicite du lieu et prudence sur les identifiants.");
+    }else{
+      lines.push("- Public : rare, et uniquement avec accord explicite (personnes identifiables → accord obligatoire).");
+    }
+    lines.push("");
+
+    lines.push("6) DROIT DE PAUSE / SORTIE");
+    lines.push(sr);
+    lines.push("");
+    lines.push(protoText());
+    lines.push("");
+
+    lines.push("7) CLÔTURE (si arrêt)");
+    lines.push("- Une trace finale : ce qu’on retient / ce qu’on laisse.");
+    lines.push("- Aucun reproche, aucune dette symbolique. Le pilote est un essai, pas un engagement.");
+    lines.push("");
+
+    lines.push("SIGNATURE : (optionnelle) Le lieu / l’équipe — Date —");
+    return lines.join("\n");
+  }
+
+  $("gen").addEventListener("click", ()=>{
+    const text = build();
+    if(!text) return;
+    out.value = text;
+    stopProto.textContent = protoText();
+    showToast("Accord généré.");
+  });
+
+  $("copy").addEventListener("click", async ()=>{
+    const text = out.value.trim();
+    if(!text){ showToast("Rien à copier."); return; }
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Copié.");
+    }catch(e){
+      out.focus(); out.select();
+      document.execCommand("copy");
+      showToast("Copie tentée (compat).");
+    }
+  });
+
+  $("reset").addEventListener("click", ()=>{
+    place.value="";
+    scope.value="";
+    rhythm.value="OBSERVATION";
+    limits.value="";
+    Array.from(roles.options).forEach(o=>o.selected=false);
+    pub.value="INTERNE";
+    stoprule.value="";
+    out.value="";
+    stopProto.textContent="Génère un accord pour inclure ce protocole dans la sortie.";
+    showToast("Réinitialisé.");
+  });
+})();
+</script>
+</body>
+</html>
