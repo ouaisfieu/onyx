@@ -4,8 +4,6 @@
 > > > sans te prendre pour un idiot,
 > > > > et avec des émojis utiles.
 
-# TL;DR
-
 ## TL;DR 🧭
 
 Tu as maintenant un **portail 100% statique** qui sait :
