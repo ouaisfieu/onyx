@@ -1,29 +1,18 @@
 <!doctype html>
-<html lang="fr">
+<html lang="la">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Wikipedia — (NE PIGEZ RIEN) — IE · Stratégie · Guerre hybride (CYOA + Quêtes)</title>
+<title>Wikipedia — Encyclopaedia (Obscura) — IE · Strategia · Bellum Hybridum</title>
 <style>
   :root{
-    /* Wikipedia-ish core */
-    --bg:#f8f9fa;
-    --paper:#ffffff;
-    --ink:#202122;
-    --mut:#54595d;
-    --line:#a2a9b1;
-    --line2:#c8ccd1;
-    --shade:#f8f9fa;
-    --link:#0645ad;
-    --visited:#0b0080;
+    /* Wikipedia-ish */
+    --bg:#f8f9fa; --paper:#fff; --ink:#202122; --mut:#54595d;
+    --line:#a2a9b1; --line2:#c8ccd1; --shade:#f8f9fa;
+    --link:#0645ad; --visited:#0b0080;
 
-    /* Game overlay */
-    --g:#10b981;        /* green */
-    --p:#a78bfa;        /* lilac */
-    --r:#ef4444;        /* red */
-    --k:#111827;        /* dark text */
-    --grad:linear-gradient(90deg,var(--g),var(--p));
-
+    /* Hidden game layer (no hints) */
+    --g:#10b981; --p:#a78bfa; --r:#ef4444; --grad:linear-gradient(90deg,var(--g),var(--p));
     --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,sans-serif;
     --serif: Georgia, "Times New Roman", Times, serif;
     --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
@@ -34,136 +23,80 @@
   a:visited{color:var(--visited)}
   a:hover{text-decoration:underline}
 
-  /* Wikipedia layout */
-  .wrap{max-width:1380px;margin:0 auto;padding:10px}
+  .wrap{max-width:1400px;margin:0 auto;padding:10px}
   .layout{display:grid;grid-template-columns:260px 1fr;gap:10px}
   @media(max-width:1100px){.layout{grid-template-columns:1fr}}
   .side,.main{background:var(--paper);border:1px solid var(--line);border-radius:6px}
   .side{padding:10px}
   .main{padding:0}
-  .brand{
-    display:flex;gap:10px;align-items:center;margin-bottom:10px;padding:6px 6px 10px;border-bottom:1px solid #eaecf0
-  }
+
+  .brand{display:flex;gap:10px;align-items:center;margin-bottom:10px;padding:6px 6px 10px;border-bottom:1px solid #eaecf0}
   .globe{width:44px;height:44px;border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #fff, #dbe7ff 28%, #92b2ff 55%, #3a66d6 80%, #24489f 100%);
     border:1px solid var(--line);
   }
   .brand .t h1{margin:0;font-size:14px;font-weight:700}
   .brand .t div{font-size:12px;color:var(--mut)}
+
   .portlet{margin:10px 0}
   .portlet h2{margin:0 0 6px;font-size:12px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
   .portlet a{display:block;padding:3px 0;font-size:14px}
   .portlet small{color:var(--mut)}
-  .topbar{
-    display:flex;align-items:center;justify-content:space-between;gap:8px;
-    padding:10px;border-bottom:1px solid #eaecf0
-  }
-  .search{flex:1;display:flex;gap:8px;align-items:center;max-width:720px}
-  .search input{
-    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff
-  }
-  .btn{
-    border:1px solid var(--line2);background:#fff;border-radius:4px;padding:8px 10px;
-    font-family:var(--sans);cursor:pointer;font-size:13px
-  }
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border-bottom:1px solid #eaecf0}
+  .search{flex:1;display:flex;gap:8px;align-items:center;max-width:760px}
+  .search input{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:#fff;font-family:var(--mono);font-size:13px}
+  .btn{border:1px solid var(--line2);background:#fff;border-radius:4px;padding:8px 10px;cursor:pointer;font-size:13px}
   .btn:hover{border-color:var(--line)}
-  .btn.primary{border:0;background:var(--grad);color:#071018;font-weight:800}
-  .btn.danger{border-color:#f1b5b5;background:#fff5f5}
-  .tabs{
-    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
-    padding:10px 10px 0;border-bottom:1px solid #eaecf0
-  }
-  .tab{
-    font-size:13px;padding:6px 10px;border:1px solid #eaecf0;border-bottom:0;border-radius:6px 6px 0 0;
-    background:var(--shade);color:var(--mut);cursor:pointer;user-select:none
-  }
+
+  .tabs{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 10px 0;border-bottom:1px solid #eaecf0}
+  .tab{font-size:13px;padding:6px 10px;border:1px solid #eaecf0;border-bottom:0;border-radius:6px 6px 0 0;background:var(--shade);color:var(--mut);cursor:pointer;user-select:none}
   .tab.active{background:#fff;color:var(--ink);border-color:var(--line2);font-weight:700}
   .pane{padding:12px}
   .hidden{display:none!important}
 
   .articleTitle{font-family:var(--serif);font-size:34px;line-height:1.15;margin:8px 0 4px}
   .subtitle{color:var(--mut);font-size:13px;margin:0 0 10px}
-  .hatnote{
-    background:var(--shade);border:1px solid #eaecf0;border-radius:4px;padding:8px 10px;
-    font-size:13px;color:var(--mut);margin:10px 0
-  }
-  .toc{
-    background:var(--shade);border:1px solid #eaecf0;border-radius:4px;padding:10px;margin:12px 0;
-    width:min(520px,100%)
-  }
+  .hatnote{background:var(--shade);border:1px solid #eaecf0;border-radius:4px;padding:8px 10px;font-size:13px;color:var(--mut);margin:10px 0}
+  .toc{background:var(--shade);border:1px solid #eaecf0;border-radius:4px;padding:10px;margin:12px 0;width:min(520px,100%)}
   .toc .t{font-weight:700;margin:0 0 6px;font-size:13px}
   .toc a{display:block;padding:2px 0;font-size:13px}
-  .lvl2{padding-left:12px}
-  .lvl3{padding-left:24px}
+  .lvl2{padding-left:12px} .lvl3{padding-left:24px}
 
-  /* Infobox */
   .row{display:grid;grid-template-columns:1fr 320px;gap:12px;align-items:start}
   @media(max-width:1000px){.row{grid-template-columns:1fr}}
-  .infobox{
-    border:1px solid var(--line2);background:var(--shade);border-radius:4px;overflow:hidden
-  }
+  .infobox{border:1px solid var(--line2);background:var(--shade);border-radius:4px;overflow:hidden}
   .infobox .hd{background:#eaecf0;padding:10px;font-weight:700;text-align:center}
   .infobox .bd{padding:10px;font-size:13px}
   .infobox dt{color:var(--mut);margin-top:8px}
   .infobox dd{margin:2px 0 0 0}
 
-  /* Refs / cats */
   .refs{font-size:13px}
   .refs ol{padding-left:18px}
   .refs li{margin:6px 0}
   .cats{margin-top:14px;border-top:1px solid #eaecf0;padding-top:10px;font-size:13px;color:var(--mut)}
   .cats a{margin-right:8px}
 
-  /* Safe external link tooltip (NOT hidden) */
+  /* External link safety: visible icon + domain tooltip (no deception) */
   .ext{display:inline-flex;align-items:center;gap:6px}
-  .ext .ico{
-    width:14px;height:14px;border-radius:3px;border:1px solid #c8ccd1;background:#fff;
-    display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#6b7280
-  }
+  .ext .ico{width:14px;height:14px;border-radius:3px;border:1px solid #c8ccd1;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#6b7280}
   [data-domain]{position:relative}
   [data-domain]:hover::after{
     content:attr(data-domain);
     position:absolute;left:0;top:115%;
-    background:#202122;color:#fff;font-size:12px;
-    padding:6px 8px;border-radius:6px;white-space:nowrap;z-index:20
+    background:#202122;color:#fff;font-size:12px;padding:6px 8px;border-radius:6px;white-space:nowrap;z-index:50
   }
 
-  /* Japanese blocks obvious */
-  .jp{
-    border-left:6px solid #d33;
-    padding-left:12px;margin:14px 0;background:#fff9f9;border:1px solid #ffe3e3;border-radius:4px
-  }
-  .jp h3{margin:10px 0 6px}
+  /* JP blocks obvious */
+  .jp{border-left:6px solid #d33;padding-left:12px;margin:14px 0;background:#fff9f9;border:1px solid #ffe3e3;border-radius:4px}
 
-  /* GAME LAYER (Fog + Quests) */
-  .gamebar{
-    display:flex;flex-wrap:wrap;gap:8px;align-items:center;
-    border:1px solid #e5e7eb;background:#f9fafb;border-radius:8px;padding:10px;margin:10px 0
-  }
-  .chip{font-size:12px;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:4px 8px;color:var(--mut)}
-  .chip.on{border:0;background:var(--grad);color:#061017;font-weight:800}
-  .meter{flex:1;min-width:220px;height:10px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;overflow:hidden}
-  .meter > div{height:100%;width:0%;background:var(--grad)}
-  .kbd{font-family:var(--mono);font-size:12px;border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:1px 6px}
-
-  /* Fog makes it “not understandable” */
-  body.fog .chaos{
-    filter: blur(.6px) contrast(1.06);
-    letter-spacing:.02em;
-    user-select:none;
-  }
-  body.fog .clarity{
-    opacity:.22;
-    filter: blur(1.4px);
-  }
+  /* NO HINTS: only fog + unlock silently */
+  body.fog .chaos{filter: blur(.72px) contrast(1.05);letter-spacing:.02em;user-select:none}
+  body.fog .clean{opacity:.15;filter: blur(2px)}
   body.restore .chaos{filter:none;letter-spacing:normal;user-select:text}
-  body.restore .clarity{opacity:1;filter:none}
+  body.restore .clean{opacity:1;filter:none}
 
-  /* Locked sections */
-  .locked{opacity:.25;filter:blur(2px);pointer-events:none;user-select:none}
-  .unlocked{opacity:1;filter:none;pointer-events:auto}
-
-  /* Runes (clickable tokens) */
+  /* Runes: clickable but unlabeled (still visible as glyph capsules) */
   .rune{
     display:inline-block;
     padding:0 6px;
@@ -178,6 +111,17 @@
   }
   .rune:hover{border-color:rgba(167,139,250,.6)}
   .rune.taken{opacity:.35;filter:blur(1.2px);cursor:default}
+
+  /* Hidden/locked */
+  .locked{opacity:.18;filter:blur(2.2px);pointer-events:none;user-select:none}
+  .unlocked{opacity:1;filter:none;pointer-events:auto}
+
+  /* Japanese links area highlighted (as requested) */
+  .jp a{font-weight:800}
+
+  /* Long wall */
+  .wall{font-family:var(--mono);font-size:13px;white-space:pre-wrap}
+
   .toast{
     position:fixed;left:50%;bottom:16px;transform:translateX(-50%);
     background:#202122;color:#fff;border:1px solid #111;
@@ -197,34 +141,36 @@
         <div class="globe" aria-hidden="true"></div>
         <div class="t">
           <h1>Wikipedia</h1>
-          <div>L’encyclopédie libre (simulation)</div>
+          <div>Encyclopaedia libera (simulatio)</div>
         </div>
       </div>
 
       <div class="portlet">
-        <h2>Navigation</h2>
-        <a href="#top">Accueil</a>
-        <a href="#anchor-intro">Introduction</a>
-        <a href="#anchor-ie">Intelligence économique</a>
-        <a href="#anchor-strat">Stratégie</a>
-        <a href="#anchor-hybrid">Guerre hybride</a>
-        <a href="#anchor-jp">セクション（日本語）</a>
-        <a href="#anchor-refs">Références</a>
+        <h2>Navigatio</h2>
+        <a href="#top">Pagina</a>
+        <a href="#caput">Caput</a>
+        <a href="#ie">Intelligentia</a>
+        <a href="#strat">Strategia</a>
+        <a href="#hyb">Hybridum</a>
+        <a href="#jp">日本語</a>
+        <a href="#refs">Fontes</a>
       </div>
 
       <div class="portlet">
-        <h2>Jeu</h2>
+        <h2>Index</h2>
         <small>
-          Tout est en désordre. Tu suis le scénario pour remettre de l’ordre.<br>
-          Ordre requis : <span class="kbd">IE</span> → <span class="kbd">STRAT</span> → <span class="kbd">HYBRID</span> → <span class="kbd">JP</span> → <span class="kbd">ORDER</span><br>
-          Bonus Konami : <span class="kbd">↑↑↓↓←→←→BA</span>
+          <span class="rune" data-token="IE">ΙΕ</span>
+          <span class="rune" data-token="STRAT">Σ</span>
+          <span class="rune" data-token="HYBRID">Η</span>
+          <span class="rune" data-token="JP">日</span>
+          <span class="rune" data-token="ORDER">Ω</span>
         </small>
       </div>
 
       <div class="portlet">
-        <h2>Langues (oui, elfiques pluriel)</h2>
+        <h2>Linguae</h2>
         <small>
-          FR · EN · Latin · tlhIngan Hol · Quenya · Sindarin · Telerin · (Avari-ish) · High Valyrian · Lorem · 日本語
+          Latine · tlhIngan Hol · Quenya · Sindarin · Telerin · (Avari-ish) · Valyrio Alto · Lorem · 日本語
         </small>
       </div>
     </aside>
@@ -232,310 +178,247 @@
     <!-- MAIN -->
     <section class="main" id="top">
       <div class="topbar">
-        <div class="search" role="search">
-          <input id="cmd" placeholder="Commande (Enter): IE | STRAT | HYBRID | JP | ORDER | NYXO | 642 | ELEN | HITH | ANOGAR | QAPLA" />
-          <button class="btn primary" id="hint">Indice</button>
-          <button class="btn" id="fogBtn">Brouillard: ON</button>
-          <button class="btn danger" id="reset">Reset</button>
+        <div class="search">
+          <input id="cmd" aria-label="cmd" placeholder="⌁" />
+          <button class="btn" id="fogBtn">☍</button>
+          <button class="btn" id="reset">⟲</button>
         </div>
       </div>
 
-      <div class="tabs" role="tablist" aria-label="Tabs">
-        <div class="tab active" data-tab="article">Article</div>
-        <div class="tab" data-tab="discussion">Discussion</div>
-        <div class="tab" data-tab="history">Historique</div>
-        <div class="tab" data-tab="source">Source</div>
+      <div class="tabs" role="tablist">
+        <div class="tab active" data-tab="article">Pagina</div>
+        <div class="tab" data-tab="talk">Colloquium</div>
+        <div class="tab" data-tab="history">Historia</div>
+        <div class="tab" data-tab="source">Fons</div>
       </div>
 
       <!-- ARTICLE -->
       <div class="pane" id="tab-article">
-        <h1 class="articleTitle">Intelligence économique · Stratégie militaire · Guerre hybride</h1>
+        <h1 class="articleTitle" id="caput">Intelligentia · Strategia · Bellum Hybridum</h1>
         <p class="subtitle">
-          Clone Wikipédia (mise en page, TOC, infobox, refs) + “brouillard” + quêtes de restauration.
-          <span class="clarity">Liens externes: signalés ↗ et domaine au survol (pas de piège).</span>
+          <span class="clean">↗ signum externum · dominium in supervolatu</span>
         </p>
 
-        <div class="hatnote">
-          Cette page est un <b>jeu sérieux de lecture/tri</b>. Elle reste conceptuelle et ne fournit pas de tactiques nuisibles.
-        </div>
-
-        <!-- GAMEBAR -->
-        <div class="gamebar">
-          <span class="chip" id="cIE">IE</span>
-          <span class="chip" id="cSTRAT">STRAT</span>
-          <span class="chip" id="cHYB">HYBRID</span>
-          <span class="chip" id="cJP">JP</span>
-          <span class="chip" id="cORD">ORDER</span>
-          <span class="chip" id="cBONUS">BONUS</span>
-          <div class="meter" aria-label="progress"><div id="meter"></div></div>
-          <span>Étape: <b id="step">Q1 (IE)</b></span>
-        </div>
-
         <div class="toc locked" id="toc">
-          <div class="t">Sommaire (verrouillé jusqu’à Q1)</div>
-          <a href="#anchor-intro">1 Introduction</a>
-          <a class="lvl2" href="#anchor-cyoa">1.1 Livre dont vous êtes le héros</a>
-          <a href="#anchor-ie">2 Intelligence économique</a>
-          <a class="lvl2" href="#anchor-ie-axes">2.1 Axes</a>
-          <a href="#anchor-strat">3 Stratégie</a>
-          <a class="lvl2" href="#anchor-strat-concepts">3.1 Concepts</a>
-          <a href="#anchor-hybrid">4 Guerre hybride</a>
-          <a class="lvl2" href="#anchor-hybrid-lecture">4.1 Lecture critique</a>
-          <a href="#anchor-jp">5 セクション（日本語）</a>
-          <a href="#anchor-refs">6 Références</a>
+          <div class="t">Index</div>
+          <a href="#prooemium">1 Prooemium</a>
+          <a class="lvl2" href="#ludus">1.1 Ludus (fragmenta)</a>
+          <a href="#ie">2 Intelligentia (oeconomica)</a>
+          <a class="lvl2" href="#ie-axes">2.1 Axis</a>
+          <a href="#strat">3 Strategia</a>
+          <a class="lvl2" href="#strat-nota">3.1 Notae</a>
+          <a href="#hyb">4 Hybridum</a>
+          <a class="lvl2" href="#hyb-lectio">4.1 Lectio</a>
+          <a href="#jp">5 日本語</a>
+          <a href="#mur">6 Mur</a>
+          <a href="#refs">7 Fontes</a>
         </div>
 
         <div class="row">
-          <div>
-            <!-- CHAOS ARTICLE BODY (ONE PAGE, VERY LONG) -->
-            <section id="anchor-intro" class="chaos">
-              <h2>Introduction</h2>
+          <div class="chaos">
+            <section id="prooemium">
+              <h2>Prooemium</h2>
               <p>
-                FR: Ici, la carte n’est pas le territoire — mais sans carte, tu marches dans le brouillard.
-                EN: The point is not to win; it’s to regain degrees of freedom.
-                LA: <i>Ordo ab chao</i>.
-                tlhIngan Hol: <i>bIvalbe’ ‘e’ yImev</i>.
-                Quenya: <i>Elen síla lúmenn’ omentielvo</i>.
-                Sindarin: <i>Mae govannen, mellon</i>.
-                Telerin: <i>Elen síla i lómë</i>.
-                Avari-ish: <i>naí… elen…</i>.
-                High Valyrian: <i>Skoros ñuhyz syt?</i>.
+                <i>Ordo ab chao</i> · <i>Non multa sed multum</i> · <i>Festina lente</i> · <i>Caveat lector</i> ·
+                tlhIngan Hol: <i>bIvalbe’ ‘e’ yImev</i> · <i>De’ lIghlu’</i> · <i>QInmey tIbuS</i> ·
+                Quenya: <i>Elen síla lúmenn’ omentielvo</i> · <i>Nai elen siluva lyenna</i> ·
+                Sindarin: <i>Mae govannen, mellon</i> · <i>Hith suilad</i> ·
+                Telerin: <i>Elen síla i lómë</i> · <i>Lindë</i> ·
+                Avari-ish: <i>naí… elen…</i> ·
+                Valyrio Alto: <i>Skoros ñuhyz syt?</i> · <i>Ānogar isse</i> ·
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.
-                日本語：「霧の中で学ぶ」。
-              </p>
-
-              <p>
-                Runes (clique) :
-                <span class="rune" data-token="IE">IE</span>
-                <span class="rune" data-token="STRAT">STRAT</span>
-                <span class="rune" data-token="HYBRID">HYBRID</span>
-                <span class="rune" data-token="JP">JP</span>
-                <span class="rune" data-token="ORDER">ORDER</span>
-                — bonus :
-                <span class="rune" data-token="NYXO">NYXO</span>
+                日本語：「霧」.
+                <span class="rune" data-token="NYXO">!NYXO</span>
                 <span class="rune" data-token="642">642</span>
-                <span class="rune" data-token="ELEN">ELEN</span>
-                <span class="rune" data-token="HITH">HITH</span>
-                <span class="rune" data-token="ANOGAR">ANOGAR</span>
-                <span class="rune" data-token="QAPLA">QAPLA</span>
               </p>
             </section>
 
-            <section id="anchor-cyoa" class="chaos">
-              <h2>Livre dont vous êtes le héros</h2>
-              <p>
-                FR: Une table. Un dossier. Une ville. Un mot: “Reprendre la main.”
-                EN: A choice is a tool.
-                LA: <i>Ars longa, vita brevis</i>.
-                Quenya: <i>Nai elen siluva lyenna</i>.
-                Sindarin: <i>Guren bêd enni</i>.
-                tlhIngan Hol: <i>Heghlu’meH QaQ jajvam?</i> (non).
-                High Valyrian: <i>Valar dohaeris</i>.
-                Lorem: ut enim ad minim veniam.
-                日本語：「選ぶ＝道具」。
-              </p>
+            <section id="ludus">
+              <h2>Ludus (fragmenta)</h2>
               <ul>
-                <li>A) “Je veux voir (IE).” — <i>cen- / tir- / cenë / kepus</i></li>
-                <li>B) “Je veux choisir (STRAT).” — Ends/Ways/Means — <i>Festina lente</i></li>
-                <li>C) “Je veux résister (HYBRID).” — multi-leviers — <i>Caveat lector</i></li>
-                <li>D) “Je veux le chaos.” — Lorem + 霧 + QInmey</li>
+                <li>tlh: <i>Qapla’</i> <span class="rune" data-token="QAPLA">Q</span></li>
+                <li>Quenya: <i>hiswë</i> · Sindarin: <i>hith</i> <span class="rune" data-token="HITH">h</span></li>
+                <li>Valyrio: <i>ānogar</i> <span class="rune" data-token="ANOGAR">ā</span></li>
+                <li>Quenya: <i>elen</i> <span class="rune" data-token="ELEN">✶</span></li>
+                <li>Lorem: <i>finibus bonorum et malorum</i></li>
               </ul>
             </section>
 
-            <section id="anchor-ie" class="chaos">
-              <h2>Intelligence économique</h2>
+            <section id="ie">
+              <h2>Intelligentia (oeconomica)</h2>
               <p>
-                FR: Veille / protection / (influence soft).
-                EN: Signals, not noise.
-                LA: <i>Non multa sed multum</i>.
-                tlh: <i>De’ lIghlu’</i>.
-                Quenya: <i>cen-</i> (voir) + <i>quet-</i> (dire).
-                Sindarin: <i>tir-</i> (observer).
-                Telerin: <i>cenë</i>.
-                HV: <i>kepus</i>.
-                Lorem: sed do eiusmod tempor.
-                日本語：「少なく深く」。
+                <i>Vigilantia</i> · <i>custodia</i> · <i>signa</i> · <i>vestigia</i> ·
+                tlh: <i>De’</i> · Quenya: <i>cen-</i> · Sindarin: <i>tir-</i> · Telerin: <i>cenë</i> ·
+                Valyrio: <i>kepus</i> · Lorem: sed do eiusmod tempor.
               </p>
-
-              <div id="anchor-ie-axes" class="hatnote">
-                Axes (dans le jeu): (1) choisir quelques sources, (2) routine courte, (3) transformer en “artefacts” (fiches).
+              <div class="hatnote" id="ie-axes">
+                <i>axis</i>: (α) pauca fontes · (β) ritus brevis · (γ) tabellae breves.
               </div>
-
               <p>
-                Lien réel (propre) :
                 <span class="ext"><span class="ico">↗</span>
                   <a data-domain="wikipedia.org" target="_blank" rel="noopener"
-                     href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">Wikipedia FR — Intelligence économique</a>
+                     href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">Intelligentia oeconomica</a>
                 </span>
+              </p>
+              <p>
+                <span class="rune" data-token="IE">ΙΕ</span>
+                <span class="rune" data-token="IE">ΙΕ</span>
+                <span class="rune" data-token="IE">ΙΕ</span>
               </p>
             </section>
 
-            <section id="anchor-strat" class="chaos">
-              <h2>Stratégie</h2>
+            <section id="strat">
+              <h2>Strategia</h2>
               <p>
-                FR: objectifs / moyens / contraintes / tempo.
-                EN: Ends / ways / means.
-                LA: <i>Festina lente</i>.
-                tlh: <i>yIlo’</i> (use).
-                Quenya: <i>lúmë</i> (temps).
-                Sindarin: <i>thangail</i> (keep what matters).
-                Telerin: <i>lindë</i> (rythme).
-                HV: <i>Vestri iksos issa</i>.
-                Lorem: quis nostrud exercitation.
-                日本語：「悪い日でもできる計画」。
+                <i>finis</i> · <i>viae</i> · <i>instrumenta</i> · <i>tempus</i> ·
+                tlh: <i>yIlo’</i> · Quenya: <i>lúmë</i> · Sindarin: <i>thangail</i> ·
+                Telerin: <i>lindë</i> · Valyrio: <i>vestri</i> · Lorem: quis nostrud exercitation.
               </p>
-
-              <div id="anchor-strat-concepts" class="hatnote">
-                Concepts: réduire le monde à 3–4 colonnes, puis itérer (artefacts > intentions).
+              <div class="hatnote" id="strat-nota">
+                <i>nota</i>: parva forma · iterare · stabilire.
               </div>
-
               <p>
-                Lien réel :
                 <span class="ext"><span class="ico">↗</span>
                   <a data-domain="wikipedia.org" target="_blank" rel="noopener"
-                     href="https://en.wikipedia.org/wiki/Strategy">Wikipedia EN — Strategy</a>
+                     href="https://en.wikipedia.org/wiki/Strategy">Strategia</a>
                 </span>
+              </p>
+              <p>
+                <span class="rune" data-token="STRAT">Σ</span>
+                <span class="rune" data-token="STRAT">Σ</span>
               </p>
             </section>
 
-            <section id="anchor-hybrid" class="chaos">
-              <h2>Guerre hybride</h2>
+            <section id="hyb">
+              <h2>Hybridum</h2>
               <p>
-                FR: mélange de leviers (information, économie, cyber, diplomatie) — au niveau conceptuel.
-                EN: Hybrid environments blend instruments.
-                LA: <i>Caveat emptor</i> (vendeurs de peur).
-                tlh: <i>QInmey</i> (messages).
-                Quenya: <i>hiswë</i> (brume).
-                Sindarin: <i>hith</i>.
-                Telerin: <i>lómë</i>.
-                HV: <i>ānogar</i>.
-                Lorem: perspiciatis unde omnis.
-                日本語：「日付・証拠・比較」。
+                <i>instrumenta mixta</i> · <i>narrationes</i> · <i>signa</i> · <i>comparatio</i> ·
+                tlh: <i>QInmey</i> · Quenya: <i>hiswë</i> · Sindarin: <i>hith</i> · Telerin: <i>lómë</i> ·
+                Valyrio: <i>ānogar</i> · Lorem: perspiciatis unde omnis.
               </p>
-
-              <div id="anchor-hybrid-lecture" class="hatnote">
-                Lecture critique (dans le jeu): dater, recouper, citer, ralentir. Hybride ≠ “tout est complot”.
+              <div class="hatnote" id="hyb-lectio">
+                <i>lectio</i>: dies · fontes · collatio · tarditas.
               </div>
-
               <p>
-                Liens réels :
                 <span class="ext"><span class="ico">↗</span>
                   <a data-domain="wikipedia.org" target="_blank" rel="noopener"
-                     href="https://en.wikipedia.org/wiki/Hybrid_warfare">Wikipedia EN — Hybrid warfare</a>
+                     href="https://en.wikipedia.org/wiki/Hybrid_warfare">Bellum hybridum</a>
                 </span>
                 ·
                 <span class="ext"><span class="ico">↗</span>
                   <a data-domain="nato.int" target="_blank" rel="noopener"
-                     href="https://www.nato.int/cps/en/natohq/topics_156338.htm">NATO — hybrid threats topic</a>
+                     href="https://www.nato.int/cps/en/natohq/topics_156338.htm">Argumentum NATO</a>
                 </span>
+              </p>
+              <p>
+                <span class="rune" data-token="HYBRID">Η</span>
+                <span class="rune" data-token="HYBRID">Η</span>
               </p>
             </section>
 
-            <section id="anchor-jp" class="jp chaos">
-              <h3>セクション（日本語）— あなたのリンク置き場（目立つ）</h3>
-              <p>赤い枠。全部 <b>dl.ouaisfi.eu/haha</b>（ここを差し替え）。</p>
+            <section id="jp" class="jp">
+              <h2>日本語</h2>
+              <p>赤い枠。リンク置き場。<b>dl.ouaisfi.eu/haha</b></p>
               <ul>
                 <li><span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a></span></li>
                 <li><span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a></span></li>
                 <li><span class="ext"><span class="ico">↗</span><a data-domain="dl.ouaisfi.eu" target="_blank" rel="noopener" href="https://dl.ouaisfi.eu/haha">dl.ouaisfi.eu/haha</a></span></li>
               </ul>
+              <p>
+                <span class="rune" data-token="JP">日</span>
+                <span class="rune" data-token="JP">日</span>
+              </p>
             </section>
 
-            <!-- HUGE WALL (procedural) -->
-            <section id="anchor-wall" class="chaos">
-              <h2>Mur de texte (x3) — chaos procédural</h2>
-              <p class="subtitle">Tu n’es pas censé “comprendre”. Tu es censé <b>trier</b> (quêtes) puis activer ORDER.</p>
-              <div id="wall" style="font-family:var(--mono);font-size:13px;white-space:pre-wrap;"></div>
+            <section id="mur">
+              <h2>Mur</h2>
+              <div id="wall" class="wall"></div>
+              <p>
+                <span class="rune" data-token="ORDER">Ω</span>
+                <span class="rune" data-token="ORDER">Ω</span>
+              </p>
             </section>
 
-            <section id="anchor-refs" class="refs chaos">
-              <h2>Références</h2>
+            <section id="refs" class="refs">
+              <h2>Fontes</h2>
               <ol>
-                <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">Wikipedia FR — Intelligence économique</a></span></li>
-                <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Strategy">Wikipedia EN — Strategy</a></span></li>
-                <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hybrid_warfare">Wikipedia EN — Hybrid warfare</a></span></li>
-                <li><span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener" href="https://www.nato.int/cps/en/natohq/topics_156338.htm">NATO — Hybrid threats topic</a></span></li>
+                <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://fr.wikipedia.org/wiki/Intelligence_%C3%A9conomique">Intelligentia oeconomica</a></span></li>
+                <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Strategy">Strategia</a></span></li>
+                <li><span class="ext"><span class="ico">↗</span><a data-domain="wikipedia.org" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Hybrid_warfare">Bellum hybridum</a></span></li>
+                <li><span class="ext"><span class="ico">↗</span><a data-domain="nato.int" target="_blank" rel="noopener" href="https://www.nato.int/cps/en/natohq/topics_156338.htm">Argumentum NATO</a></span></li>
               </ol>
-
               <div class="cats">
-                Catégories :
-                <a href="#anchor-ie">Intelligence économique</a>
-                <a href="#anchor-strat">Stratégie</a>
-                <a href="#anchor-hybrid">Guerre hybride</a>
-                <a href="#anchor-jp">日本語</a>
-                <a href="#anchor-wall">CYOA</a>
+                Categoriae:
+                <a href="#ie">Intelligentia</a>
+                <a href="#strat">Strategia</a>
+                <a href="#hyb">Hybridum</a>
+                <a href="#jp">日本語</a>
+                <a href="#mur">Mur</a>
               </div>
             </section>
+
+            <div class="hatnote clean locked" id="cleanView">
+              <i>pagina restituta</i>
+            </div>
           </div>
 
-          <!-- INFOBOX -->
           <aside>
             <div class="infobox">
-              <div class="hd">Fiche (simulation)</div>
+              <div class="hd">Tabella</div>
               <div class="bd">
                 <dl>
-                  <dt>Type</dt><dd>Clone Wikipédia + Quêtes + Brouillard</dd>
-                  <dt>But</dt><dd>Remettre de l’ordre (compétences de tri)</dd>
-                  <dt>Langues</dt><dd>FR/EN/LA/tlh/Elfiques+/HV/Lorem/JP</dd>
-                  <dt>Ordre requis</dt><dd><span class="kbd">IE</span>→<span class="kbd">STRAT</span>→<span class="kbd">HYBRID</span>→<span class="kbd">JP</span>→<span class="kbd">ORDER</span></dd>
-                  <dt>JP liens</dt><dd><a href="#anchor-jp">dl.ouaisfi.eu/haha</a></dd>
-                  <dt>Konami</dt><dd><span class="kbd">↑↑↓↓←→←→BA</span></dd>
+                  <dt>Genus</dt><dd>Simulatio “Wikipedia” + nebulam + runas</dd>
+                  <dt>Linguae</dt><dd>LA · tlh · Q · S · T · AV · HV · Lorem · 日本語</dd>
+                  <dt>Signa</dt><dd>↗ + dominium in supervolatu</dd>
+                  <dt>JP</dt><dd><a href="#jp">dl.ouaisfi.eu/haha</a></dd>
+                  <dt>Glyphi</dt><dd>ΙΕ / Σ / Η / 日 / Ω</dd>
                 </dl>
               </div>
             </div>
 
-            <div class="hatnote" style="margin-top:10px">
-              <b>Note</b> : Tu peux gagner les quêtes en tapant les ancres (Enter) ou en cliquant les runes.
-            </div>
-
-            <div class="hatnote locked" id="unlockNote">
-              <b>Verrouillage</b> : le Sommaire et certains effets ne se débloquent qu’en suivant l’ordre.
+            <div class="hatnote locked" id="lockBox">
+              <span class="rune" data-token="IE">ΙΕ</span>
+              <span class="rune" data-token="STRAT">Σ</span>
+              <span class="rune" data-token="HYBRID">Η</span>
+              <span class="rune" data-token="JP">日</span>
+              <span class="rune" data-token="ORDER">Ω</span>
             </div>
           </aside>
         </div>
-
-        <!-- ORDERED “CLEAN VIEW” (locked until ORDER) -->
-        <div class="hatnote locked" id="orderedView">
-          <b>Vue ordonnée</b> (déverrouillée après ORDER) : tu passes du chaos à une lecture “propre”.
-          <br><span class="clarity">Indice: quand ORDER est validé, le brouillard se coupe et la page devient sélectionnable.</span>
-        </div>
       </div>
 
-      <!-- DISCUSSION -->
-      <div class="pane hidden" id="tab-discussion">
-        <h1 class="articleTitle">Discussion</h1>
-        <p class="subtitle">Page de discussion (simulation) — encore brumeuse.</p>
-        <div class="hatnote">
-          “Ce n’est pas un manuel, c’est un exercice de lecture/tri.” — “Not a playbook.”
+      <!-- TALK -->
+      <div class="pane hidden" id="tab-talk">
+        <h1 class="articleTitle">Colloquium</h1>
+        <div class="hatnote chaos">
+          <i>Caveat lector</i> · tlh: <i>QInmey tIbuS</i> · Quenya: <i>cen-</i> · Sindarin: <i>tir-</i> · Lorem.
         </div>
         <p class="chaos">
-          FR: garder conceptuel. EN: keep it conceptual. LA: <i>Caveat lector</i>.
-          tlh: <i>QInmey tIbuS</i>. Quenya: <i>cen-</i>. Sindarin: <i>tir-</i>. Telerin: <i>cenë</i>. HV: <i>ānogar</i>. Lorem: sed do eiusmod.
+          <i>Fragmenta · notae · murmura · lómë · hiswë · elen · ānogar · Qapla’</i>.
+          <span class="rune" data-token="NYXO">!NYXO</span>
         </p>
       </div>
 
       <!-- HISTORY -->
       <div class="pane hidden" id="tab-history">
-        <h1 class="articleTitle">Historique</h1>
-        <p class="subtitle">Historique fictif (simulation Wikipédia).</p>
-        <div class="hatnote locked" id="histLock">
-          Historique verrouillé : déverrouille au moins <b>HYBRID</b> (Q3) ou Konami.
-        </div>
+        <h1 class="articleTitle">Historia</h1>
+        <div class="hatnote locked" id="histLock">⟂</div>
         <div class="hatnote unlocked hidden" id="histOpen">
-          <b>Historique (fictif)</b> : 12 révisions — “ajout du brouillard”, “ajout des runes”, “ajout JP”, “réfs”.
+          <ul class="chaos">
+            <li>rev. XII — <i>nebula addita</i></li>
+            <li>rev. XI — <i>runae dispersae</i></li>
+            <li>rev. X — <i>mur textuum</i></li>
+            <li>rev. IX — <i>日本語枠</i></li>
+          </ul>
         </div>
       </div>
 
       <!-- SOURCE -->
       <div class="pane hidden" id="tab-source">
-        <h1 class="articleTitle">Source</h1>
-        <p class="subtitle">Résumé des règles (simulation).</p>
-        <ul>
-          <li>Mode Brouillard = incompréhension volontaire.</li>
-          <li>Quêtes = IE → STRAT → HYBRID → JP → ORDER.</li>
-          <li>ORDER = passage en “restore mode” (lecture propre).</li>
-          <li>Liens externes = toujours signalés ↗ + domaine au survol.</li>
-        </ul>
+        <h1 class="articleTitle">Fons</h1>
+        <pre class="chaos" style="white-space:pre-wrap;font-family:var(--mono);font-size:13px">
+lorem(nebula) + runae(ΙΕ→Σ→Η→日→Ω) + pagina_unica
+        </pre>
       </div>
     </section>
   </div>
@@ -549,17 +432,18 @@
   const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const toast = $("#toast");
 
+  function ping(){ /* silent */ }
   function showToast(msg){
     toast.textContent = msg;
     toast.classList.add("show");
-    setTimeout(()=>toast.classList.remove("show"), 1200);
+    setTimeout(()=>toast.classList.remove("show"), 700);
   }
 
-  // Tabs (Wikipedia-ish)
+  // Tabs
   const tabs = $$(".tab");
   const panes = {
     article: $("#tab-article"),
-    discussion: $("#tab-discussion"),
+    talk: $("#tab-talk"),
     history: $("#tab-history"),
     source: $("#tab-source")
   };
@@ -570,114 +454,42 @@
     panes[t.dataset.tab].classList.remove("hidden");
   }));
 
-  // Fog toggle
-  const fogBtn = $("#fogBtn");
+  // Buttons are glyph-only (no hints)
   let fog = true;
-  fogBtn.addEventListener("click", () => {
+  $("#fogBtn").addEventListener("click", () => {
     fog = !fog;
     document.body.classList.toggle("fog", fog);
-    fogBtn.textContent = "Brouillard: " + (fog ? "ON" : "OFF");
-    showToast(fog ? "Brouillard activé." : "Brouillard désactivé.");
+    // no explanatory text
   });
 
-  // Procedural "x3" wall (big but fast)
+  // Procedural wall (long)
   const wall = $("#wall");
-  const VOLUME = 220; // increase to make it even longer
+  const VOLUME = 360; // long
   const BLOCK = 6;
 
   const pools = {
-    FR:[
-      "Le signal n’est pas une opinion, c’est une trace.",
-      "Le brouillard est une pédagogie, pas une punition.",
-      "La clarté fabrique des options.",
-      "Un plan doit survivre à un mauvais jour.",
-      "Transformer = fiche courte + date + source."
-    ],
-    EN:[
-      "Noise is infinite; attention is scarce.",
-      "Agency follows comprehension.",
-      "Ship a small artifact, then iterate.",
-      "A map is not a territory—still useful.",
-      "Stabilize to strategize."
-    ],
-    LA:[
-      "Scientia potentia est.",
-      "Festina lente.",
-      "Caveat lector.",
-      "Non multa sed multum.",
-      "Primum vivere, deinde philosophari."
-    ],
-    TLH:[
-      "bIvalbe’ ‘e’ yImev.",
-      "Qapla’ (post laborem).",
-      "De’ lIghlu’.",
-      "yInlIj yIchenmoH.",
-      "QInmey tIbuS."
-    ],
-    Q:[
-      "Elen síla lúmenn’ omentielvo.",
-      "Nai elen siluva lyenna.",
-      "Hiswë mi lúmë.",
-      "Cen- quet-.",
-      "Lúmë ná turë."
-    ],
-    S:[
-      "Mae govannen, mellon.",
-      "Hith suilad.",
-      "Tir i chent.",
-      "Thangail: keep what matters.",
-      "Caro an i-’lam."
-    ],
-    T:[
-      "Elen síla i lómë.",
-      "Lindë: tempo as tool.",
-      "Cenë i tecil.",
-      "Nórëa: place as network.",
-      "Lómë is curriculum."
-    ],
-    AV:[
-      "naí… elen… (fragmentum).",
-      "hith-quen… (styl.)",
-      "tir-quen… (styl.)",
-      "cen-quen… (styl.)",
-      "mellon… (echo)"
-    ],
-    HV:[
-      "Skoros ñuhyz syt?",
-      "Ānogar isse.",
-      "Valar dohaeris.",
-      "Vestri iksos issa.",
-      "Kepus, ñuhyz."
-    ],
-    LOREM:[
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
-      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.",
-      "Excepteur sint occaecat cupidatat non proident."
-    ],
-    JP:[
-      "日本語：霧は学習の環境。",
-      "日本語：順番が大事（IE→STRAT→HYBRID→JP→ORDER）。",
-      "日本語：証拠＝日付＋出典＋比較。",
-      "日本語：少しずつ、確実に。",
-      "日本語：混乱から秩序へ。"
-    ]
+    LA:["Ordo ab chao.","Non multa sed multum.","Festina lente.","Caveat lector.","Primum vivere."],
+    TLH:["bIvalbe’ ‘e’ yImev.","De’ lIghlu’.","QInmey tIbuS.","yInlIj yIchenmoH.","Qapla’."],
+    Q:["Elen síla lúmenn’ omentielvo.","Nai elen siluva lyenna.","Hiswë mi lúmë.","Cen- quet-.","Lúmë ná turë."],
+    S:["Mae govannen, mellon.","Hith suilad.","Tir i chent.","Thangail.","Caro an i-’lam."],
+    T:["Elen síla i lómë.","Lindë.","Cenë i tecil.","Nórëa.","Lómë."],
+    AV:["naí… elen…","hith-quen…","tir-quen…","cen-quen…","mellon…"],
+    HV:["Skoros ñuhyz syt?","Ānogar isse.","Valar dohaeris.","Vestri iksos issa.","Kepus, ñuhyz."],
+    L:["Lorem ipsum dolor sit amet.","Sed do eiusmod tempor incididunt.","Ut enim ad minim veniam.","Duis aute irure dolor.","Excepteur sint occaecat."],
+    JP:["日本語：霧。","日本語：順番。","日本語：比較。","日本語：日付。","日本語：断片。"]
   };
   const pick = (arr)=>arr[Math.floor(Math.random()*arr.length)];
+
   let out = [];
-  out.push("—[MUR]— Tu lis dans le chaos; tu gagnes par le tri. (runes cachées en clair, pas de piège)\n\n");
   for(let i=1;i<=VOLUME;i++){
-    const injectRune =
-      (i%37===0) ? `  <span class="rune" data-token="IE">IE</span>` :
-      (i%53===0) ? `  <span class="rune" data-token="STRAT">STRAT</span>` :
-      (i%71===0) ? `  <span class="rune" data-token="HYBRID">HYBRID</span>` :
-      (i%89===0) ? `  <span class="rune" data-token="JP">JP</span>` :
-      (i%101===0)? `  <span class="rune" data-token="ORDER">ORDER</span>` : "";
+    const inject =
+      (i%73===0) ? ` <span class="rune" data-token="IE">ΙΕ</span>` :
+      (i%97===0) ? ` <span class="rune" data-token="STRAT">Σ</span>` :
+      (i%131===0)? ` <span class="rune" data-token="HYBRID">Η</span>` :
+      (i%167===0)? ` <span class="rune" data-token="JP">日</span>` :
+      (i%199===0)? ` <span class="rune" data-token="ORDER">Ω</span>` : "";
     out.push(
       `—[${String(i).padStart(3,"0")}]— `+
-      `FR:${pick(pools.FR)} `+
-      `EN:${pick(pools.EN)} `+
       `LA:${pick(pools.LA)} `+
       `tlh:${pick(pools.TLH)} `+
       `Q:${pick(pools.Q)} `+
@@ -685,152 +497,108 @@
       `T:${pick(pools.T)} `+
       `AV:${pick(pools.AV)} `+
       `HV:${pick(pools.HV)} `+
-      `Lorem:${pick(pools.LOREM)} `+
-      `${pick(pools.JP)}${injectRune}\n`
+      `L:${pick(pools.L)} `+
+      `${pick(pools.JP)}${inject}\n`
     );
     if(i%BLOCK===0) out.push("\n");
   }
   wall.innerHTML = out.join("");
 
-  // QUESTS
-  const cmd = $("#cmd");
-  const hint = $("#hint");
-  const toc = $("#toc");
-  const orderedView = $("#orderedView");
-  const unlockNote = $("#unlockNote");
-  const histLock = $("#histLock");
-  const histOpen = $("#histOpen");
-
-  const chips = {
-    IE: $("#cIE"),
-    STRAT: $("#cSTRAT"),
-    HYBRID: $("#cHYB"),
-    JP: $("#cJP"),
-    ORDER: $("#cORD"),
-    BONUS: $("#cBONUS")
-  };
-  const meter = $("#meter");
-  const stepEl = $("#step");
-
+  // Hidden quest chain (no hints on screen)
   const steps = ["IE","STRAT","HYBRID","JP","ORDER"];
-  const bonus = ["NYXO","642","ELEN","HITH","ANOGAR","QAPLA"];
   let stepIndex = 0;
   const collected = new Set();
 
-  function updateProgress(){
-    steps.forEach(s=>{
-      chips[s].classList.toggle("on", collected.has(s));
-    });
-    const done = steps.filter(s=>collected.has(s)).length;
-    const pct = Math.round((done/steps.length)*100);
-    meter.style.width = pct + "%";
-    stepEl.textContent = "Q"+(stepIndex+1) + " ("+(steps[stepIndex]||"DONE")+")";
+  const toc = $("#toc");
+  const cleanView = $("#cleanView");
+  const lockBox = $("#lockBox");
+  const histLock = $("#histLock");
+  const histOpen = $("#histOpen");
 
-    // Unlocks
+  function applyUnlocks(){
     if(collected.has("IE")){
       toc.classList.remove("locked"); toc.classList.add("unlocked");
-      unlockNote.classList.remove("locked"); unlockNote.classList.add("unlocked");
+      lockBox.classList.remove("locked"); lockBox.classList.add("unlocked");
     }
     if(collected.has("HYBRID")){
       histLock.classList.add("hidden");
       histOpen.classList.remove("hidden");
+      histOpen.classList.remove("hidden");
+      histOpen.classList.add("unlocked");
     }
     if(collected.has("ORDER")){
       document.body.classList.add("restore");
       document.body.classList.remove("fog");
       fog = false;
-      fogBtn.textContent = "Brouillard: OFF";
-      orderedView.classList.remove("locked"); orderedView.classList.add("unlocked");
-      showToast("ORDER: la page redevient lisible (restore mode).");
+      cleanView.classList.remove("locked"); cleanView.classList.add("unlocked");
     }
   }
 
-  function award(token, source){
+  function award(token){
     token = token.toUpperCase();
-    if(collected.has(token)){ showToast("Déjà pris: "+token); return; }
+    if(collected.has(token)) return;
 
-    // Main steps must be in order
+    // strict order for main steps; no hint, no message
     if(steps.includes(token)){
       const expected = steps[stepIndex];
       if(token !== expected){
-        showToast("Mauvais ordre. Attendu: "+expected);
-        // Punish: fog ON
+        // punishment: re-fog
         document.body.classList.add("fog");
         fog = true;
-        fogBtn.textContent = "Brouillard: ON";
         return;
       }
       collected.add(token);
       stepIndex++;
-      showToast("Quête validée: "+token);
-      updateProgress();
+      applyUnlocks();
       return;
     }
 
-    // Bonus: mark BONUS chip
-    if(bonus.includes(token)){
-      collected.add(token);
-      chips.BONUS.classList.add("on");
-      showToast("Bonus: "+token);
-      return;
-    }
-
-    showToast("Bruit.");
+    // bonus: silent
+    collected.add(token);
+    applyUnlocks();
   }
-
-  // Commands
-  cmd.addEventListener("keydown",(e)=>{
-    if(e.key!=="Enter") return;
-    const v=(cmd.value||"").trim().toUpperCase();
-    if(!v){ showToast("Tape une commande."); return; }
-    const main = steps.find(s=>v.includes(s));
-    const bon = bonus.find(b=>v.includes(b));
-    if(main) award(main,"cmd");
-    else if(bon) award(bon,"cmd");
-    else showToast("Attendu: "+(steps[stepIndex]||"DONE"));
-    cmd.select();
-  });
-
-  // Hints
-  hint.addEventListener("click",()=>{
-    showToast("Indice: "+(steps[stepIndex]||"DONE")+" (ordre strict).");
-    cmd.focus();
-  });
-
-  // Reset
-  $("#reset").addEventListener("click",()=>{
-    stepIndex=0;
-    collected.clear();
-    Object.values(chips).forEach(c=>c.classList.remove("on"));
-    meter.style.width="0%";
-    toc.classList.add("locked"); toc.classList.remove("unlocked");
-    orderedView.classList.add("locked"); orderedView.classList.remove("unlocked");
-    unlockNote.classList.add("locked"); unlockNote.classList.remove("unlocked");
-    histOpen.classList.add("hidden");
-    histLock.classList.remove("hidden");
-    document.body.classList.remove("restore");
-    document.body.classList.add("fog");
-    fog = true;
-    fogBtn.textContent="Brouillard: ON";
-    $$(".rune.taken").forEach(r=>r.classList.remove("taken"));
-    updateProgress();
-    showToast("Reset.");
-  });
 
   // Rune clicks
   document.addEventListener("click",(e)=>{
     const r = e.target.closest(".rune");
     if(!r) return;
     if(r.classList.contains("taken")) return;
-    const token = r.getAttribute("data-token") || r.textContent;
+    const token = r.getAttribute("data-token") || "";
     const before = collected.size;
-    award(token,"rune");
-    if(collected.has(token.toUpperCase()) && collected.size!==before){
+    award(token);
+    if(collected.size !== before){
       r.classList.add("taken");
     }
   });
 
-  // Konami => unlock all
+  // Command input (glyph-only placeholder); accepts tokens, still no hints
+  const cmd = $("#cmd");
+  cmd.addEventListener("keydown",(e)=>{
+    if(e.key!=="Enter") return;
+    const v=(cmd.value||"").trim().toUpperCase();
+    if(!v) return;
+    const hit = steps.find(s=>v.includes(s)) || ["NYXO","642","ELEN","HITH","ANOGAR","QAPLA"].find(b=>v.includes(b));
+    if(hit) award(hit);
+    cmd.value = "⌁";
+    cmd.select();
+  });
+
+  // Reset (silent)
+  $("#reset").addEventListener("click",()=>{
+    stepIndex = 0;
+    collected.clear();
+    toc.classList.add("locked"); toc.classList.remove("unlocked");
+    cleanView.classList.add("locked"); cleanView.classList.remove("unlocked");
+    lockBox.classList.add("locked"); lockBox.classList.remove("unlocked");
+    histOpen.classList.add("hidden");
+    histLock.classList.remove("hidden");
+    document.body.classList.remove("restore");
+    document.body.classList.add("fog");
+    fog = true;
+    $$(".rune.taken").forEach(x=>x.classList.remove("taken"));
+  });
+
+  // Konami unlock (still silent)
   const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
   let kpos = 0;
   window.addEventListener("keydown",(e)=>{
@@ -842,14 +610,13 @@
         kpos=0;
         steps.forEach(s=>collected.add(s));
         stepIndex = steps.length;
-        updateProgress();
-        showToast("Konami: tout déverrouillé.");
+        applyUnlocks();
       }
     } else kpos=0;
   });
 
-  // init
-  updateProgress();
+  // Start: no extra text
+  cmd.value = "⌁";
 })();
 </script>
 </body>
