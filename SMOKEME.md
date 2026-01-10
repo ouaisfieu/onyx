@@ -100,8 +100,8 @@ Tu vas vite gagner en puissance si tu normalises 15–20 types max :
 
 Exemples dans ta source :
 
-* Le lieu “Tarot” (Babel’zin) est “Lieu de liens du SSM Le Grès” + horaires + équipe + réseau + activités 
-* “L’Entr’Act” a “Organisation porteuse : Centre L’Orée + WOPS …” 
+* Le lieu “Tarot” (Tarot) est “Lieu de liens du SSM Le Grès” + horaires + équipe + réseau + activités 
+* “L’Entr’Act” a “Organisation porteuse : Centre L’Orée + Astro …” 
 * Les réseaux Psy 107 (RÉZONE, NORWEST, HERMES+, BRUXELLES-EST) ont territoires, siège, contacts, et “lieux de liens associés” 
 * Organismes de coordination (LBSM, PBSM-BPGG, Brusano, Vivalis) avec rôles et contacts 
 
@@ -122,7 +122,7 @@ Ensuite ton toggle “Noms réels” se contente de choisir quel label afficher.
 ## 4) Exemple de fichier master JSON (structure + premiers objets utiles)
 
 > Ci-dessous : **un squelette importable** + **un noyau minimal** (Tarot + un lieu lié à Astro + réseaux Psy 107 + coordos).
-> Je laisse “Astro” comme **entité codée** (sans nommer). La relation “co-portage” existe parce que la source dit “Centre L’Orée + WOPS …”  (et on mappe WOPS → Astro côté jeu).
+> Je laisse “Astro” comme **entité codée** (sans nommer). La relation “co-portage” existe parce que la source dit “Centre L’Orée + Astro …”  (et on mappe Astro → Astro côté jeu).
 
 ```json
 {
@@ -234,7 +234,7 @@ Ensuite ton toggle “Noms réels” se contente de choisir quel label afficher.
           "key": "note",
           "value": "Entité codée (mapping côté jeu). Liée à un lieu via co-portage.",
           "confidence": 0.8,
-          "evidence": [{ "sourceId": "src_md_ldlplus_2024_2025", "ref": "L'Entr'Act / Organisation porteuse mentionne WOPS" }]
+          "evidence": [{ "sourceId": "src_md_ldlplus_2024_2025", "ref": "L'Entr'Act / Organisation porteuse mentionne Astro" }]
         }
       ]
     },
@@ -345,7 +345,7 @@ Ensuite ton toggle “Noms réels” se contente de choisir quel label afficher.
       "from": "ent_place_weekend_01",
       "to": "ent_astro",
       "confidence": 0.9,
-      "evidence": [{ "sourceId": "src_md_ldlplus_2024_2025", "ref": "L'Entr'Act / Organisation porteuse: Centre L'Orée + WOPS (mappé → Astro)" }]
+      "evidence": [{ "sourceId": "src_md_ldlplus_2024_2025", "ref": "L'Entr'Act / Organisation porteuse: Centre L'Orée + Astro (mappé → Astro)" }]
     }
   ],
 
@@ -356,7 +356,7 @@ Ensuite ton toggle “Noms réels” se contente de choisir quel label afficher.
 }
 ```
 
-Les “preuves” viennent directement de ton fichier de référence (Babel’zin, L’Entr’Act, réseaux, coordos).    
+Les “preuves” viennent directement de ton fichier de référence (Tarot, L’Entr’Act, réseaux, coordos).    
 
 ---
 
@@ -390,7 +390,7 @@ LBSM, PBSM-BPGG, Brusano, Vivalis : utiles pour “liens structurels” et “qu
 ## 6) Règle d’or “vrai vs risqué”
 
 * **Si c’est écrit explicitement dans la source** : confidence **1.0**
-* **Si tu fais un mapping “jeu” (ex: WOPS → Astro)** : confidence **0.9** mais avec `evidence.ref` clair (pour audit)
+* **Si tu fais un mapping “jeu” (ex: Astro → Astro)** : confidence **0.9** mais avec `evidence.ref` clair (pour audit)
 * **Si tu infères** (ex: “ce lieu est plutôt orienté X”) : confidence **0.6** et tag `needs_review:true`
 
 ---
