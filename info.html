@@ -1,1 +1,332 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Recherche avancée Google — Guide multilingue (FR + EN + Latin + tlhIngan Hol + Elfiques + Haut valyrien + Lorem + 日本語)</title>
+<style>
+  :root{
+    --bg:#0b1020;
+    --paper:rgba(255,255,255,.06);
+    --paper2:rgba(255,255,255,.08);
+    --ink:#e8f0ff;
+    --mut:#a9b4d0;
+    --line:rgba(255,255,255,.14);
+    --good:#8fffd2;
+    --lilac:#c7a8ff;
+    --warn:#ffd27a;
+    --bad:#ff7aa5;
+    --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    --sans: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Noto Sans",Arial,sans-serif;
+    --grad: linear-gradient(90deg,var(--good),var(--lilac));
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:radial-gradient(1200px 800px at 20% 0%, rgba(199,168,255,.18), transparent 60%),
+                           radial-gradient(1200px 800px at 80% 10%, rgba(143,255,210,.12), transparent 55%),
+                           var(--bg);
+            color:var(--ink);font-family:var(--sans);line-height:1.55}
+  a{color:var(--good);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+  header{
+    background:var(--paper);border:1px solid var(--line);border-radius:18px;
+    padding:16px;box-shadow:0 0 60px rgba(0,0,0,.45)
+  }
+  h1{margin:0;font-size:22px;letter-spacing:.06em}
+  h1 .g{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .sub{margin:8px 0 0;color:var(--mut);font-size:13px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+  .chip{border:1px solid var(--line);background:rgba(0,0,0,.18);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--mut)}
+  .btn{
+    cursor:pointer;border:1px solid var(--line);background:rgba(0,0,0,.18);
+    color:var(--ink);border-radius:14px;padding:9px 12px;font-size:13px
+  }
+  .btn:hover{border-color:rgba(255,255,255,.28)}
+  .btn.primary{border:0;background:var(--grad);color:#061017;font-weight:900}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  section{
+    background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:14px
+  }
+  h2{margin:0 0 10px;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--lilac)}
+  p{margin:8px 0;color:var(--ink)}
+  .mut{color:var(--mut)}
+  .mono{font-family:var(--mono)}
+  .code{
+    background:rgba(0,0,0,.26);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px;
+    overflow:auto;
+    font-family:var(--mono);
+    font-size:12px;
+    line-height:1.5;
+    color:#eafff7;
+  }
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .kbd{
+    display:inline-block;
+    padding:.12rem .5rem;
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:10px;
+    background:rgba(0,0,0,.22);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--good);
+  }
+  .tip{
+    border-left:6px solid var(--good);
+    background:rgba(16,185,129,.10);
+    border:1px solid rgba(16,185,129,.25);
+    border-radius:16px;
+    padding:10px 12px;
+    margin-top:10px;
+  }
+  .warn{
+    border-left:6px solid var(--warn);
+    background:rgba(255,210,122,.10);
+    border:1px solid rgba(255,210,122,.25);
+    border-radius:16px;
+    padding:10px 12px;
+    margin-top:10px;
+    color:var(--ink);
+  }
+  .bad{
+    border-left:6px solid var(--bad);
+    background:rgba(255,122,165,.10);
+    border:1px solid rgba(255,122,165,.25);
+    border-radius:16px;
+    padding:10px 12px;
+    margin-top:10px;
+  }
+  .langTabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .tab{
+    border:1px solid var(--line);background:rgba(0,0,0,.18);
+    border-radius:999px;padding:6px 10px;font-size:12px;color:var(--mut);
+    cursor:pointer;user-select:none
+  }
+  .tab.active{border:0;background:var(--grad);color:#061017;font-weight:900}
+  .langPane{display:none;margin-top:10px}
+  .langPane.active{display:block}
+  footer{margin:14px 0 0;color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1><span class="g">Recherche avancée sur Google</span> — guide multilingue</h1>
+    <div class="sub">
+      Objectif : apprendre à formuler des requêtes précises (OSINT “propre”) en utilisant les opérateurs Google.
+      <span class="mut">Inclut nos langues: FR (correct), EN, Latin, tlhIngan Hol, Elfiques (Quenya/Sindarin/Telerin/Avari-ish), Haut valyrien, Lorem, 日本語.</span>
+    </div>
+    <div class="bar">
+      <span class="chip">Niveau: débutant → avancé</span>
+      <span class="chip">Usage: veille, sources, recoupement</span>
+      <button class="btn primary" id="copyPack">Copier un pack d’exemples</button>
+      <button class="btn" id="toggleCheat">Afficher/Masquer mémo opérateurs</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section>
+      <h2>1) Français — l’essentiel (clair, concret)</h2>
+      <p>
+        La recherche avancée consiste à <b>contraindre</b> Google : tu dis où chercher, quoi inclure, quoi exclure,
+        et tu <b>réduis le bruit</b>. Tu peux combiner plusieurs opérateurs dans une même requête.
+      </p>
+
+      <div class="code mono" id="cheat" style="display:none">
+Opérateurs clés (Google) :
+- "phrase exacte"           → chercher l’expression exacte
+- mot1 OR mot2              → l’un OU l’autre
+- -mot                      → exclure un terme
+- site:exemple.org          → limiter à un site ou domaine
+- filetype:pdf              → limiter à un type de fichier (pdf, docx, xls, ppt…)
+- intitle:mot               → mot dans le titre
+- inurl:mot                 → mot dans l’URL
+- intext:mot                → mot dans le texte
+- (mot1 mot2)               → grouper / prioriser
+- 2023..2025                → plage d’années (ou nombres)
+- before:YYYY-MM-DD         → avant une date (si supporté)
+- after:YYYY-MM-DD          → après une date (si supporté)
+      </div>
+
+      <p class="mut"><b>Règle d’or</b> : commence simple, puis ajoute 1 contrainte à la fois.</p>
+
+      <div class="tip">
+        <b>Mini-méthode (en 4 lignes)</b><br>
+        1) Définis le sujet en 3 mots.<br>
+        2) Ajoute <span class="kbd">site:</span> (source) OU <span class="kbd">filetype:</span> (format).<br>
+        3) Ajoute des guillemets pour une expression clé.<br>
+        4) Exclue le bruit avec <span class="kbd">-</span> et teste 2–3 variantes.
+      </div>
+
+      <div class="warn">
+        <b>Important</b> : Google n’est pas “neutre” (classement, personnalisation, SEO). Pour recouper :
+        teste aussi d’autres moteurs (DuckDuckGo, Brave, Startpage) et les sites sources directement.
+      </div>
+    </section>
+
+    <section>
+      <h2>2) Exemples prêts à copier (grand public)</h2>
+
+      <p class="mono">A) Trouver des documents officiels (PDF) sur un thème</p>
+      <div class="code mono">site:.be filetype:pdf "rapport annuel" (association OR asbl) -stage -emploi</div>
+
+      <p class="mono">B) Chercher une page précise sans connaître l’URL</p>
+      <div class="code mono">intitle:"appel à projets" site:*.be "inclusion numérique"</div>
+
+      <p class="mono">C) Nettoyer un sujet “bruyant”</p>
+      <div class="code mono">"éducation aux médias" -twitter -x.com -facebook -instagram site:.org</div>
+
+      <p class="mono">D) Croiser deux notions (intersection)</p>
+      <div class="code mono">("éducation permanente" OR "éducation populaire") ("jeu sérieux" OR ARG) site:.be</div>
+
+      <p class="mono">E) Chercher des présentations / supports</p>
+      <div class="code mono">filetype:ppt (atelier OR formation) "médiation numérique" site:.be</div>
+
+      <div class="bad">
+        <b>Astuce anti-bullshit</b> : quand tu trouves une info, refais une requête avec
+        <span class="kbd">"citation exacte"</span> + <span class="kbd">site:</span> de la source supposée.
+        Si ça ne sort nulle part… méfiance.
+      </div>
+    </section>
+  </div>
+
+  <section>
+    <h2>3) Multilingue — même idée, différentes “voix”</h2>
+    <p class="mut">
+      Chaque bloc dit la même chose : “réduire le bruit, trouver des sources solides, recouper”.
+      (C’est un clin d’œil à notre univers, pas une traduction parfaite mot à mot.)
+    </p>
+
+    <div class="langTabs" id="tabs">
+      <div class="tab active" data-pane="fr">FR</div>
+      <div class="tab" data-pane="en">EN</div>
+      <div class="tab" data-pane="la">LA</div>
+      <div class="tab" data-pane="tlh">TLH</div>
+      <div class="tab" data-pane="elf">ELV+</div>
+      <div class="tab" data-pane="hv">HV</div>
+      <div class="tab" data-pane="lorem">LOREM</div>
+      <div class="tab" data-pane="jp">日本語</div>
+    </div>
+
+    <div class="langPane active" id="pane-fr">
+      <p><b>FR</b> — Pour chercher mieux : <b>contraints</b> ta requête (site, type de fichier, titre), puis <b>recoupe</b>.</p>
+      <div class="code mono">site:.be filetype:pdf "guide" ("médiation" OR "inclusion") -publicité -sponsor</div>
+    </div>
+
+    <div class="langPane" id="pane-en">
+      <p><b>EN</b> — Constrain the query (site, filetype, title) and cross-check sources.</p>
+      <div class="code mono">site:.be filetype:pdf "guide" ("digital inclusion" OR "media literacy") -ads -sponsored</div>
+    </div>
+
+    <div class="langPane" id="pane-la">
+      <p><b>Latin</b> — <i>Quaestio artior, responsum melior</i>: fontes restringe, strepitum exclude, et confer.</p>
+      <div class="code mono">site:.be filetype:pdf "relatio" (institutio OR consilium) -mercatura</div>
+    </div>
+
+    <div class="langPane" id="pane-tlh">
+      <p><b>tlhIngan Hol</b> — <i>De’ yInej, QInmey tIbuS, wejlogh yIqaD</i> (data seek, messages focus, check thrice).</p>
+      <div class="code mono">site:.be filetype:pdf "report" (training OR workshop) -ads</div>
+    </div>
+
+    <div class="langPane" id="pane-elf">
+      <p><b>Elfiques (pluriel)</b> — Quenya: <i>cen-</i> (voir) ; Sindarin: <i>tir-</i> (observer) ; Telerin: <i>cenë</i> ; Avari-ish: <i>elen…</i> (fragmenta).</p>
+      <div class="code mono">site:.be ("atelier" OR "céramique") filetype:pdf intitle:programme -vente</div>
+    </div>
+
+    <div class="langPane" id="pane-hv">
+      <p><b>Haut valyrien</b> — <i>Kepus, ñuhyz</i>: cherche les traces, pas les cris. <i>Ānogar</i>: ordonne ensuite.</p>
+      <div class="code mono">site:.be filetype:pdf "programme" (culture OR social) -marketing</div>
+    </div>
+
+    <div class="langPane" id="pane-lorem">
+      <p><b>Lorem</b> — Lorem ipsum: restringe, exclude, collige, confirma, iterare.</p>
+      <div class="code mono">site:.be filetype:pdf "lorem" -ipsum (guide OR manual)</div>
+    </div>
+
+    <div class="langPane" id="pane-jp">
+      <p><b>日本語</b> — 検索を「絞る」：site / filetype / 引用符、そして複数ソースで確認する。</p>
+      <div class="code mono">site:.be filetype:pdf "ガイド" ("デジタル" OR "メディア") -広告</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>4) Pour aller plus loin (sans jargon inutile)</h2>
+    <p>
+      <b>Trois réflexes</b> qui changent tout :
+      (1) chercher le <b>format</b> (PDF/PPT), (2) chercher le <b>site source</b> (institution, asbl), (3) chercher les <b>mots exacts</b>.
+    </p>
+    <div class="code mono">
+Exercices (à refaire sur n’importe quel sujet) :
+1) "expression exacte" site:.be
+2) site:exemple.org filetype:pdf motclé
+3) intitle:mot (mot1 OR mot2) -bruit -pub
+    </div>
+    <p class="mut">
+      Si tu veux, on peut ensuite transformer ça en “mission” de RPG sérieux : points d’XP quand tu produis 1 fiche-source,
+      1 carte d’acteurs, 1 synthèse, 1 bibliographie, etc.
+    </p>
+  </section>
+
+  <footer>
+    Note: Certains opérateurs peuvent évoluer selon Google (et les résultats varient selon contexte). Le principe reste stable : <b>contraindre + recouper</b>.
+  </footer>
+</div>
+
+<script>
+(() => {
+  const cheat = document.getElementById("cheat");
+  document.getElementById("toggleCheat").addEventListener("click", () => {
+    cheat.style.display = (cheat.style.display === "none") ? "block" : "none";
+  });
+
+  // tabs
+  const tabs = Array.from(document.querySelectorAll("#tabs .tab"));
+  const panes = {
+    fr: document.getElementById("pane-fr"),
+    en: document.getElementById("pane-en"),
+    la: document.getElementById("pane-la"),
+    tlh: document.getElementById("pane-tlh"),
+    elf: document.getElementById("pane-elf"),
+    hv: document.getElementById("pane-hv"),
+    lorem: document.getElementById("pane-lorem"),
+    jp: document.getElementById("pane-jp"),
+  };
+  tabs.forEach(t => t.addEventListener("click", () => {
+    tabs.forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    Object.values(panes).forEach(p => p.classList.remove("active"));
+    panes[t.dataset.pane].classList.add("active");
+  }));
+
+  // copy pack
+  const pack = [
+    'site:.be filetype:pdf "rapport annuel" (association OR asbl) -stage -emploi',
+    'intitle:"appel à projets" site:*.be "inclusion numérique"',
+    '"éducation aux médias" -twitter -x.com -facebook -instagram site:.org',
+    '("éducation permanente" OR "éducation populaire") ("jeu sérieux" OR ARG) site:.be',
+    'filetype:ppt (atelier OR formation) "médiation numérique" site:.be',
+    '"citation exacte" site:exemple.org'
+  ].join("\\n");
+  document.getElementById("copyPack").addEventListener("click", async () => {
+    try{
+      await navigator.clipboard.writeText(pack);
+      alert("Pack copié dans le presse-papiers.");
+    } catch(e){
+      // fallback
+      const ta = document.createElement("textarea");
+      ta.value = pack;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      alert("Pack copié (fallback).");
+    }
+  });
+})();
+</script>
+</body>
+</html>
 
