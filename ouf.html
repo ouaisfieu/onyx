@@ -1,0 +1,2059 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>NYXO • Dashboard final (Monitor + Fiche + Graph)</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root{
+      --bg:#0b0d12;
+      --panel:#111524;
+      --card:#141a2e;
+      --line:#212844;
+      --fg:#f3f6ff;
+      --muted:#a9b2cc;
+      --muted2:#7f89a8;
+      --accent:#b38bff; /* neon mauve */
+      --accent2:#39ffb6; /* neon green */
+      --danger:#ff5d7a;
+      --warn:#ffcc66;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --r2:12px;
+      --tap:56px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial;
+    }
+    [data-theme="light"]{
+      --bg:#f6f7fb;
+      --panel:#ffffff;
+      --card:#ffffff;
+      --line:#e6e9f3;
+      --fg:#0e1220;
+      --muted:#3d4a70;
+      --muted2:#5b678e;
+      --shadow: 0 10px 30px rgba(10,15,30,.12);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 800px at 20% 0%, rgba(179,139,255,.12), transparent 60%),
+                  radial-gradient(900px 700px at 90% 20%, rgba(57,255,182,.10), transparent 55%),
+                  var(--bg);
+      color:var(--fg);
+      overflow-x:hidden;
+    }
+
+    .app{min-height:100%;display:flex;flex-direction:column}
+
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px) saturate(1.2);
+      background: linear-gradient(180deg, rgba(11,13,18,.92), rgba(11,13,18,.70));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    [data-theme="light"] header{
+      background: linear-gradient(180deg, rgba(246,247,251,.92), rgba(246,247,251,.70));
+      border-bottom:1px solid rgba(10,15,30,.08);
+    }
+
+    .topbar{
+      max-width:1180px;
+      margin:0 auto;
+      padding:10px 12px calc(10px + env(safe-area-inset-top));
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .brand{display:flex;align-items:center;gap:10px;min-width:0}
+    .logo{
+      width:40px;height:40px;border-radius:12px;
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(179,139,255,.9), transparent 60%),
+        radial-gradient(16px 16px at 70% 60%, rgba(57,255,182,.75), transparent 65%),
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 10px 28px rgba(0,0,0,.22);
+      flex:0 0 auto;
+    }
+    [data-theme="light"] .logo{border:1px solid rgba(10,15,30,.10)}
+    .brand h1{
+      margin:0;font-size:14px;line-height:1.1;letter-spacing:.2px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw;
+    }
+    .brand .sub{
+      margin:2px 0 0 0;font-size:12px;color:var(--muted);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw;
+    }
+
+    .actions{display:flex;gap:8px;align-items:center;flex:0 0 auto}
+
+    button,.btn{
+      height:40px;padding:0 12px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:var(--fg);font:inherit;cursor:pointer;
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      user-select:none;-webkit-tap-highlight-color: transparent;
+    }
+    [data-theme="light"] button,[data-theme="light"] .btn{
+      border:1px solid rgba(10,15,30,.10);
+      background: rgba(10,15,30,.03);
+    }
+    button:active{transform: translateY(1px)}
+    button:disabled{opacity:.45;cursor:not-allowed}
+
+    .btn-primary{
+      border-color: rgba(179,139,255,.45);
+      background: linear-gradient(180deg, rgba(179,139,255,.20), rgba(179,139,255,.08));
+    }
+    .btn-ok{
+      border-color: rgba(57,255,182,.38);
+      background: linear-gradient(180deg, rgba(57,255,182,.15), rgba(57,255,182,.06));
+    }
+    .btn-danger{
+      border-color: rgba(255,93,122,.45);
+      background: linear-gradient(180deg, rgba(255,93,122,.16), rgba(255,93,122,.06));
+    }
+
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:var(--muted);font-size:12px;white-space:nowrap;
+    }
+    [data-theme="light"] .chip{
+      border:1px solid rgba(10,15,30,.10);
+      background: rgba(10,15,30,.03);
+    }
+
+    .tabs{
+      max-width:1180px;margin:0 auto;padding:0 12px 10px;
+      display:flex;gap:8px;overflow:auto;scrollbar-width:none;
+    }
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{
+      height:38px;padding:0 12px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);font-size:13px;
+      display:flex;align-items:center;gap:8px;flex:0 0 auto;
+    }
+    .tab[aria-selected="true"]{
+      color:var(--fg);
+      border-color: rgba(179,139,255,.40);
+      background: linear-gradient(180deg, rgba(179,139,255,.18), rgba(179,139,255,.06));
+    }
+
+    main{
+      flex:1;width:100%;max-width:1180px;margin:0 auto;
+      padding:12px 12px calc(90px + env(safe-area-inset-bottom));
+      display:grid;gap:12px;
+    }
+    @media (min-width: 980px){
+      main{grid-template-columns: 420px 1fr;align-items:start;padding-bottom:16px}
+      .mobile-bottom{display:none}
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    [data-theme="light"] .panel{
+      border:1px solid rgba(10,15,30,.10);
+      background: linear-gradient(180deg, rgba(10,15,30,.02), rgba(10,15,30,.01));
+    }
+
+    .panel-head{
+      padding:12px;border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    [data-theme="light"] .panel-head{border-bottom:1px solid rgba(10,15,30,.08)}
+    .panel-title{display:flex;flex-direction:column;gap:2px;min-width:0}
+    .panel-title b{
+      font-size:14px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+    }
+    .panel-title span{
+      font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+    }
+
+    .panel-body{padding:12px}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .stack{display:flex;flex-direction:column;gap:10px}
+
+    .input,input[type="text"],input[type="search"],select,textarea{
+      width:100%;
+      background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      color:var(--fg);
+      border-radius:12px;
+      padding:12px 12px;
+      outline:none;
+      font:inherit;
+    }
+    [data-theme="light"] .input,[data-theme="light"] input,[data-theme="light"] select,[data-theme="light"] textarea{
+      background: rgba(10,15,30,.03);
+      border:1px solid rgba(10,15,30,.10);
+    }
+    textarea{min-height:110px;resize:vertical}
+
+    .muted{color:var(--muted);font-size:12px;line-height:1.35}
+    .tiny{color:var(--muted2);font-size:11px;line-height:1.35}
+    .mono{font-family:var(--mono)}
+    .hr{height:1px;background:rgba(255,255,255,.06);margin:10px 0}
+    [data-theme="light"] .hr{background:rgba(10,15,30,.08)}
+
+    .list{display:flex;flex-direction:column;gap:8px}
+    .item{
+      padding:10px 10px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      display:flex;gap:10px;align-items:flex-start;
+      cursor:pointer;
+    }
+    [data-theme="light"] .item{
+      border:1px solid rgba(10,15,30,.10);
+      background: rgba(10,15,30,.02);
+    }
+    .item:active{transform: translateY(1px)}
+    .dot{
+      width:10px;height:10px;border-radius:999px;margin-top:4px;
+      background: rgba(179,139,255,.9);
+      box-shadow: 0 0 0 6px rgba(179,139,255,.12);
+      flex:0 0 auto;
+    }
+    .dot.ok{
+      background: rgba(57,255,182,.95);
+      box-shadow: 0 0 0 6px rgba(57,255,182,.12);
+    }
+    .dot.warn{
+      background: rgba(255,204,102,.95);
+      box-shadow: 0 0 0 6px rgba(255,204,102,.12);
+    }
+    .item .meta{min-width:0; flex:1}
+    .item .name{
+      font-size:14px;font-weight:700;margin:0;line-height:1.25;word-break:break-word;
+    }
+    .item .sub{
+      margin-top:4px;font-size:12px;color:var(--muted);
+      display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:11px;white-space:nowrap;
+    }
+    [data-theme="light"] .pill{
+      border:1px solid rgba(10,15,30,.10);
+      background: rgba(10,15,30,.02);
+    }
+
+    .detail-title{display:flex;flex-direction:column;gap:4px;min-width:0}
+    .detail-title h2{margin:0;font-size:16px;letter-spacing:.2px;word-break:break-word}
+    .detail-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .kv{
+      display:grid;
+      grid-template-columns: 120px 1fr;
+      gap:8px 12px;
+      align-items:start;
+      margin-top:6px;
+    }
+    .kv .k{color:var(--muted);font-size:12px}
+    .kv .v{font-size:13px;line-height:1.35;word-break:break-word}
+    .a{color:var(--accent);text-decoration:none}
+    .a:hover{text-decoration:underline}
+
+    .warnbox{
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(255,204,102,.35);
+      background: rgba(255,204,102,.08);
+      color: var(--fg);
+      font-size:13px;line-height:1.35;
+    }
+
+    .mobile-bottom{
+      position:fixed;left:0;right:0;bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(11,13,18,0), rgba(11,13,18,.85) 30%, rgba(11,13,18,.95));
+      border-top:1px solid rgba(255,255,255,.06);
+      z-index:60;
+    }
+    [data-theme="light"] .mobile-bottom{
+      background: linear-gradient(180deg, rgba(246,247,251,0), rgba(246,247,251,.85) 30%, rgba(246,247,251,.95));
+      border-top:1px solid rgba(10,15,30,.10);
+    }
+    .bar{max-width:1180px;margin:0 auto;display:flex;gap:8px}
+    .bar button{flex:1;height:var(--tap);border-radius:16px}
+
+    @keyframes pulseMauve{
+      0%,70%{box-shadow: 0 0 0 rgba(179,139,255,0), 0 0 0 rgba(179,139,255,0)}
+      80%{box-shadow: 0 0 0 1px rgba(179,139,255,.35), 0 0 24px rgba(179,139,255,.50)}
+      100%{box-shadow: 0 0 0 rgba(179,139,255,0), 0 0 0 rgba(179,139,255,0)}
+    }
+    .blink{animation: pulseMauve 2.2s ease-in-out infinite}
+    .blink.paused{animation:none}
+
+    .modal-backdrop{
+      position:fixed;inset:0;background: rgba(0,0,0,.55);
+      display:none;align-items:flex-end;justify-content:center;
+      z-index:100;padding:12px;
+    }
+    .modal{
+      width:min(860px, 100%);
+      background: var(--panel);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      overflow:hidden;
+      max-height: calc(100vh - 40px);
+      display:flex;flex-direction:column;
+    }
+    [data-theme="light"] .modal{border:1px solid rgba(10,15,30,.12)}
+    .modal-head{
+      padding:12px;border-bottom:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .modal-body{padding:12px;overflow:auto}
+    .modal-backdrop.show{display:flex}
+
+    /* Graph */
+    .graphWrap{
+      display:flex;flex-direction:column;gap:10px;
+    }
+    .graphToolbar{
+      display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+    }
+    .graphStage{
+      position:relative;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      height: min(58vh, 560px);
+    }
+    [data-theme="light"] .graphStage{
+      background: rgba(10,15,30,.04);
+      border:1px solid rgba(10,15,30,.10);
+    }
+    #graphCanvas{width:100%;height:100%;display:block}
+    .graphHint{
+      position:absolute;left:12px;bottom:12px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(11,13,18,.55);
+      color:var(--muted);
+      font-size:12px;
+      backdrop-filter: blur(8px);
+    }
+    [data-theme="light"] .graphHint{
+      background: rgba(246,247,251,.70);
+      border:1px solid rgba(10,15,30,.10);
+    }
+    .sr{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+  </style>
+</head>
+
+<body>
+<div class="app" id="app" data-theme="dark">
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div style="min-width:0">
+          <h1>NYXO • Bruxelles</h1>
+          <div class="sub" id="subtitle">Dashboard • import JSON pour démarrer</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <span class="chip" id="sessionChip">Session: vide</span>
+        <button class="btn" id="btnTheme" title="Thème (sombre/clair)">☾</button>
+        <button class="btn btn-primary" id="btnImport" title="Importer un JSON">Importer</button>
+      </div>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <div class="tab" role="tab" tabindex="0" aria-selected="true" data-tab="explore">Explorer</div>
+      <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="graph">Graph</div>
+      <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="tasks">Tâches</div>
+      <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="contrib">Contribuer</div>
+      <div class="tab" role="tab" tabindex="-1" aria-selected="false" data-tab="settings">Réglages</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- LEFT / MONITOR -->
+    <section class="panel" id="panelList">
+      <div class="panel-head">
+        <div class="panel-title">
+          <b>Monitor</b>
+          <span id="listHint">Sélectionne un nœud • navigation ↔</span>
+        </div>
+        <div class="row" style="gap:8px">
+          <button class="btn" id="btnBack" title="Retour" disabled>←</button>
+          <button class="btn" id="btnFwd" title="Suivant" disabled>→</button>
+        </div>
+      </div>
+
+      <!-- Explore -->
+      <div class="panel-body" id="tab-explore-left">
+        <div class="stack">
+          <div class="row">
+            <input class="input" id="search" type="search" placeholder="Rechercher (nom, mission, public…)" />
+          </div>
+          <div class="row">
+            <select id="filterType" class="input">
+              <option value="">Tous types</option>
+              <option value="lieu_de_lien">Lieu de lien</option>
+              <option value="ssm">Service santé mentale</option>
+              <option value="hotline">Ligne d’écoute</option>
+              <option value="hopital">Hôpital / urgences</option>
+              <option value="equipe_mobile">Équipe mobile</option>
+              <option value="spad">SPAD</option>
+              <option value="education_permanente">Éducation permanente</option>
+              <option value="service">Service (générique)</option>
+              <option value="institution">Institution</option>
+              <option value="reseau">Réseau</option>
+            </select>
+          </div>
+
+          <div class="warnbox" id="emptyBox">
+            <b>Ça démarre vide (volontairement).</b><br/>
+            Importer ton JSON (ou glisser-déposer) pour travailler. Rien n’est embarqué ici.
+          </div>
+
+          <div class="row">
+            <div class="pill">Résultats: <b id="count">0</b></div>
+            <div class="pill">Entités: <b id="total">0</b></div>
+            <div class="pill">Liens: <b id="linksCount">0</b></div>
+          </div>
+
+          <div class="list" id="list"></div>
+        </div>
+      </div>
+
+      <!-- Tasks -->
+      <div class="panel-body" id="tab-tasks-left" style="display:none">
+        <div class="stack">
+          <div class="warnbox">
+            <b>Tâches</b> = file d’enrichissement / validation / corrections.<br/>
+            Ici, on travaille “sans halluciner” : une tâche doit citer une preuve.
+          </div>
+          <div class="row">
+            <input class="input" id="taskSearch" type="search" placeholder="Rechercher une tâche…" />
+          </div>
+          <div class="list" id="taskList"></div>
+        </div>
+      </div>
+
+      <!-- Contrib -->
+      <div class="panel-body" id="tab-contrib-left" style="display:none">
+        <div class="stack">
+          <div class="warnbox">
+            <b>Contribuer</b> : propose une amélioration (sans l’imposer).<br/>
+            On crée une “proposition” exportable, à valider ensuite.
+          </div>
+          <div class="row">
+            <select id="proposalType" class="input">
+              <option value="field_update">Corriger/compléter un champ</option>
+              <option value="new_entity">Ajouter une entité</option>
+              <option value="new_link">Proposer un lien</option>
+              <option value="issue">Signaler un problème</option>
+            </select>
+          </div>
+          <textarea id="proposalBody" class="input" placeholder="Décris la proposition (quoi + pourquoi + preuve/URL/page)…"></textarea>
+          <div class="row">
+            <button class="btn btn-primary" id="btnAddProposal">Ajouter à la liste</button>
+            <button class="btn" id="btnClearProposals">Vider</button>
+          </div>
+          <div class="hr"></div>
+          <div class="panel-title">
+            <b>Propositions (exportables)</b>
+            <span>Rien n’est envoyé. Tu exportes quand tu veux.</span>
+          </div>
+          <div class="list" id="proposalList"></div>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="panel-body" id="tab-settings-left" style="display:none">
+        <div class="stack">
+          <div class="warnbox">
+            <b>Attention pérennité</b> : la session est stockée en <span class="mono">localStorage</span>.<br/>
+            Ça peut sauter (cache navigateur, nettoyage, autre appareil). <b>Export régulier recommandé.</b>
+          </div>
+
+          <div class="row">
+            <button class="btn btn-primary" id="btnExport">EXPORTER</button>
+            <button class="btn btn-danger" id="btnReset">Réinitialiser session</button>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="panel-title">
+            <b>Import & compatibilité</b>
+            <span>Charge JSON via fichier, drag&drop, ou URL (si hébergé)</span>
+          </div>
+
+          <div class="row">
+            <input class="input mono" id="urlInput" type="text" placeholder="https://…/dataset.json (optionnel)" />
+            <button class="btn" id="btnLoadUrl">Charger URL</button>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="panel-title">
+            <b>Accessibilité</b>
+            <span>Confort de chacun</span>
+          </div>
+
+          <div class="row">
+            <label class="pill" style="gap:10px">
+              <span>Taille texte</span>
+              <select id="fontScale" style="height:34px;border-radius:10px">
+                <option value="1">100%</option>
+                <option value="1.07">107%</option>
+                <option value="1.15">115%</option>
+                <option value="1.25">125%</option>
+              </select>
+            </label>
+
+            <label class="pill" style="gap:10px">
+              <span>Contraste</span>
+              <select id="contrast" style="height:34px;border-radius:10px">
+                <option value="normal">Normal</option>
+                <option value="high">Élevé</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="panel-title">
+            <b>Pause / rythme</b>
+            <span>Un bouton “PAUSE” toutes les 50 minutes</span>
+          </div>
+          <div class="row">
+            <button class="btn btn-ok" id="btnPause">PAUSE</button>
+            <span class="chip" id="pauseChip">Prochaine pause: —</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT / DETAIL + GRAPH -->
+    <section class="panel" id="panelDetail">
+      <div class="panel-head">
+        <div class="panel-title detail-title">
+          <b id="rightTitle">Fiche du nœud</b>
+          <span id="detailHint">Sélectionne un item à gauche</span>
+        </div>
+        <div class="detail-actions" id="detailActions">
+          <button class="btn" id="btnPin" title="Épingler">📌</button>
+          <button class="btn" id="btnCopyId" title="Copier l’ID" disabled>⧉ ID</button>
+        </div>
+      </div>
+
+      <!-- Detail content -->
+      <div class="panel-body" id="detail">
+        <div class="warnbox">
+          <b>Objectif</b> : un espace de travail simple, mobile-first, contributif.<br/>
+          Commence par <b>Importer</b> un dataset JSON.
+        </div>
+      </div>
+
+      <!-- Graph content -->
+      <div class="panel-body" id="graphPanel" style="display:none">
+        <div class="graphWrap">
+          <div class="warnbox">
+            <b>Graph</b> = visualisation des <b>entités</b> + <b>liens</b> de ton JSON.<br/>
+            Clique un nœud → ouvre sa fiche. Molette/trackpad → zoom. Glisser → déplacer.
+          </div>
+
+          <div class="graphToolbar">
+            <button class="btn" id="btnGraphFit">Ajuster</button>
+            <button class="btn" id="btnGraphCenterSel" title="Centrer sur la sélection">Centrer</button>
+            <button class="btn" id="btnGraphFreeze" title="Geler/dégeler la simulation">Geler</button>
+            <span class="pill">Nœuds: <b id="gNodes">0</b></span>
+            <span class="pill">Arêtes: <b id="gEdges">0</b></span>
+            <span class="pill">FPS: <b id="gFps">—</b></span>
+          </div>
+
+          <div class="graphStage" id="graphStage">
+            <canvas id="graphCanvas"></canvas>
+            <div class="graphHint">Astuce: Alt+← / Alt+→ = historique • Double-clic = reset zoom</div>
+          </div>
+
+          <div class="tiny">
+            Notes: le graph n’invente rien. Il affiche uniquement ce que ton JSON contient (entities + links).
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile bottom bar -->
+  <div class="mobile-bottom">
+    <div class="bar">
+      <button class="btn btn-primary blink" id="btnExportMobile">EXPORTER</button>
+      <button class="btn btn-ok" id="btnPauseMobile">PAUSE</button>
+      <button class="btn" id="btnImportMobile">Importer</button>
+    </div>
+  </div>
+
+  <!-- Modal Import -->
+  <div class="modal-backdrop" id="importModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Importer">
+      <div class="modal-head">
+        <b>Importer un JSON</b>
+        <button class="btn" id="btnCloseImport">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="warnbox">
+          <b>Important</b> : cette appli n’embarque aucune donnée. Tu importes ton JSON pour travailler.
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <input class="input" id="fileInput" type="file" accept=".json,application/json" />
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="warnbox" id="dropZone" style="border-style:dashed">
+          Glisse-dépose ton fichier <span class="mono">.json</span> ici.
+          <div class="tiny" style="margin-top:6px">
+            Si OneDrive “fichiers à la demande” casse la lecture : copie le JSON dans <b>Téléchargements</b> puis réessaie.
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <details>
+          <summary>Coller du JSON (secours)</summary>
+          <textarea id="pasteJson" class="input mono" placeholder="Colle ici le JSON complet…"></textarea>
+          <div class="row" style="margin-top:10px">
+            <button class="btn btn-primary" id="btnLoadPaste">Charger</button>
+            <span class="tiny" id="pasteInfo"></span>
+          </div>
+        </details>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <button class="btn btn-primary" id="btnImportMerge">Importer (fusionner)</button>
+          <button class="btn" id="btnImportReplace">Importer (remplacer)</button>
+        </div>
+
+        <div class="tiny" style="margin-top:10px">
+          “Fusionner” = ajoute/écrase par ID. “Remplacer” = nouveau workspace.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ============================
+     State & Storage
+  ============================ */
+  const LS_KEY = "nyxo_bxl_workspace_final";
+  const LS_UI  = "nyxo_bxl_ui_final";
+
+  const state = {
+    workspace: {
+      meta: { dataset: "workspace", schema: "final", generated_at: null, scope: "Brussels-Capital-Region" },
+      sources: [],
+      zones: [],
+      entities: [],
+      links: [],
+      tasks: [],
+      proposals: []
+    },
+    selectedId: null,
+    pinnedId: null,
+    history: { stack: [], idx: -1 },
+    ui: { tab: "explore", theme: "dark", fontScale: 1, contrast: "normal" },
+    pause: { nextAt: null, timerId: null },
+
+    // graph runtime
+    graph: {
+      nodes: [],
+      edges: [],
+      nodeIndex: new Map(),
+      running: true,
+      view: { cx: 0, cy: 0, scale: 1 },
+      dragging: false,
+      dragNode: null,
+      dragPan: false,
+      panStart: { x:0, y:0, cx:0, cy:0 },
+      lastT: 0,
+      fps: { acc:0, frames:0, last:0, val: 0 }
+    }
+  };
+
+  /* ============================
+     DOM
+  ============================ */
+  const $ = (sel) => document.querySelector(sel);
+
+  const subtitle = $("#subtitle");
+  const sessionChip = $("#sessionChip");
+
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const tabBodiesLeft = {
+    explore: $("#tab-explore-left"),
+    graph: null, // left stays on explore (list always useful)
+    tasks: $("#tab-tasks-left"),
+    contrib: $("#tab-contrib-left"),
+    settings: $("#tab-settings-left")
+  };
+
+  const rightTitle = $("#rightTitle");
+  const detailActions = $("#detailActions");
+  const detailEl = $("#detail");
+  const detailHint = $("#detailHint");
+
+  const graphPanel = $("#graphPanel");
+  const graphStage = $("#graphStage");
+  const graphCanvas = $("#graphCanvas");
+  const gNodes = $("#gNodes");
+  const gEdges = $("#gEdges");
+  const gFps   = $("#gFps");
+  const btnGraphFit = $("#btnGraphFit");
+  const btnGraphCenterSel = $("#btnGraphCenterSel");
+  const btnGraphFreeze = $("#btnGraphFreeze");
+
+  const listEl = $("#list");
+  const countEl = $("#count");
+  const totalEl = $("#total");
+  const linksCountEl = $("#linksCount");
+  const emptyBox = $("#emptyBox");
+
+  const searchEl = $("#search");
+  const filterTypeEl = $("#filterType");
+
+  const taskSearchEl = $("#taskSearch");
+  const taskListEl = $("#taskList");
+
+  const proposalTypeEl = $("#proposalType");
+  const proposalBodyEl = $("#proposalBody");
+  const proposalListEl = $("#proposalList");
+
+  const btnImport = $("#btnImport");
+  const btnImportMobile = $("#btnImportMobile");
+  const importModal = $("#importModal");
+  const btnCloseImport = $("#btnCloseImport");
+  const fileInput = $("#fileInput");
+  const dropZone = $("#dropZone");
+  const pasteJson = $("#pasteJson");
+  const btnLoadPaste = $("#btnLoadPaste");
+  const pasteInfo = $("#pasteInfo");
+  const btnImportMerge = $("#btnImportMerge");
+  const btnImportReplace = $("#btnImportReplace");
+
+  const btnExport = $("#btnExport");
+  const btnExportMobile = $("#btnExportMobile");
+  const btnReset = $("#btnReset");
+
+  const btnTheme = $("#btnTheme");
+  const fontScaleEl = $("#fontScale");
+  const contrastEl = $("#contrast");
+
+  const urlInput = $("#urlInput");
+  const btnLoadUrl = $("#btnLoadUrl");
+
+  const btnBack = $("#btnBack");
+  const btnFwd = $("#btnFwd");
+
+  const btnPin = $("#btnPin");
+  const btnCopyId = $("#btnCopyId");
+
+  const btnAddProposal = $("#btnAddProposal");
+  const btnClearProposals = $("#btnClearProposals");
+
+  const btnPause = $("#btnPause");
+  const btnPauseMobile = $("#btnPauseMobile");
+  const pauseChip = $("#pauseChip");
+
+  /* ============================
+     Helpers
+  ============================ */
+  const nowIso = () => new Date().toISOString();
+  const clamp = (n,a,b)=>Math.max(a,Math.min(b,n));
+  const safeText = (v)=> (v===null||v===undefined) ? "" : String(v);
+
+  function escapeHtml(str){
+    return safeText(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  function normalizeWorkspace(obj){
+    return {
+      meta: obj?.meta || { dataset: "import", schema: obj?.schema || "unknown", generated_at: obj?.generated_at || null, scope: obj?.scope || "unknown" },
+      sources: Array.isArray(obj?.sources) ? obj.sources : [],
+      zones: Array.isArray(obj?.zones) ? obj.zones : [],
+      entities: Array.isArray(obj?.entities) ? obj.entities : [],
+      links: Array.isArray(obj?.links) ? obj.links : [],
+      tasks: Array.isArray(obj?.tasks) ? obj.tasks : [],
+      proposals: Array.isArray(obj?.proposals) ? obj.proposals : []
+    };
+  }
+
+  function readFileAsText(file){
+    return new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onerror=()=>reject(reader.error||new Error("Lecture impossible"));
+      reader.onload=()=>resolve(String(reader.result||""));
+      reader.readAsText(file);
+    });
+  }
+
+  function jsonParseStrict(text){
+    const t=text.trim();
+    if(!t) throw new Error("Texte vide");
+    if(t.startsWith("<")) throw new Error("Le fichier ressemble à du HTML, pas du JSON");
+    return JSON.parse(t);
+  }
+
+  function persistUI(){
+    try{ localStorage.setItem(LS_UI, JSON.stringify(state.ui)); }catch(e){}
+  }
+
+  function persistWorkspace(){
+    state.workspace.meta.generated_at = nowIso();
+    try{ localStorage.setItem(LS_KEY, JSON.stringify(state.workspace)); }catch(e){}
+    updateSessionChip();
+  }
+
+  function loadFromStorage(){
+    try{
+      const ui = JSON.parse(localStorage.getItem(LS_UI) || "null");
+      if(ui && typeof ui==="object") state.ui = {...state.ui, ...ui};
+    }catch(e){}
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      if(!raw) return;
+      const obj = JSON.parse(raw);
+      state.workspace = normalizeWorkspace(obj);
+    }catch(e){}
+  }
+
+  function setTheme(theme){
+    state.ui.theme = theme;
+    $("#app").setAttribute("data-theme", theme);
+    btnTheme.textContent = (theme === "dark") ? "☾" : "☀";
+    persistUI();
+    // redraw graph after theme switch
+    if(state.ui.tab === "graph") requestGraphDraw();
+  }
+
+  function applyA11y(){
+    document.documentElement.style.fontSize = (16 * (state.ui.fontScale||1)) + "px";
+    const hi = state.ui.contrast === "high";
+    document.documentElement.style.setProperty("--muted", hi ? "rgba(243,246,255,.92)" : "");
+    document.documentElement.style.setProperty("--muted2", hi ? "rgba(243,246,255,.78)" : "");
+    persistUI();
+    if(state.ui.tab === "graph") requestGraphDraw();
+  }
+
+  function updateSessionChip(){
+    const e = state.workspace.entities?.length || 0;
+    const l = state.workspace.links?.length || 0;
+    const t = state.workspace.tasks?.length || 0;
+    sessionChip.textContent = e ? `Session: ${e} entités • ${l} liens • ${t} tâches` : "Session: vide";
+    subtitle.textContent = e ? `Bruxelles • ${e} entités • session locale` : "Dashboard • import JSON pour démarrer";
+  }
+
+  function openModal(){ importModal.classList.add("show"); }
+  function closeModal(){ importModal.classList.remove("show"); }
+
+  function setActiveTab(tab){
+    state.ui.tab = tab;
+    tabs.forEach(t => {
+      const on = t.dataset.tab === tab;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.setAttribute("tabindex", on ? "0" : "-1");
+    });
+
+    // Left panel bodies
+    Object.entries(tabBodiesLeft).forEach(([k, el]) => {
+      if(!el) return;
+      el.style.display = (k === tab) ? "" : "none";
+    });
+    // Graph tab keeps list on left (explore list)
+    if(tab === "graph"){
+      tabBodiesLeft.explore.style.display = "";
+      tabBodiesLeft.tasks.style.display = "none";
+      tabBodiesLeft.contrib.style.display = "none";
+      tabBodiesLeft.settings.style.display = "none";
+    }
+
+    // Right panel
+    if(tab === "graph"){
+      rightTitle.textContent = "Graph";
+      detailActions.style.display = "none";
+      detailEl.style.display = "none";
+      graphPanel.style.display = "";
+      ensureGraphReady();
+      requestGraphDraw();
+    }else{
+      rightTitle.textContent = "Fiche du nœud";
+      detailActions.style.display = "";
+      detailEl.style.display = "";
+      graphPanel.style.display = "none";
+      renderDetail();
+    }
+
+    persistUI();
+  }
+
+  function getEntityById(id){
+    return state.workspace.entities.find(e => e && e.id === id) || null;
+  }
+
+  function getLinksFor(id){
+    const links = state.workspace.links || [];
+    const out = { in: [], out: [] };
+    for(const l of links){
+      if(!l) continue;
+      if(l.from === id) out.out.push(l);
+      if(l.to === id) out.in.push(l);
+    }
+    return out;
+  }
+
+  function scoreStatus(e){
+    const st = (e?.status || "").toLowerCase();
+    if(st === "verified") return "ok";
+    if(st === "stale" || st === "unverified") return "warn";
+    return "default";
+  }
+
+  function pushHistory(id){
+    if(!id) return;
+    const cur = state.history.stack[state.history.idx];
+    if(cur === id) return;
+
+    state.history.stack = state.history.stack.slice(0, state.history.idx + 1);
+    state.history.stack.push(id);
+    state.history.idx = state.history.stack.length - 1;
+    updateNavButtons();
+  }
+
+  function updateNavButtons(){
+    btnBack.disabled = !(state.history.idx > 0);
+    btnFwd.disabled = !(state.history.idx < state.history.stack.length - 1);
+  }
+
+  function gotoHistory(delta){
+    const ni = clamp(state.history.idx + delta, 0, state.history.stack.length - 1);
+    if(ni === state.history.idx) return;
+    state.history.idx = ni;
+    updateNavButtons();
+    const id = state.history.stack[state.history.idx];
+    selectEntity(id, {push:false});
+  }
+
+  function selectEntity(id, opts={push:true}){
+    const e = getEntityById(id);
+    if(!e) return;
+
+    state.selectedId = id;
+    if(opts.push) pushHistory(id);
+
+    renderList();
+    renderDetail();
+    btnCopyId.disabled = false;
+
+    // If graph visible: highlight and redraw
+    if(state.ui.tab === "graph"){
+      requestGraphDraw();
+    }
+    persistWorkspace();
+  }
+
+  function toDisplayName(e){
+    const d = e?.display || {};
+    return d.masked_name || d.name || e?.name || "(sans nom)";
+  }
+
+  function summarize(e){
+    const d = e?.display || {};
+    if(d.summary) return d.summary;
+    const f = e?.fields || {};
+    const tryKeys = ["missions","public_cible","description","contact","adresse","address"];
+    for(const k of tryKeys){
+      if(f[k]) return safeText(f[k]).slice(0, 220);
+    }
+    return "";
+  }
+
+  function normalizeUrl(u){
+    const s = safeText(u).trim();
+    if(!s) return "";
+    if(/^https?:\/\//i.test(s)) return s;
+    if(/^[\w.-]+\.[a-z]{2,}/i.test(s)) return "https://" + s;
+    return s;
+  }
+
+  function extractCommonFields(fields){
+    const f = fields || {};
+    const phone = f.phone || f.telephone || f.tel || f.gsm || "";
+    const email = f.email || f.mail || "";
+    const url = normalizeUrl(f.url || f.website || f.site_web || f.site || "");
+    const address = f.address || f.adresse || "";
+    const commune = f.commune || f.localite || f.ville || "";
+    const langs = f.langues || f.langues_parlees || "";
+    const tarifs = f.tarifs || f.aspects_financiers_et_tarifs || "";
+    return { phone, email, url, address, commune, langs, tarifs };
+  }
+
+  function renderDetail(){
+    const id = state.selectedId || state.pinnedId;
+    const e = id ? getEntityById(id) : null;
+    if(!e){
+      detailHint.textContent = "Sélectionne un item à gauche";
+      detailEl.innerHTML = `
+        <div class="warnbox">
+          <b>Objectif</b> : un espace de travail simple, mobile-first, contributif.<br/>
+          Commence par <b>Importer</b> un dataset JSON.
+        </div>`;
+      return;
+    }
+
+    detailHint.textContent = `ID: ${e.id || "—"}`;
+    const name = toDisplayName(e);
+    const sum = summarize(e);
+    const status = safeText(e.status || "unverified");
+    const type = safeText(e.type || "service");
+    const tags = Array.isArray(e.tags) ? e.tags : [];
+    const fields = e.fields || {};
+    const ev = Array.isArray(e.evidence) ? e.evidence : [];
+    const fe = (fields && typeof fields._field_evidence === "object") ? fields._field_evidence : null;
+
+    const {phone, email, url, address, commune, langs, tarifs} = extractCommonFields(fields);
+
+    const rel = getLinksFor(e.id);
+    const outIds = rel.out.map(l => l.to).filter(Boolean);
+    const inIds = rel.in.map(l => l.from).filter(Boolean);
+
+    const relatedOut = outIds.map(id => getEntityById(id)).filter(Boolean);
+    const relatedIn  = inIds.map(id => getEntityById(id)).filter(Boolean);
+
+    const fieldRows = [];
+    const pushRow = (k,v) => { if(v) fieldRows.push(`<div class="k">${k}</div><div class="v">${v}</div>`); };
+
+    pushRow("Type", `<span class="pill">${escapeHtml(type)}</span> <span class="pill">statut: ${escapeHtml(status)}</span>`);
+    if(commune) pushRow("Commune", escapeHtml(commune));
+    if(address) pushRow("Adresse", escapeHtml(address));
+    if(phone) pushRow("Téléphone", `<span class="mono">${escapeHtml(phone)}</span>`);
+    if(email) pushRow("Email", `<span class="mono">${escapeHtml(email)}</span>`);
+    if(url) pushRow("Site", `<a class="a" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(url)}</a>`);
+    if(langs) pushRow("Langues", escapeHtml(langs));
+    if(tarifs) pushRow("Coût", escapeHtml(tarifs));
+
+    const extraKeys = ["public_cible","missions","description","contact","modalites_inscription","delais_attente","zone_couverte","criteres_orientation"];
+    for(const k of extraKeys){
+      if(fields[k]){
+        pushRow(k.replace(/_/g," "), escapeHtml(safeText(fields[k])));
+      }
+    }
+
+    const evidenceHtml = ev.length
+      ? `<div class="hr"></div>
+         <div class="muted"><b>Preuves / sources</b> (tel que fourni)</div>
+         <div class="tiny mono" style="white-space:pre-wrap">${escapeHtml(JSON.stringify(ev, null, 2))}</div>`
+      : `<div class="hr"></div><div class="tiny">Aucune preuve jointe dans ce dataset (à enrichir via tâches).</div>`;
+
+    const fieldEvidenceHtml = fe
+      ? `<div class="hr"></div>
+         <div class="muted"><b>Traçabilité par champ</b></div>
+         <div class="tiny mono" style="white-space:pre-wrap">${escapeHtml(JSON.stringify(fe, null, 2))}</div>`
+      : ``;
+
+    const relatedItemHtml = (x) => {
+      const st = scoreStatus(x);
+      const dotClass = st === "ok" ? "ok" : (st === "warn" ? "warn" : "");
+      const t = safeText(x.type || "service");
+      const nm = escapeHtml(toDisplayName(x));
+      const xid = escapeHtml(safeText(x.id));
+      return `
+        <div class="item" data-goto="${xid}">
+          <div class="dot ${dotClass}"></div>
+          <div class="meta">
+            <div class="name">${nm}</div>
+            <div class="sub">
+              <span class="pill">${escapeHtml(t)}</span>
+              <span class="pill mono">${xid}</span>
+            </div>
+          </div>
+        </div>`;
+    };
+
+    const tagsHtml = tags.length
+      ? `<div class="row" style="margin-top:8px">${tags.slice(0,16).map(t => `<span class="pill">#${escapeHtml(t)}</span>`).join("")}</div>`
+      : ``;
+
+    detailEl.innerHTML = `
+      <div class="stack">
+        <div>
+          <div class="detail-title">
+            <h2>${escapeHtml(name)}</h2>
+            ${sum ? `<div class="muted">${escapeHtml(sum)}</div>` : `<div class="muted">—</div>`}
+            ${tagsHtml}
+          </div>
+        </div>
+
+        <div class="kv">
+          ${fieldRows.join("") || `<div class="k">Info</div><div class="v">Aucun champ standard détecté.</div>`}
+        </div>
+
+        <div class="hr"></div>
+        <div class="muted"><b>Relations</b> (liens présents dans le JSON)</div>
+        <div class="row" style="margin-top:8px">
+          <div class="pill">Sortants: <b>${relatedOut.length}</b></div>
+          <div class="pill">Entrants: <b>${relatedIn.length}</b></div>
+        </div>
+
+        ${relatedOut.length ? `
+          <div class="hr"></div>
+          <div class="tiny">Vers…</div>
+          <div class="list">${relatedOut.slice(0,20).map(relatedItemHtml).join("")}</div>` : ``}
+
+        ${relatedIn.length ? `
+          <div class="hr"></div>
+          <div class="tiny">Depuis…</div>
+          <div class="list">${relatedIn.slice(0,20).map(relatedItemHtml).join("")}</div>` : ``}
+
+        ${evidenceHtml}
+        ${fieldEvidenceHtml}
+      </div>
+    `;
+
+    detailEl.querySelectorAll("[data-goto]").forEach(btn => {
+      btn.addEventListener("click", () => selectEntity(btn.getAttribute("data-goto"), {push:true}));
+    });
+  }
+
+  function renderList(){
+    const ws = state.workspace;
+    const ents = Array.isArray(ws.entities) ? ws.entities.filter(Boolean) : [];
+    const q = (searchEl.value || "").trim().toLowerCase();
+    const t = filterTypeEl.value;
+
+    totalEl.textContent = String(ents.length);
+    linksCountEl.textContent = String((ws.links || []).length);
+
+    if(ents.length === 0){
+      emptyBox.style.display = "";
+      listEl.innerHTML = "";
+      countEl.textContent = "0";
+      return;
+    }
+    emptyBox.style.display = "none";
+
+    const filtered = ents.filter(e => {
+      if(t && (e.type || "") !== t) return false;
+      if(!q) return true;
+      const name = toDisplayName(e).toLowerCase();
+      const sum = summarize(e).toLowerCase();
+      const blob = safeText(JSON.stringify(e.fields || {})).toLowerCase();
+      return name.includes(q) || sum.includes(q) || blob.includes(q);
+    });
+
+    countEl.textContent = String(filtered.length);
+
+    const html = filtered.slice(0, 240).map(e => {
+      const st = scoreStatus(e);
+      const dotClass = st === "ok" ? "ok" : (st === "warn" ? "warn" : "");
+      const type = escapeHtml(safeText(e.type || "service"));
+      const name = escapeHtml(toDisplayName(e));
+      const sum = escapeHtml(summarize(e));
+      const id = escapeHtml(safeText(e.id || ""));
+      const sel = (state.selectedId === e.id)
+        ? `style="border-color: rgba(179,139,255,.45); background: rgba(179,139,255,.08)"`
+        : "";
+      return `
+        <div class="item" ${sel} data-id="${id}">
+          <div class="dot ${dotClass}"></div>
+          <div class="meta">
+            <div class="name">${name}</div>
+            <div class="sub">
+              <span class="pill">${type}</span>
+              ${id ? `<span class="pill mono">${id}</span>` : ``}
+            </div>
+            ${sum ? `<div class="tiny" style="margin-top:6px">${sum}</div>` : ``}
+          </div>
+        </div>`;
+    }).join("");
+
+    listEl.innerHTML = html || `<div class="muted">Aucun résultat.</div>`;
+
+    listEl.querySelectorAll(".item[data-id]").forEach(el => {
+      el.addEventListener("click", () => {
+        const id = el.getAttribute("data-id");
+        selectEntity(id, {push:true});
+      });
+    });
+  }
+
+  function renderTasks(){
+    const tasks = Array.isArray(state.workspace.tasks) ? state.workspace.tasks : [];
+    const q = (taskSearchEl.value || "").trim().toLowerCase();
+
+    const filtered = tasks.filter(t => !q || safeText(JSON.stringify(t)).toLowerCase().includes(q));
+
+    taskListEl.innerHTML = filtered.length ? filtered.slice(0,240).map((t, idx) => {
+      const title = escapeHtml(safeText(t.title || t.id || `Tâche ${idx+1}`));
+      const prio = escapeHtml(safeText(t.priority || "—"));
+      const note = escapeHtml(safeText(t.note || t.prompt || t.description || ""));
+      return `
+        <div class="item" style="cursor:default">
+          <div class="dot warn"></div>
+          <div class="meta">
+            <div class="name">${title}</div>
+            <div class="sub">
+              <span class="pill">priority: ${prio}</span>
+              ${t.type ? `<span class="pill">${escapeHtml(safeText(t.type))}</span>` : ``}
+            </div>
+            ${note ? `<div class="tiny" style="margin-top:6px">${note}</div>` : ``}
+          </div>
+        </div>`;
+    }).join("") : `<div class="muted">Aucune tâche.</div>`;
+  }
+
+  function renderProposals(){
+    const props = Array.isArray(state.workspace.proposals) ? state.workspace.proposals : [];
+    proposalListEl.innerHTML = props.length ? props.slice().reverse().map((p) => {
+      const title = escapeHtml(`${p.kind} • ${p.created_at}`);
+      const body = escapeHtml(p.body || "");
+      return `
+        <div class="item" style="cursor:default">
+          <div class="dot"></div>
+          <div class="meta">
+            <div class="name">${title}</div>
+            <div class="tiny mono" style="margin-top:6px;white-space:pre-wrap">${body}</div>
+          </div>
+        </div>`;
+    }).join("") : `<div class="muted">Aucune proposition.</div>`;
+  }
+
+  /* ============================
+     Import / Export
+  ============================ */
+  let pendingImportObj = null;
+
+  function setPendingFromText(text){
+    const obj = jsonParseStrict(text);
+    pendingImportObj = normalizeWorkspace(obj);
+    pasteInfo.textContent = `OK • ${pendingImportObj.entities.length} entités • ${pendingImportObj.links.length} liens`;
+  }
+
+  async function setPendingFromFile(file){
+    const txt = await readFileAsText(file);
+    const obj = jsonParseStrict(txt);
+    pendingImportObj = normalizeWorkspace(obj);
+    return pendingImportObj;
+  }
+
+  function hashStr(s){
+    let h = 2166136261;
+    for(let i=0;i<s.length;i++){
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    return (h>>>0).toString(16);
+  }
+
+  function mergeWorkspace(incoming){
+    const cur = state.workspace;
+
+    const mapById = (arr, key="id") => {
+      const m = new Map();
+      for(const it of arr || []){
+        if(it && it[key]) m.set(it[key], it);
+      }
+      return m;
+    };
+
+    const zones = mapById(cur.zones);
+    for(const z of incoming.zones || []) if(z && z.id) zones.set(z.id, z);
+
+    const sources = mapById(cur.sources);
+    for(const s of incoming.sources || []){
+      if(s && s.id) sources.set(s.id, s);
+      else if(s && s.title){
+        const sid = "src_" + hashStr(s.title);
+        sources.set(sid, {...s, id: sid});
+      }
+    }
+
+    const ents = mapById(cur.entities);
+    for(const e of incoming.entities || []) if(e && e.id) ents.set(e.id, e);
+
+    const linkSig = (l) => `${safeText(l.from)}|${safeText(l.to)}|${safeText(l.type||l.rel||"")}`;
+    const linkSet = new Set((cur.links || []).filter(Boolean).map(linkSig));
+    const links = [...(cur.links || []).filter(Boolean)];
+    for(const l of incoming.links || []){
+      if(!l) continue;
+      const sig = linkSig(l);
+      if(linkSet.has(sig)) continue;
+      linkSet.add(sig);
+      links.push(l);
+    }
+
+    const tasks = [...(cur.tasks || []), ...(incoming.tasks || [])];
+    const proposals = [...(cur.proposals || []), ...(incoming.proposals || [])];
+
+    state.workspace = {
+      meta: {...cur.meta, imported_at: nowIso(), scope: cur.meta.scope || incoming.meta?.scope || "unknown"},
+      sources: [...sources.values()],
+      zones: [...zones.values()],
+      entities: [...ents.values()],
+      links, tasks, proposals
+    };
+
+    if(state.selectedId && !getEntityById(state.selectedId)) state.selectedId = null;
+
+    updateSessionChip();
+    persistWorkspace();
+    renderAll();
+    rebuildGraphFromWorkspace();
+  }
+
+  function replaceWorkspace(incoming){
+    state.workspace = incoming;
+    state.selectedId = null;
+    state.pinnedId = null;
+    state.history = { stack: [], idx: -1 };
+    updateNavButtons();
+    updateSessionChip();
+    persistWorkspace();
+    renderAll();
+    rebuildGraphFromWorkspace();
+  }
+
+  function exportWorkspace(){
+    const blob = new Blob([JSON.stringify(state.workspace, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,"-");
+    a.download = `nyxo_dashboard_workspace_${ts}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 8000);
+  }
+
+  async function loadFromUrl(url){
+    const u = safeText(url).trim();
+    if(!u) throw new Error("URL vide");
+    const res = await fetch(u, {cache:"no-store"});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const obj = await res.json();
+    return normalizeWorkspace(obj);
+  }
+
+  /* ============================
+     Pause logic
+  ============================ */
+  function schedulePause(){
+    const ms = 50 * 60 * 1000;
+    const next = Date.now() + ms;
+    state.pause.nextAt = next;
+    updatePauseChip();
+    if(state.pause.timerId) clearTimeout(state.pause.timerId);
+    state.pause.timerId = setTimeout(() => {
+      pauseChip.textContent = "PAUSE maintenant ✅";
+      flashPauseButton();
+      schedulePause();
+    }, ms);
+  }
+
+  function flashPauseButton(){
+    btnPause.classList.add("blink");
+    btnPauseMobile.classList.add("blink");
+    setTimeout(() => {
+      btnPause.classList.remove("blink");
+      btnPauseMobile.classList.remove("blink");
+    }, 7000);
+  }
+
+  function updatePauseChip(){
+    if(!state.pause.nextAt){ pauseChip.textContent = "Prochaine pause: —"; return; }
+    const diff = Math.max(0, state.pause.nextAt - Date.now());
+    const min = Math.ceil(diff / 60000);
+    pauseChip.textContent = `Prochaine pause: ~${min} min`;
+  }
+
+  /* ============================
+     EXPORT blink every 3 minutes
+  ============================ */
+  function exportBlinkLoop(){
+    const enableBlink = () => {
+      btnExport.classList.add("blink");
+      btnExportMobile.classList.add("blink");
+      setTimeout(() => {
+        btnExport.classList.remove("blink");
+        btnExportMobile.classList.remove("blink");
+      }, 10000);
+    };
+    setInterval(enableBlink, 3 * 60 * 1000);
+  }
+
+  /* ============================
+     GRAPH (Canvas)
+  ============================ */
+  function ensureGraphReady(){
+    // Resize canvas to stage
+    resizeGraphCanvas();
+    // rebuild if not built
+    rebuildGraphFromWorkspace();
+  }
+
+  function resizeGraphCanvas(){
+    const rect = graphStage.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    graphCanvas.width = Math.max(2, Math.floor(rect.width * dpr));
+    graphCanvas.height = Math.max(2, Math.floor(rect.height * dpr));
+    graphCanvas.style.width = rect.width + "px";
+    graphCanvas.style.height = rect.height + "px";
+  }
+
+  function rebuildGraphFromWorkspace(){
+    const ents = (state.workspace.entities || []).filter(e => e && e.id);
+    const links = (state.workspace.links || []).filter(l => l && l.from && l.to);
+
+    const nodes = ents.slice(0, 900).map((e, i) => ({
+      id: e.id,
+      name: toDisplayName(e),
+      type: safeText(e.type || "service"),
+      status: safeText(e.status || "unverified"),
+      // physics
+      x: (Math.random()-0.5) * 800,
+      y: (Math.random()-0.5) * 600,
+      vx: 0,
+      vy: 0,
+      r: 7
+    }));
+
+    const idx = new Map();
+    nodes.forEach((n, i) => idx.set(n.id, i));
+
+    const edges = [];
+    for(const l of links){
+      const a = idx.get(l.from);
+      const b = idx.get(l.to);
+      if(a === undefined || b === undefined) continue;
+      edges.push({
+        a, b,
+        type: safeText(l.type || l.rel || "")
+      });
+    }
+
+    state.graph.nodes = nodes;
+    state.graph.edges = edges;
+    state.graph.nodeIndex = idx;
+    gNodes.textContent = String(nodes.length);
+    gEdges.textContent = String(edges.length);
+
+    // Fit view if first build or empty view
+    graphFit();
+    requestGraphDraw();
+  }
+
+  function graphFit(){
+    const nodes = state.graph.nodes;
+    if(!nodes.length){
+      state.graph.view = { cx:0, cy:0, scale:1 };
+      return;
+    }
+    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+    for(const n of nodes){
+      minX = Math.min(minX, n.x);
+      minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x);
+      maxY = Math.max(maxY, n.y);
+    }
+    const w = maxX-minX || 1;
+    const h = maxY-minY || 1;
+
+    const rect = graphStage.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const cw = rect.width * dpr;
+    const ch = rect.height * dpr;
+    const pad = 80 * dpr;
+
+    const sx = (cw - pad) / w;
+    const sy = (ch - pad) / h;
+    const s = Math.max(0.05, Math.min(2.8, Math.min(sx, sy)));
+
+    state.graph.view.cx = (minX + maxX) / 2;
+    state.graph.view.cy = (minY + maxY) / 2;
+    state.graph.view.scale = s;
+  }
+
+  function graphCenterOnSelected(){
+    const id = state.selectedId;
+    if(!id) return;
+    const i = state.graph.nodeIndex.get(id);
+    if(i === undefined) return;
+    const n = state.graph.nodes[i];
+    state.graph.view.cx = n.x;
+    state.graph.view.cy = n.y;
+    requestGraphDraw();
+  }
+
+  function worldToScreen(x, y){
+    const ctx = graphCanvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    const w = graphCanvas.width;
+    const h = graphCanvas.height;
+    const v = state.graph.view;
+    // center canvas, then scale, then translate world
+    return {
+      x: (w/2) + (x - v.cx) * v.scale,
+      y: (h/2) + (y - v.cy) * v.scale
+    };
+  }
+
+  function screenToWorld(px, py){
+    const w = graphCanvas.width;
+    const h = graphCanvas.height;
+    const v = state.graph.view;
+    return {
+      x: v.cx + (px - w/2) / v.scale,
+      y: v.cy + (py - h/2) / v.scale
+    };
+  }
+
+  function pickNode(px, py){
+    const nodes = state.graph.nodes;
+    const wpos = screenToWorld(px, py);
+    let best = null;
+    let bestD = Infinity;
+    for(let i=0;i<nodes.length;i++){
+      const n = nodes[i];
+      const dx = n.x - wpos.x;
+      const dy = n.y - wpos.y;
+      const d = dx*dx + dy*dy;
+      const rr = (n.r / state.graph.view.scale + 6 / state.graph.view.scale);
+      if(d < rr*rr && d < bestD){
+        bestD = d;
+        best = i;
+      }
+    }
+    return best;
+  }
+
+  function stepPhysics(dt){
+    const nodes = state.graph.nodes;
+    const edges = state.graph.edges;
+    if(!nodes.length) return;
+
+    const kRepel = 2600;    // repulsion strength
+    const kSpring = 0.012;  // spring strength
+    const rest = 92;        // rest length
+    const damp = 0.92;
+
+    // Simple repulsion (O(n^2) but capped at 900 nodes)
+    for(let i=0;i<nodes.length;i++){
+      const a = nodes[i];
+      for(let j=i+1;j<nodes.length;j++){
+        const b = nodes[j];
+        let dx = a.x - b.x;
+        let dy = a.y - b.y;
+        let d2 = dx*dx + dy*dy + 0.01;
+        const inv = 1 / Math.sqrt(d2);
+        const f = kRepel * inv * inv; // ~1/d
+        dx *= inv; dy *= inv;
+        a.vx += dx * f * dt;
+        a.vy += dy * f * dt;
+        b.vx -= dx * f * dt;
+        b.vy -= dy * f * dt;
+      }
+    }
+
+    // Springs
+    for(const e of edges){
+      const a = nodes[e.a];
+      const b = nodes[e.b];
+      let dx = b.x - a.x;
+      let dy = b.y - a.y;
+      const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+      const diff = dist - rest;
+      const fx = (dx / dist) * (diff * kSpring);
+      const fy = (dy / dist) * (diff * kSpring);
+      a.vx += fx * dt;
+      a.vy += fy * dt;
+      b.vx -= fx * dt;
+      b.vy -= fy * dt;
+    }
+
+    // Integrate
+    for(const n of nodes){
+      if(state.graph.dragNode && state.graph.dragNode === n) {
+        n.vx = 0; n.vy = 0;
+        continue;
+      }
+      n.vx *= damp;
+      n.vy *= damp;
+      n.x += n.vx;
+      n.y += n.vy;
+    }
+  }
+
+  let graphDrawPending = false;
+  function requestGraphDraw(){
+    if(graphDrawPending) return;
+    graphDrawPending = true;
+    requestAnimationFrame(() => {
+      graphDrawPending = false;
+      drawGraph();
+    });
+  }
+
+  function drawGraph(){
+    const ctx = graphCanvas.getContext("2d");
+    const w = graphCanvas.width;
+    const h = graphCanvas.height;
+
+    ctx.clearRect(0,0,w,h);
+
+    // background subtle grid
+    ctx.save();
+    ctx.globalAlpha = 0.10;
+    const step = 80 * (window.devicePixelRatio || 1);
+    ctx.beginPath();
+    for(let x=0;x<w;x+=step){ ctx.moveTo(x,0); ctx.lineTo(x,h); }
+    for(let y=0;y<h;y+=step){ ctx.moveTo(0,y); ctx.lineTo(w,y); }
+    ctx.strokeStyle = (state.ui.theme === "dark") ? "#ffffff" : "#000000";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+
+    const nodes = state.graph.nodes;
+    const edges = state.graph.edges;
+    const v = state.graph.view;
+
+    // edges
+    ctx.save();
+    ctx.globalAlpha = 0.20;
+    ctx.lineWidth = Math.max(1, (window.devicePixelRatio||1) * 1);
+    ctx.strokeStyle = (state.ui.theme === "dark") ? "#b38bff" : "#2b2f66";
+    ctx.beginPath();
+    for(const e of edges){
+      const a = nodes[e.a], b = nodes[e.b];
+      const A = worldToScreen(a.x, a.y);
+      const B = worldToScreen(b.x, b.y);
+      ctx.moveTo(A.x, A.y);
+      ctx.lineTo(B.x, B.y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // nodes
+    const selId = state.selectedId;
+    ctx.save();
+    for(const n of nodes){
+      const p = worldToScreen(n.x, n.y);
+      const r = Math.max(3.5, n.r * (window.devicePixelRatio||1));
+      const isSel = selId && n.id === selId;
+
+      // color by status/type lightly
+      let fill = "rgba(179,139,255,.85)";
+      const st = (n.status||"").toLowerCase();
+      if(st === "verified") fill = "rgba(57,255,182,.92)";
+      if(st === "stale") fill = "rgba(255,204,102,.92)";
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, isSel ? r*1.55 : r, 0, Math.PI*2);
+      ctx.fillStyle = fill;
+      ctx.globalAlpha = isSel ? 1 : 0.88;
+      ctx.fill();
+
+      // ring for selected
+      if(isSel){
+        ctx.globalAlpha = 0.75;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "rgba(179,139,255,.95)";
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    }
+    ctx.restore();
+
+    // selected label
+    if(selId){
+      const i = state.graph.nodeIndex.get(selId);
+      if(i !== undefined){
+        const n = state.graph.nodes[i];
+        const p = worldToScreen(n.x, n.y);
+        ctx.save();
+        ctx.globalAlpha = 0.9;
+        ctx.font = `${12 * (window.devicePixelRatio||1)}px ${getComputedStyle(document.body).fontFamily}`;
+        ctx.fillStyle = (state.ui.theme === "dark") ? "#f3f6ff" : "#0e1220";
+        ctx.fillText(n.name || n.id, p.x + 14, p.y - 14);
+        ctx.restore();
+      }
+    }
+  }
+
+  function graphLoop(t){
+    const g = state.graph;
+    if(!g.lastT) g.lastT = t;
+    const dt = Math.min(0.033, (t - g.lastT) / 1000);
+    g.lastT = t;
+
+    // FPS meter
+    g.fps.frames++;
+    g.fps.acc += (t - (g.fps.last||t));
+    g.fps.last = t;
+    if(g.fps.acc > 500){
+      g.fps.val = Math.round(1000 * g.fps.frames / g.fps.acc);
+      g.fps.acc = 0; g.fps.frames = 0;
+      gFps.textContent = String(g.fps.val);
+    }
+
+    if(state.ui.tab === "graph"){
+      if(g.running) stepPhysics(dt);
+      requestGraphDraw();
+    }
+    requestAnimationFrame(graphLoop);
+  }
+
+  // Graph events
+  function wireGraphEvents(){
+    const dpr = window.devicePixelRatio || 1;
+
+    const getLocal = (ev) => {
+      const rect = graphCanvas.getBoundingClientRect();
+      const x = (ev.clientX - rect.left) * dpr;
+      const y = (ev.clientY - rect.top) * dpr;
+      return { x, y };
+    };
+
+    graphCanvas.addEventListener("mousedown", (ev) => {
+      const p = getLocal(ev);
+      const hit = pickNode(p.x, p.y);
+      if(hit !== null && hit !== undefined){
+        const n = state.graph.nodes[hit];
+        state.graph.dragging = true;
+        state.graph.dragNode = n;
+        // keep selected synced
+        selectEntity(n.id, {push:true});
+      }else{
+        state.graph.dragPan = true;
+        state.graph.panStart = { x:p.x, y:p.y, cx: state.graph.view.cx, cy: state.graph.view.cy };
+      }
+    });
+
+    window.addEventListener("mousemove", (ev) => {
+      if(state.ui.tab !== "graph") return;
+      const rect = graphCanvas.getBoundingClientRect();
+      const inside = ev.clientX >= rect.left && ev.clientX <= rect.right && ev.clientY >= rect.top && ev.clientY <= rect.bottom;
+      if(!inside && !state.graph.dragPan && !state.graph.dragging) return;
+
+      const p = getLocal(ev);
+
+      if(state.graph.dragging && state.graph.dragNode){
+        const w = screenToWorld(p.x, p.y);
+        state.graph.dragNode.x = w.x;
+        state.graph.dragNode.y = w.y;
+        state.graph.dragNode.vx = 0;
+        state.graph.dragNode.vy = 0;
+        requestGraphDraw();
+      }else if(state.graph.dragPan){
+        const dx = (p.x - state.graph.panStart.x) / state.graph.view.scale;
+        const dy = (p.y - state.graph.panStart.y) / state.graph.view.scale;
+        state.graph.view.cx = state.graph.panStart.cx - dx;
+        state.graph.view.cy = state.graph.panStart.cy - dy;
+        requestGraphDraw();
+      }
+    });
+
+    window.addEventListener("mouseup", () => {
+      state.graph.dragging = false;
+      state.graph.dragNode = null;
+      state.graph.dragPan = false;
+    });
+
+    graphCanvas.addEventListener("wheel", (ev) => {
+      if(state.ui.tab !== "graph") return;
+      ev.preventDefault();
+      const p = getLocal(ev);
+      const before = screenToWorld(p.x, p.y);
+
+      const delta = -ev.deltaY;
+      const factor = delta > 0 ? 1.12 : 0.89;
+      state.graph.view.scale = clamp(state.graph.view.scale * factor, 0.03, 8);
+
+      const after = screenToWorld(p.x, p.y);
+      // keep point under cursor stable
+      state.graph.view.cx += (before.x - after.x);
+      state.graph.view.cy += (before.y - after.y);
+
+      requestGraphDraw();
+    }, { passive:false });
+
+    graphCanvas.addEventListener("dblclick", (ev) => {
+      ev.preventDefault();
+      graphFit();
+      requestGraphDraw();
+    });
+
+    graphCanvas.addEventListener("click", (ev) => {
+      const p = getLocal(ev);
+      const hit = pickNode(p.x, p.y);
+      if(hit !== null && hit !== undefined){
+        const n = state.graph.nodes[hit];
+        selectEntity(n.id, {push:true});
+      }
+    });
+
+    // Responsive
+    window.addEventListener("resize", () => {
+      resizeGraphCanvas();
+      requestGraphDraw();
+    });
+  }
+
+  /* ============================
+     Wiring + Render
+  ============================ */
+  function renderAll(){
+    renderList();
+    renderTasks();
+    renderProposals();
+    renderDetail();
+  }
+
+  // Tabs
+  tabs.forEach(t => {
+    t.addEventListener("click", () => setActiveTab(t.dataset.tab));
+    t.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        setActiveTab(t.dataset.tab);
+      }
+    });
+  });
+
+  // Search
+  searchEl.addEventListener("input", () => renderList());
+  filterTypeEl.addEventListener("change", () => renderList());
+  taskSearchEl.addEventListener("input", () => renderTasks());
+
+  // Navigation
+  btnBack.addEventListener("click", () => gotoHistory(-1));
+  btnFwd.addEventListener("click", () => gotoHistory(1));
+
+  // Pin / Copy
+  btnPin.addEventListener("click", () => {
+    if(!state.selectedId) return;
+    state.pinnedId = (state.pinnedId === state.selectedId) ? null : state.selectedId;
+    persistWorkspace();
+    renderDetail();
+  });
+
+  btnCopyId.addEventListener("click", async () => {
+    const id = state.selectedId;
+    if(!id) return;
+    try{
+      await navigator.clipboard.writeText(id);
+      btnCopyId.textContent = "✓ ID";
+      setTimeout(() => btnCopyId.textContent = "⧉ ID", 900);
+    }catch(e){
+      alert("Copie manuelle: " + id);
+    }
+  });
+
+  // Import modal
+  const openImport = () => { pendingImportObj = null; pasteInfo.textContent=""; fileInput.value=""; pasteJson.value=""; openModal(); };
+  btnImport.addEventListener("click", openImport);
+  btnImportMobile.addEventListener("click", openImport);
+  btnCloseImport.addEventListener("click", closeModal);
+  importModal.addEventListener("click", (e) => { if(e.target === importModal) closeModal(); });
+
+  // File input
+  fileInput.addEventListener("change", async () => {
+    const f = fileInput.files && fileInput.files[0];
+    if(!f) return;
+    try{
+      await setPendingFromFile(f);
+      pasteInfo.textContent = `OK • ${pendingImportObj.entities.length} entités • ${pendingImportObj.links.length} liens`;
+    }catch(err){
+      pasteInfo.textContent = `Erreur: ${err?.message || err}`;
+    }
+  });
+
+  // Drop zone
+  ["dragenter","dragover"].forEach(evt => dropZone.addEventListener(evt, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    dropZone.style.borderColor = "rgba(179,139,255,.55)";
+  }));
+  ["dragleave","drop"].forEach(evt => dropZone.addEventListener(evt, (e) => {
+    e.preventDefault(); e.stopPropagation();
+    dropZone.style.borderColor = "";
+  }));
+  dropZone.addEventListener("drop", async (e) => {
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(!f) return;
+    try{
+      await setPendingFromFile(f);
+      pasteInfo.textContent = `OK • ${pendingImportObj.entities.length} entités • ${pendingImportObj.links.length} liens`;
+    }catch(err){
+      pasteInfo.textContent = `Erreur: ${err?.message || err}`;
+    }
+  });
+
+  // Paste load
+  btnLoadPaste.addEventListener("click", () => {
+    try{ setPendingFromText(pasteJson.value); }
+    catch(err){ pasteInfo.textContent = `Erreur: ${err?.message || err}`; }
+  });
+  pasteJson.addEventListener("input", () => pasteInfo.textContent = `${pasteJson.value.length} caractères`);
+
+  // Import actions
+  btnImportMerge.addEventListener("click", () => {
+    if(!pendingImportObj){ pasteInfo.textContent = "Charge d’abord un JSON (fichier ou collage)."; return; }
+    mergeWorkspace(pendingImportObj);
+    closeModal();
+  });
+  btnImportReplace.addEventListener("click", () => {
+    if(!pendingImportObj){ pasteInfo.textContent = "Charge d’abord un JSON (fichier ou collage)."; return; }
+    replaceWorkspace(pendingImportObj);
+    closeModal();
+  });
+
+  // Export
+  btnExport.addEventListener("click", exportWorkspace);
+  btnExportMobile.addEventListener("click", exportWorkspace);
+
+  // Reset
+  btnReset.addEventListener("click", () => {
+    if(!confirm("Réinitialiser la session locale ? (export recommandé avant)")) return;
+    try{ localStorage.removeItem(LS_KEY); }catch(e){}
+    state.workspace = normalizeWorkspace({});
+    state.selectedId = null;
+    state.pinnedId = null;
+    state.history = {stack:[], idx:-1};
+    updateNavButtons();
+    updateSessionChip();
+    renderAll();
+    rebuildGraphFromWorkspace();
+  });
+
+  // Theme & a11y
+  btnTheme.addEventListener("click", () => setTheme(state.ui.theme === "dark" ? "light" : "dark"));
+  fontScaleEl.addEventListener("change", () => { state.ui.fontScale = parseFloat(fontScaleEl.value) || 1; applyA11y(); });
+  contrastEl.addEventListener("change", () => { state.ui.contrast = contrastEl.value; applyA11y(); });
+
+  // URL load
+  btnLoadUrl.addEventListener("click", async () => {
+    const u = urlInput.value.trim();
+    if(!u) return;
+    try{
+      const incoming = await loadFromUrl(u);
+      mergeWorkspace(incoming);
+      alert("Chargé & fusionné.");
+    }catch(err){
+      alert("Erreur URL: " + (err?.message || err) + "\n\n(En double-clic file://, 'fetch' peut échouer : utilise Import fichier.)");
+    }
+  });
+
+  // Proposals
+  btnAddProposal.addEventListener("click", () => {
+    const kind = proposalTypeEl.value;
+    const body = proposalBodyEl.value.trim();
+    if(!body){ alert("Écris une proposition (quoi + pourquoi + preuve)."); return; }
+    const p = { kind, body, created_at: nowIso() };
+    state.workspace.proposals = Array.isArray(state.workspace.proposals) ? state.workspace.proposals : [];
+    state.workspace.proposals.push(p);
+    proposalBodyEl.value = "";
+    persistWorkspace();
+    renderProposals();
+  });
+
+  btnClearProposals.addEventListener("click", () => {
+    if(!confirm("Vider la liste des propositions ?")) return;
+    state.workspace.proposals = [];
+    persistWorkspace();
+    renderProposals();
+  });
+
+  // Pause
+  const onPause = () => {
+    alert("PAUSE ✅\n\n• Respire\n• Bois de l’eau\n• Reviens quand tu veux\n\n(Le rappel reviendra automatiquement.)");
+  };
+  btnPause.addEventListener("click", onPause);
+  btnPauseMobile.addEventListener("click", onPause);
+
+  // Keyboard nav
+  window.addEventListener("keydown", (e) => {
+    if(e.key === "Escape" && importModal.classList.contains("show")) closeModal();
+    if(e.altKey && e.key === "ArrowLeft") gotoHistory(-1);
+    if(e.altKey && e.key === "ArrowRight") gotoHistory(1);
+  });
+
+  // Graph buttons
+  btnGraphFit.addEventListener("click", () => { graphFit(); requestGraphDraw(); });
+  btnGraphCenterSel.addEventListener("click", () => graphCenterOnSelected());
+  btnGraphFreeze.addEventListener("click", () => {
+    state.graph.running = !state.graph.running;
+    btnGraphFreeze.textContent = state.graph.running ? "Geler" : "Dégeler";
+  });
+
+  /* ============================
+     Init
+  ============================ */
+  loadFromStorage();
+
+  setTheme(state.ui.theme || "dark");
+  fontScaleEl.value = String(state.ui.fontScale || 1);
+  contrastEl.value = state.ui.contrast || "normal";
+  applyA11y();
+
+  updateSessionChip();
+  renderAll();
+  updateNavButtons();
+
+  // Graph init
+  wireGraphEvents();
+  resizeGraphCanvas();
+  rebuildGraphFromWorkspace();
+  requestAnimationFrame(graphLoop);
+
+  schedulePause();
+  exportBlinkLoop();
+  setInterval(updatePauseChip, 60 * 1000);
+
+  // Restore tab last
+  setActiveTab(state.ui.tab || "explore");
+
+})();
+</script>
+</body>
+</html>
