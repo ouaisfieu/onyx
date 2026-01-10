@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NYXO Portal</title>
+<style>
+:root{--bg:#050a12;--txt:#e8f0ff;--primary:#86fbd6;--secondary:#d7a8ff;--border:rgba(255,255,255,.08)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui;background:var(--bg);color:var(--txt);overflow:hidden;height:100vh}
+canvas{position:fixed;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+canvas:active{cursor:grabbing}
+.hud{position:fixed;top:12px;left:12px;right:12px;z-index:20;display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:8px 12px;background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:8px;color:var(--txt);cursor:pointer;font-size:12px;font-weight:600;backdrop-filter:blur(10px)}
+.btn:hover{background:rgba(0,0,0,.7)}
+.btn:active{transform:scale(.95)}
+.btn.primary{background:rgba(134,251,214,.2);border-color:var(--primary)}
+.btn.danger{background:rgba(255,106,139,.2);border-color:#ff6a8b}
+.drawer{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:30;display:none;backdrop-filter:blur(20px);overflow-y:auto;padding:20px}
+.drawer.open{display:block}
+.panel{background:rgba(13,20,34,.9);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;max-width:600px;margin-left:auto;margin-right:auto}
+.panel h3{font-size:14px;margin-bottom:12px;color:var(--primary);text-transform:uppercase;letter-spacing:.1em}
+.stat{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.stat:last-child{border:0}
+.stat-val{font-weight:700;font-family:monospace;color:var(--primary)}
+textarea{width:100%;height:200px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--txt);font-family:monospace;font-size:11px;resize:vertical}
+.chip{padding:8px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:6px;margin-bottom:6px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.chip:hover{background:rgba(0,0,0,.5);border-color:var(--primary)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+input[type="file"]{display:none}
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:rgba(13,20,34,.95);border:2px solid var(--primary);padding:12px 20px;border-radius:8px;z-index:100;display:none;font-weight:600;backdrop-filter:blur(20px)}
+#toast.show{display:block}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="hud">
+  <button class="btn" onclick="home()">🏠</button>
+  <button class="btn" id="modeBtn" onclick="toggleMode()">ZONES</button>
+  <button class="btn" onclick="regen()">🔄</button>
+  <button class="btn primary" onclick="openDrawer()">Monitor</button>
+</div>
+
+<div class="drawer" id="drawer">
+  <div class="panel">
+    <h3>Monitor</h3>
+    <div class="stat"><span>Entités</span><span class="stat-val" id="statE">0</span></div>
+    <div class="stat"><span>Liens</span><span class="stat-val" id="statL">0</span></div>
+    <div class="stat"><span>Zones</span><span class="stat-val" id="statZ">0</span></div>
+  </div>
+  
+  <div class="panel">
+    <h3>Actions</h3>
+    <button class="btn primary" onclick="sample()" style="width:100%;margin-bottom:8px">📦 Sample</button>
+    <button class="btn" onclick="document.getElementById('file').click()" style="width:100%;margin-bottom:8px">📥 Import</button>
+    <input type="file" id="file" accept=".json">
+    <button class="btn" onclick="exp()" style="width:100%;margin-bottom:8px">📤 Export</button>
+    <button class="btn danger" onclick="reset()" style="width:100%">🗑️ Reset</button>
+  </div>
+  
+  <div class="panel">
+    <h3>JSON</h3>
+    <textarea id="json" placeholder='{"zones":[],"entities":[],"links":[]}'></textarea>
+    <button class="btn primary" onclick="apply()" style="width:100%;margin-top:8px">✓ Apply</button>
+  </div>
+  
+  <div class="panel">
+    <h3>Détails</h3>
+    <div id="details">Cliquez sur une entité</div>
+  </div>
+  
+  <button class="btn" onclick="closeDrawer()" style="width:100%;max-width:600px;margin:20px auto;display:block">✕ Fermer</button>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const c=document.getElementById("c");
+const ctx=c.getContext("2d");
+const ui={
+  modeBtn:document.getElementById("modeBtn"),
+  drawer:document.getElementById("drawer"),
+  statE:document.getElementById("statE"),
+  statL:document.getElementById("statL"),
+  statZ:document.getElementById("statZ"),
+  json:document.getElementById("json"),
+  details:document.getElementById("details"),
+  file:document.getElementById("file"),
+  toast:document.getElementById("toast")
+};
+
+let MODE="ZONES";
+let db={zones:[],entities:[],links:[]};
+let view={x:0,y:0,z:1};
+let sel=null,hov=null;
+let drag=false,ds={x:0,y:0},vs={x:0,y:0};
+
+const COL={ASTRO:"#86fbd6",TAROT:"#d7a8ff",NEUTRE:"#8fa8d0"};
+function col(l){return COL[l]||COL.NEUTRE}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0;return Math.abs(h)}
+function toast(m){ui.toast.textContent=m;ui.toast.classList.add("show");setTimeout(()=>ui.toast.classList.remove("show"),2500)}
+
+function fit(){
+  const dpr=window.devicePixelRatio||1;
+  c.width=c.clientWidth*dpr;
+  c.height=c.clientHeight*dpr;
+  ctx.scale(dpr,dpr);
+}
+fit();
+window.addEventListener("resize",()=>{fit();render()});
+
+function s2w(sx,sy){
+  const w=c.clientWidth,h=c.clientHeight;
+  return {x:(sx-w/2)/view.z-view.x,y:(sy-h/2)/view.z-view.y};
+}
+
+function render(){
+  const w=c.clientWidth,h=c.clientHeight;
+  ctx.clearRect(0,0,w,h);
+  
+  ctx.save();
+  ctx.translate(w/2,h/2);
+  ctx.scale(view.z,view.z);
+  ctx.translate(view.x,view.y);
+  
+  db.zones.forEach(z=>{
+    const cl=col(z.layer);
+    ctx.fillStyle=cl+"22";
+    ctx.beginPath();
+    ctx.arc(z.x||0,z.y||0,140,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle=cl+"66";
+    ctx.font="11px monospace";
+    ctx.textAlign="center";
+    ctx.fillText(z.label||z.id,z.x||0,z.y||0);
+  });
+  
+  ctx.strokeStyle="rgba(134,251,214,.15)";
+  ctx.lineWidth=1;
+  db.links.forEach(l=>{
+    const e1=db.entities.find(e=>e.id===l.from);
+    const e2=db.entities.find(e=>e.id===l.to);
+    if(!e1||!e2)return;
+    if(sel&&(l.from===sel||l.to===sel)){ctx.strokeStyle="rgba(134,251,214,.4)";ctx.lineWidth=2}
+    else{ctx.strokeStyle="rgba(134,251,214,.15)";ctx.lineWidth=1}
+    ctx.beginPath();
+    ctx.moveTo(e1.x||0,e1.y||0);
+    ctx.lineTo(e2.x||0,e2.y||0);
+    ctx.stroke();
+  });
+  
+  db.entities.forEach(e=>{
+    const s=sel===e.id,h=hov===e.id;
+    const r=s?8:h?6.5:5.5;
+    const cl=col(e.layer);
+    if(s){ctx.shadowColor=cl;ctx.shadowBlur=20}else{ctx.shadowBlur=0}
+    ctx.fillStyle=cl;
+    ctx.beginPath();
+    ctx.arc(e.x||0,e.y||0,r,0,Math.PI*2);
+    ctx.fill();
+    ctx.shadowBlur=0;
+    ctx.strokeStyle=cl+"aa";
+    ctx.lineWidth=1.2;
+    ctx.beginPath();
+    ctx.arc(e.x||0,e.y||0,r+2,0,Math.PI*2);
+    ctx.stroke();
+  });
+  
+  if(view.z>1.2){
+    ctx.font="600 10px sans-serif";
+    ctx.textAlign="center";
+    db.entities.slice(0,20).forEach(e=>{
+      const n=e.display?.masked_name||e.id;
+      const t=n.length>15?n.substring(0,14)+"…":n;
+      const w=ctx.measureText(t).width;
+      ctx.fillStyle="rgba(0,0,0,.7)";
+      ctx.fillRect((e.x||0)-w/2-4,(e.y||0)+10,w+8,14);
+      ctx.fillStyle="#fff";
+      ctx.fillText(t,e.x||0,(e.y||0)+20);
+    });
+  }
+  
+  ctx.restore();
+  
+  ui.statE.textContent=db.entities.length;
+  ui.statL.textContent=db.links.length;
+  ui.statZ.textContent=db.zones.length;
+}
+
+function physics(){
+  const zg=MODE==="ZONES"?.18:.04;
+  const rep=MODE==="GRAPH"?900:400;
+  
+  db.entities.forEach(e=>{
+    const z=db.zones.find(zz=>zz.id===e.zone);
+    if(z){
+      const dx=(z.x||0)-(e.x||0),dy=(z.y||0)-(e.y||0),d=Math.sqrt(dx*dx+dy*dy);
+      if(d>1){e.vx=(e.vx||0)+(dx/d)*zg;e.vy=(e.vy||0)+(dy/d)*zg}
+    }
+  });
+  
+  for(let i=0;i<db.entities.length;i++){
+    for(let j=i+1;j<db.entities.length;j++){
+      const e1=db.entities[i],e2=db.entities[j];
+      const dx=(e2.x||0)-(e1.x||0),dy=(e2.y||0)-(e1.y||0),d=Math.sqrt(dx*dx+dy*dy);
+      if(d>0&&d<180){
+        const f=rep/(d*d+1),fx=(dx/d)*f,fy=(dy/d)*f;
+        e1.vx=(e1.vx||0)-fx;e1.vy=(e1.vy||0)-fy;
+        e2.vx=(e2.vx||0)+fx;e2.vy=(e2.vy||0)+fy;
+      }
+    }
+  }
+  
+  const ss=MODE==="GRAPH"?.12:.05;
+  db.links.forEach(l=>{
+    const e1=db.entities.find(e=>e.id===l.from);
+    const e2=db.entities.find(e=>e.id===l.to);
+    if(!e1||!e2)return;
+    const dx=(e2.x||0)-(e1.x||0),dy=(e2.y||0)-(e1.y||0),d=Math.sqrt(dx*dx+dy*dy);
+    if(d>1){
+      const diff=d-100,f=diff*ss,fx=(dx/d)*f,fy=(dy/d)*f;
+      e1.vx=(e1.vx||0)+fx;e1.vy=(e1.vy||0)+fy;
+      e2.vx=(e2.vx||0)-fx;e2.vy=(e2.vy||0)-fy;
+    }
+  });
+  
+  db.entities.forEach(e=>{
+    e.vx=(e.vx||0)*.85;e.vy=(e.vy||0)*.85;
+    e.vx=clamp(e.vx||0,-7,7);e.vy=clamp(e.vy||0,-7,7);
+    e.x=(e.x||0)+(e.vx||0);e.y=(e.y||0)+(e.vy||0);
+  });
+}
+
+function loop(){physics();render();requestAnimationFrame(loop)}
+loop();
+
+c.addEventListener("pointerdown",e=>{
+  const r=c.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  const w=s2w(mx,my);
+  let hit=null;
+  for(let i=db.entities.length-1;i>=0;i--){
+    const ent=db.entities[i];
+    const dx=w.x-(ent.x||0),dy=w.y-(ent.y||0),d=Math.sqrt(dx*dx+dy*dy);
+    if(d<11/view.z){hit=ent;break}
+  }
+  if(hit){
+    select(hit.id);
+    openDrawer();
+  }else{
+    drag=true;ds={x:mx,y:my};vs={x:view.x,y:view.y};
+  }
+});
+
+c.addEventListener("pointermove",e=>{
+  const r=c.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  if(drag){
+    const dx=mx-ds.x,dy=my-ds.y;
+    view.x=vs.x+dx/view.z;
+    view.y=vs.y+dy/view.z;
+  }else{
+    const w=s2w(mx,my);
+    let h=null;
+    for(let i=db.entities.length-1;i>=0;i--){
+      const ent=db.entities[i];
+      const dx=w.x-(ent.x||0),dy=w.y-(ent.y||0),d=Math.sqrt(dx*dx+dy*dy);
+      if(d<11/view.z){h=ent;break}
+    }
+    hov=h?h.id:null;
+  }
+});
+
+c.addEventListener("pointerup",()=>{drag=false});
+
+c.addEventListener("wheel",e=>{
+  e.preventDefault();
+  view.z=clamp(view.z-e.deltaY*.0009,.5,3.5);
+});
+
+function select(id){
+  sel=id;
+  const e=db.entities.find(ent=>ent.id===id);
+  if(!e){ui.details.innerHTML="Introuvable";return}
+  const n=e.display?.masked_name||e.id;
+  const lf=db.links.filter(l=>l.from===id);
+  const lt=db.links.filter(l=>l.to===id);
+  let h=`<strong>${n}</strong><br><small>${e.type} • ${e.layer}</small>`;
+  if(lf.length){
+    h+=`<br><br><strong>→ ${lf.length}</strong><br>`;
+    lf.slice(0,5).forEach(l=>{
+      const t=db.entities.find(ent=>ent.id===l.to);
+      if(t){
+        const tn=t.display?.masked_name||t.id;
+        h+=`<div class="chip" onclick="select('${l.to}')"><span class="dot" style="background:${col(t.layer)}"></span>${tn}</div>`;
+      }
+    });
+  }
+  if(lt.length){
+    h+=`<br><strong>← ${lt.length}</strong><br>`;
+    lt.slice(0,5).forEach(l=>{
+      const s=db.entities.find(ent=>ent.id===l.from);
+      if(s){
+        const sn=s.display?.masked_name||s.id;
+        h+=`<div class="chip" onclick="select('${l.from}')"><span class="dot" style="background:${col(s.layer)}"></span>${sn}</div>`;
+      }
+    });
+  }
+  ui.details.innerHTML=h;
+}
+
+function home(){view.x=0;view.y=0;view.z=1;toast("Vue recentrée")}
+function toggleMode(){MODE=MODE==="ZONES"?"GRAPH":"ZONES";ui.modeBtn.textContent=MODE;toast("Mode "+MODE)}
+function regen(){
+  db.entities.forEach(e=>{
+    const z=db.zones.find(zz=>zz.id===e.zone);
+    if(z){
+      const h=hash(e.id),a=(h%360)*(Math.PI/180),r=50+(h%90);
+      e.x=(z.x||0)+Math.cos(a)*r;
+      e.y=(z.y||0)+Math.sin(a)*r;
+      e.vx=0;e.vy=0;
+    }
+  });
+  toast("Régénéré");
+}
+
+function openDrawer(){ui.drawer.classList.add("open")}
+function closeDrawer(){ui.drawer.classList.remove("open")}
+
+function sample(){
+  const zones=[
+    {id:"Z-1000",commune:"Centre",x:0,y:0,layer:"ASTRO",label:"Centre"},
+    {id:"Z-1030",commune:"Schaerbeek",x:300,y:-150,layer:"TAROT",label:"Schaerbeek"},
+    {id:"Z-1070",commune:"Anderlecht",x:-300,y:150,layer:"NEUTRE",label:"Anderlecht"},
+    {id:"Z-1050",commune:"Ixelles",x:200,y:200,layer:"ASTRO",label:"Ixelles"},
+    {id:"Z-1090",commune:"Jette",x:-350,y:-250,layer:"TAROT",label:"Jette"}
+  ];
+  const types=["lieu_de_liens","ssm","centre_jour","federation"];
+  const layers=["ASTRO","TAROT","NEUTRE"];
+  const entities=[...Array(35)].map((_,i)=>{
+    const z=zones[hash(`e${i}`)%zones.length];
+    const h=hash(i.toString()),a=(h%360)*(Math.PI/180),r=50+(h%80);
+    return {
+      id:`E-${String(i+1).padStart(3,"0")}`,
+      type:types[hash(`t${i}`)%types.length],
+      zone:z.id,
+      layer:layers[hash(`l${i}`)%layers.length],
+      confidence:.7,
+      display:{masked_name:`Entité_${i+1}`},
+      tags:["sample"],
+      x:z.x+Math.cos(a)*r,
+      y:z.y+Math.sin(a)*r,
+      vx:0,vy:0
+    };
+  });
+  const links=[];
+  let lid=1;
+  entities.forEach((e,i)=>{
+    const n=1+(hash(`n${e.id}`)%2);
+    for(let j=0;j<n;j++){
+      const t=entities[(i+j+1)%entities.length];
+      if(e.id!==t.id)links.push({id:`L-${lid++}`,type:"connect",from:e.id,to:t.id,confidence:.8});
+    }
+  });
+  const data={meta:{dataset:"sample"},zones,entities,links};
+  ui.json.value=JSON.stringify(data,null,2);
+  apply();
+  toast("Sample chargé: "+entities.length);
+}
+
+function apply(){
+  try{
+    const data=JSON.parse(ui.json.value||"{}");
+    db.zones=data.zones||[];
+    db.entities=data.entities||[];
+    db.links=data.links||[];
+    db.entities.forEach(e=>{
+      if(e.x===undefined||e.y===undefined){
+        const z=db.zones.find(zz=>zz.id===e.zone);
+        if(z){
+          const h=hash(e.id),a=(h%360)*(Math.PI/180),r=50+(h%100);
+          e.x=(z.x||0)+Math.cos(a)*r;
+          e.y=(z.y||0)+Math.sin(a)*r;
+        }else{e.x=0;e.y=0}
+      }
+      if(!e.vx)e.vx=0;
+      if(!e.vy)e.vy=0;
+    });
+    toast("Appliqué: "+db.entities.length);
+  }catch(err){toast("Erreur: "+err.message)}
+}
+
+ui.file.onchange=()=>{
+  const f=ui.file.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      ui.json.value=ev.target.result;
+      apply();
+      openDrawer();
+      toast("Import OK");
+    }catch(err){toast("Erreur: "+err.message)}
+  };
+  r.onerror=()=>toast("Erreur lecture");
+  r.readAsText(f);
+  ui.file.value="";
+};
+
+function exp(){
+  const data={meta:{dataset:"nyxo-export",date:new Date().toISOString()},zones:db.zones,entities:db.entities,links:db.links};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`nyxo-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast("Export OK");
+}
+
+function reset(){if(confirm("Reset?")){db={zones:[],entities:[],links:[]};ui.json.value="";render();toast("Reset")}}
+
+toast("🧠 NYXO Portal");
+</script>
+</body>
+</html>
